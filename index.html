@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSA 450 Randomizer App</title>
+    <title>Self Study App</title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#4f46e5">
@@ -11,20 +11,20 @@
     <!-- Inline Manifest to make it a Single File PWA -->
     <script type="application/json" id="my-manifest">
     {
-      "name": "DSA 450 Randomizer",
-      "short_name": "DSA450",
+      "name": "Self Study App",
+      "short_name": "SelfStudy",
       "start_url": "./index.html",
       "display": "standalone",
       "background_color": "#f3f4f6",
       "theme_color": "#4f46e5",
       "icons": [
         {
-          "src": "https://via.placeholder.com/192x192/4f46e5/ffffff?text=DSA",
+          "src": "https://via.placeholder.com/192x192/4f46e5/ffffff?text=SSA",
           "sizes": "192x192",
           "type": "image/png"
         },
         {
-          "src": "https://via.placeholder.com/512x512/4f46e5/ffffff?text=DSA",
+          "src": "https://via.placeholder.com/512x512/4f46e5/ffffff?text=SSA",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -159,8 +159,15 @@
             color: #111827;
         }
 
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
         .secondary-btn {
-            display: inline-block;
+            display: block;
             text-align: center;
             background-color: #10b981;
             color: white;
@@ -174,13 +181,21 @@
         .secondary-btn:hover {
             background-color: #059669;
         }
+
+        .gfg-btn {
+            background-color: #f59e0b;
+        }
+
+        .gfg-btn:hover {
+            background-color: #d97706;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>DSA 450 Practice App</h1>
-            <p>Select a topic and test your problem-solving skills!</p>
+            <h1>Self Study App</h1>
+            <p>Select a topic and master your DSA interview prep!</p>
         </header>
 
         <main>
@@ -202,50 +217,171 @@
                 <span id="q-topic" class="badge">Topic</span>
                 <h2 id="q-title">Question Title</h2>
                 <div class="actions">
-                    <a id="q-link" href="#" target="_blank" class="secondary-btn">Solve on 450DSA / External Link</a>
+                    <a id="q-explanation-link" href="#" target="_blank" class="secondary-btn">📖 View Explanation / Striver Guide</a>
+                    <a id="q-gfg-link" href="#" target="_blank" class="secondary-btn gfg-btn">💻 Practice on GFG (Companies & Figures)</a>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Dataset based on 450 DSA list
+        // Expanded dataset with both Explanation (Striver/Conceptual) and GFG links
         const dsaQuestions = [
             // Array
-            { topic: "Array", title: "Reverse the array", url: "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/" },
-            { topic: "Array", title: "Find the maximum and minimum element in an array", url: "https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/" },
-            { topic: "Array", title: "Find the Kth max and min element of an array", url: "https://practice.geeksforgeeks.org/problems/kth-smallest-element/0" },
-            { topic: "Array", title: "Sort an array of 0s, 1s and 2s without sorting algo", url: "https://practice.geeksforgeeks.org/problems/sort-an-array-of-0s-1s-and-2s4231/1" },
-            { topic: "Array", title: "Move all negative elements to end of array", url: "https://www.geeksforgeeks.org/move-negative-numbers-beginning-positive-end-constant-extra-space/" },
+            { 
+                topic: "Array", 
+                title: "Reverse the array", 
+                explanationUrl: "https://takeuforward.org/data-structures/reverse-a-array/", 
+                gfgUrl: "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/" 
+            },
+            { 
+                topic: "Array", 
+                title: "Find the maximum and minimum element in an array", 
+                explanationUrl: "https://takeuforward.org/data-structures/maximum-and-minimum-element-in-an-array/", 
+                gfgUrl: "https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/" 
+            },
+            { 
+                topic: "Array", 
+                title: "Find the Kth max and min element of an array", 
+                explanationUrl: "https://takeuforward.org/data-structures/kth-largest-smallest-element-in-an-array/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/kth-smallest-element/0" 
+            },
+            { 
+                topic: "Array", 
+                title: "Sort an array of 0s, 1s and 2s (Dutch National Flag Algorithm)", 
+                explanationUrl: "https://takeuforward.org/data-structures/sort-an-array-of-0s-1s-and-2s/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/sort-an-array-of-0s-1s-and-2s4231/1" 
+            },
+            { 
+                topic: "Array", 
+                title: "Move all negative elements to end of array", 
+                explanationUrl: "https://takeuforward.org/arrays/move-all-negative-elements-to-end-of-array/", 
+                gfgUrl: "https://www.geeksforgeeks.org/move-negative-numbers-beginning-positive-end-constant-extra-space/" 
+            },
 
             // String
-            { topic: "String", title: "Reverse a String", url: "https://leetcode.com/problems/reverse-string/" },
-            { topic: "String", title: "Check whether a string is Palindrome or not", url: "https://practice.geeksforgeeks.org/problems/palindrome-string0817/1" },
-            { topic: "String", title: "Find Duplicate characters in a string", url: "https://www.geeksforgeeks.org/print-all-the-duplicates-in-the-input-string/" },
-            { topic: "String", title: "Check whether one string is a rotation of another", url: "https://www.geeksforgeeks.org/a-program-to-check-if-strings-are-rotations-of-each-other/" },
+            { 
+                topic: "String", 
+                title: "Reverse a String", 
+                explanationUrl: "https://takeuforward.org/data-structures/reverse-a-string/", 
+                gfgUrl: "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/" 
+            },
+            { 
+                topic: "String", 
+                title: "Check whether a string is Palindrome or not", 
+                explanationUrl: "https://takeuforward.org/data-structures/check-if-a-string-is-palindrome-or-not/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/palindrome-string0817/1" 
+            },
+            { 
+                topic: "String", 
+                title: "Find Duplicate characters in a string", 
+                explanationUrl: "https://takeuforward.org/data-structures/find-duplicate-characters-in-a-string/", 
+                gfgUrl: "https://www.geeksforgeeks.org/print-all-the-duplicates-in-the-input-string/" 
+            },
+            { 
+                topic: "String", 
+                title: "Check whether one string is a rotation of another", 
+                explanationUrl: "https://takeuforward.org/data-structures/check-if-string-is-rotation-of-another/", 
+                gfgUrl: "https://www.geeksforgeeks.org/a-program-to-check-if-strings-are-rotations-of-each-other/" 
+            },
 
             // Tree
-            { topic: "Tree", title: "Level order traversal", url: "https://practice.geeksforgeeks.org/problems/level-order-traversal/1" },
-            { topic: "Tree", title: "Reverse Level Order traversal", url: "https://practice.geeksforgeeks.org/problems/reverse-level-order-traversal/1" },
-            { topic: "Tree", title: "Height of a tree", url: "https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1" },
-            { topic: "Tree", title: "Diameter of a binary tree", url: "https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1" },
+            { 
+                topic: "Tree", 
+                title: "Level order traversal", 
+                explanationUrl: "https://takeuforward.org/data-structures/level-order-traversal-of-binary-tree/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/level-order-traversal/1" 
+            },
+            { 
+                topic: "Tree", 
+                title: "Reverse Level Order traversal", 
+                explanationUrl: "https://takeuforward.org/data-structures/reverse-level-order-traversal/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/reverse-level-order-traversal/1" 
+            },
+            { 
+                topic: "Tree", 
+                title: "Height of a tree", 
+                explanationUrl: "https://takeuforward.org/data-structures/maximum-depth-of-a-binary-tree/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1" 
+            },
+            { 
+                topic: "Tree", 
+                title: "Diameter of a binary tree", 
+                explanationUrl: "https://takeuforward.org/data-structures/calculate-the-diameter-of-a-binary-tree/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1" 
+            },
 
             // Graph
-            { topic: "Graph", title: "Create a Graph and print it", url: "https://www.geeksforgeeks.org/graphs-and-its-representations/" },
-            { topic: "Graph", title: "Implement Breadth First Search (BFS)", url: "https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1" },
-            { topic: "Graph", title: "Implement Depth First Search (DFS)", url: "https://practice.geeksforgeeks.org/problems/print-adjacency-list-1587115620/1" },
-            { topic: "Graph", title: "Detect Cycle in a Directed Graph", url: "https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1" },
+            { 
+                topic: "Graph", 
+                title: "Create a Graph and print representation", 
+                explanationUrl: "https://takeuforward.org/graph/introduction-to-graphs/", 
+                gfgUrl: "https://www.geeksforgeeks.org/graphs-and-its-representations/" 
+            },
+            { 
+                topic: "Graph", 
+                title: "Implement Breadth First Search (BFS)", 
+                explanationUrl: "https://takeuforward.org/graph/breadth-first-search-bfs-level-order-traversal/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1" 
+            },
+            { 
+                topic: "Graph", 
+                title: "Implement Depth First Search (DFS)", 
+                explanationUrl: "https://takeuforward.org/graph/depth-first-search-dfs/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/print-adjacency-list-1587115620/1" 
+            },
+            { 
+                topic: "Graph", 
+                title: "Detect Cycle in a Directed Graph", 
+                explanationUrl: "https://takeuforward.org/graph/detect-cycle-in-a-directed-graph-dfs/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1" 
+            },
 
             // Trie
-            { topic: "Trie", title: "Construct a Trie (Insert, Search, Delete)", url: "https://www.geeksforgeeks.org/trie-insert-and-search/" },
-            { topic: "Trie", title: "Print all valid words present in a dictionary", url: "https://www.geeksforgeeks.org/boggle-find-all-possible-words-in-a-board-of-characters/" },
-            { topic: "Trie", title: "Phone directory / Auto-complete feature", url: "https://practice.geeksforgeeks.org/problems/phone-directory4628/1" },
+            { 
+                topic: "Trie", 
+                title: "Construct a Trie (Insert, Search, Delete)", 
+                explanationUrl: "https://takeuforward.org/data-structures/implement-trie-1/", 
+                gfgUrl: "https://www.geeksforgeeks.org/trie-insert-and-search/" 
+            },
+            { 
+                topic: "Trie", 
+                title: "Print all valid words present in a dictionary", 
+                explanationUrl: "https://takeuforward.org/data-structures/trie-complete-implementation/", 
+                gfgUrl: "https://www.geeksforgeeks.org/boggle-find-all-possible-words-in-a-board-of-characters/" 
+            },
+            { 
+                topic: "Trie", 
+                title: "Phone directory / Auto-complete feature", 
+                explanationUrl: "https://takeuforward.org/data-structures/implement-trie-ii/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/phone-directory4628/1" 
+            },
 
             // DP
-            { topic: "DP", title: "Coin Change Problem", url: "https://practice.geeksforgeeks.org/problems/coin-change2448/1" },
-            { topic: "DP", title: "0/1 Knapsack Problem", url: "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1" },
-            { topic: "DP", title: "Longest Common Subsequence", url: "https://practice.geeksforgeeks.org/problems/longest-common-subsequence-1587115620/1" },
-            { topic: "DP", title: "Word Break Problem", url: "https://practice.geeksforgeeks.org/problems/word-break1352/1" }
+            { 
+                topic: "DP", 
+                title: "Coin Change Problem", 
+                explanationUrl: "https://takeuforward.org/data-structures/coin-change-dp-20/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/coin-change2448/1" 
+            },
+            { 
+                topic: "DP", 
+                title: "0/1 Knapsack Problem", 
+                explanationUrl: "https://takeuforward.org/data-structures/0-1-knapsack-dp-19/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1" 
+            },
+            { 
+                topic: "DP", 
+                title: "Longest Common Subsequence", 
+                explanationUrl: "https://takeuforward.org/data-structures/longest-common-subsequence-dp-25/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/longest-common-subsequence-1587115620/1" 
+            },
+            { 
+                topic: "DP", 
+                title: "Word Break Problem", 
+                explanationUrl: "https://takeuforward.org/data-structures/word-break-problem-dp-132/", 
+                gfgUrl: "https://practice.geeksforgeeks.org/problems/word-break1352/1" 
+            }
         ];
 
         const topicSelect = document.getElementById('topic-select');
@@ -253,7 +389,8 @@
         const questionCard = document.getElementById('question-card');
         const qTopic = document.getElementById('q-topic');
         const qTitle = document.getElementById('q-title');
-        const qLink = document.getElementById('q-link');
+        const qExplanationLink = document.getElementById('q-explanation-link');
+        const qGfgLink = document.getElementById('q-gfg-link');
 
         randomBtn.addEventListener('click', () => {
             const selectedTopic = topicSelect.value;
@@ -273,7 +410,8 @@
 
             qTopic.textContent = question.topic;
             qTitle.textContent = question.title;
-            qLink.href = question.url;
+            qExplanationLink.href = question.explanationUrl;
+            qGfgLink.href = question.gfgUrl;
 
             questionCard.classList.remove('hidden');
         });
