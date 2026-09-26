@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Self Study">
-    <title>Self Study - Striver DSA & Daily Practice</title>
+    <title>Self Study - Striver DSA & Daily POTD</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +26,7 @@
             }
         }
     </script>
-    <!-- FontAwesome for icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -38,12 +38,11 @@
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
     
-    <!-- Valid Web App Manifest Link -->
+    <!-- Dynamic Web App Manifest Link -->
     <link rel="manifest" id="dynamic-manifest">
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
 
-    <!-- Header -->
     <header class="sticky top-0 z-50 backdrop-blur-md bg-darkBg/80 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -52,7 +51,7 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Self Study</h1>
-                    <p class="text-xs text-slate-400">Striver DSA Hub & Daily Practice</p>
+                    <p class="text-xs text-slate-400">Striver DSA & Daily POTD</p>
                 </div>
             </div>
             
@@ -61,12 +60,12 @@
                     <i class="fa-solid fa-mobile-screen-button"></i>
                     <span>Install App</span>
                 </button>
-                <button onclick="openInstallModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-2">
-                    <i class="fa-solid fa-circle-question text-indigo-400"></i>
-                    <span class="hidden sm:inline">PWA Guide</span>
+                <button onclick="openSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-gear text-indigo-400"></i>
+                    <span>Settings & Time</span>
                 </button>
                 <div class="relative">
-                    <button onclick="openInstallModal()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
+                    <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
                         <i class="fa-solid fa-bell text-lg"></i>
                         <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full hidden"></span>
                     </button>
@@ -75,48 +74,72 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
 
-        <!-- Self Study Topic & Daily Notification Banner -->
+        <!-- Problem of the Day & Topic Selection Control Card -->
         <section class="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
-                <div class="space-y-3">
-                    <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-500/30">
-                        <i class="fa-solid fa-bullseye text-amber-400"></i>
-                        <span>ACTIVE SELF STUDY TOPIC</span>
+                <div class="space-y-4 flex-1">
+                    <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-500/30">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        <span>PROBLEM OF THE DAY (POTD)</span>
                     </div>
-                    <h2 id="active-topic-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Loading your target topic...</h2>
-                    <p id="active-topic-desc" class="text-slate-400 text-sm sm:text-base max-w-2xl">Daily mobile notifications and random questions will be served specifically from this chosen topic until you change it.</p>
-                    <div class="flex flex-wrap items-center gap-3 pt-1">
-                        <span id="active-topic-count" class="bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-lg border border-slate-700 font-medium">Questions: 0</span>
-                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-lg border border-emerald-500/20 font-medium flex items-center space-x-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span>Daily Notification Active</span>
-                        </span>
+                    
+                    <!-- Topic Selector Dropdown -->
+                    <div class="space-y-2 max-w-md">
+                        <label for="topic-dropdown" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Select Practice Topic:</label>
+                        <select id="topic-dropdown" onchange="onTopicDropdownChange(this.value)" class="w-full bg-slate-900 border border-indigo-500/40 rounded-2xl px-4 py-3 text-sm text-white font-semibold focus:outline-none focus:border-indigo-400 transition shadow-inner">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div id="potd-container" class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span id="potd-topic-tag" class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Arrays</span>
+                            <span id="potd-diff" class="text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20">Easy</span>
+                        </div>
+                        <h3 id="potd-title" class="text-lg font-bold text-white">Loading Problem of the Day...</h3>
+                        <div class="flex flex-wrap items-center gap-3 pt-2">
+                            <a id="potd-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition flex items-center space-x-2 shadow-lg shadow-indigo-600/30">
+                                <span>Solve on Platform</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                            <button onclick="generateNewPOTD()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-4 py-2.5 rounded-xl text-xs transition border border-slate-700 flex items-center space-x-2">
+                                <i class="fa-solid fa-shuffle text-amber-400"></i>
+                                <span>Get Another Random Question</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="triggerDailyRandomNotification()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
-                        <span>Test Topic Notification Now</span>
-                    </button>
-                    <button onclick="switchMainTab('random')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-3 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-sliders text-indigo-400"></i>
-                        <span>Change Study Topic</span>
+
+                <div class="flex flex-col justify-center space-y-3 lg:border-l lg:border-slate-800 lg:pl-8">
+                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+                        <div class="flex items-center justify-between text-xs text-slate-400">
+                            <span>Daily Notification Time:</span>
+                            <span id="display-notif-time" class="text-indigo-400 font-bold">09:00 AM</span>
+                        </div>
+                        <button onclick="openSettingsModal()" class="w-full bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 border border-indigo-500/30">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Configure Notification Time</span>
+                        </button>
+                    </div>
+
+                    <button onclick="triggerTestNotificationNow()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Test Notification Now</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Navigation Tabs for Main Curriculum vs Self Study Practice -->
+        <!-- Navigation Tabs for Curriculum vs Study Mode -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
             <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
                 <button onclick="switchMainTab('sheets')" id="tab-sheets-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow">Curriculum Sheets</button>
-                <button onclick="switchMainTab('random')" id="tab-random-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-shuffle text-amber-400"></i>
-                    <span>Self Study Topic & Practice</span>
+                <button onclick="switchMainTab('practice')" id="tab-practice-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-laptop-code text-amber-400"></i>
+                    <span>Topic Practice Session</span>
                 </button>
             </div>
             
@@ -139,104 +162,98 @@
             </div>
         </div>
 
-        <!-- Self Study Topic & Random Practice Mode Container -->
-        <div id="random-view" class="hidden space-y-8">
-            <div class="bg-darkCard border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-                <div class="max-w-2xl space-y-2">
-                    <h3 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-bullseye text-amber-400"></i>
-                        <span>Select Your Self Study Topic</span>
-                    </h3>
-                    <p class="text-xs text-slate-400">Choose any topic below. This will become your active focus topic. You will receive random questions from this topic for your daily mobile notification until you select a different topic.</p>
+        <!-- Dedicated Topic Practice View -->
+        <div id="practice-view" class="hidden space-y-8">
+            <div class="bg-darkCard border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-6 max-w-3xl mx-auto text-center">
+                <div class="w-16 h-16 bg-indigo-600/20 border border-indigo-500/30 rounded-3xl flex items-center justify-center text-indigo-400 text-2xl mx-auto">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 id="practice-title" class="text-2xl font-bold text-white">Active Practice: Arrays</h3>
+                    <p class="text-xs text-slate-400">Solving questions one by one from your chosen topic. Practice without limits!</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="topic-selector-grid">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Active Random Quiz Box -->
-            <div id="random-practice-box" class="hidden bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                    <div>
-                        <span id="rp-topic-name" class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Topic Name</span>
-                        <h4 id="rp-counter" class="text-xs text-slate-400 mt-2">Question 1 of X</h4>
+                <div id="practice-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span id="practice-q-index" class="text-xs text-slate-400 font-medium">Question 1 of 10</span>
+                        <span id="practice-q-diff" class="text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20">Medium</span>
                     </div>
-                    <button onclick="exitRandomPractice()" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-medium transition">Back to Topics</button>
-                </div>
-
-                <div class="space-y-4 py-4 text-center sm:text-left">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <h3 id="rp-question-title" class="text-xl sm:text-2xl font-bold text-white">Question title goes here</h3>
-                        <span id="rp-diff" class="self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium">Medium</span>
+                    <h4 id="practice-q-title" class="text-xl font-bold text-white">Question title goes here</h4>
+                    <div class="flex items-center space-x-3 pt-2">
+                        <a id="practice-q-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition flex items-center space-x-2">
+                            <span>Solve on Platform</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                        <button onclick="nextPracticeQuestion()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-5 py-2.5 rounded-xl text-xs transition border border-slate-700">
+                            Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
                     </div>
-                    <p class="text-xs text-slate-400">Solve this question or throw another random question from your selected Self Study topic.</p>
-                </div>
-
-                <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                    <a id="rp-link" href="#" target="_blank" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3.5 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2">
-                        <span>Solve on Platform</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                    </a>
-                    <button onclick="throwNextRandomQuestion()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3.5 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-shuffle text-amber-400"></i>
-                        <span>Throw Another Random Question</span>
-                    </button>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Install Modal / PWA Guide -->
-    <div id="install-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <!-- Settings & Time Picker Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-darkCard border border-slate-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6">
-            <button onclick="closeInstallModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+            <button onclick="closeSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
             <div class="flex items-center space-x-4">
                 <div class="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-indigo-400 text-2xl">
-                    <i class="fa-solid fa-mobile-screen"></i>
+                    <i class="fa-solid fa-bell"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white">Install 'Self Study' App</h3>
-                    <p class="text-xs text-slate-400">Get daily topic random question push notifications</p>
+                    <h3 class="text-xl font-bold text-white">Notification & Time Settings</h3>
+                    <p class="text-xs text-slate-400">Schedule your daily Problem of the Day push notification</p>
                 </div>
             </div>
 
-            <div class="space-y-4 text-sm text-slate-300">
+            <div class="space-y-5 text-sm text-slate-300">
+                <!-- Native PWA Install Box -->
                 <div id="native-install-box" class="hidden bg-indigo-600/10 border border-indigo-500/30 p-4 rounded-2xl space-y-2">
-                    <h4 class="font-semibold text-indigo-300">One-Click Installation Ready!</h4>
-                    <p class="text-xs text-slate-300">Your browser supports direct installation. Click below to add 'Self Study' to your device home screen.</p>
-                    <button onclick="triggerInstallPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow">Install App Now</button>
+                    <h4 class="font-semibold text-indigo-300 text-xs">One-Click App Installation Ready!</h4>
+                    <p class="text-xs text-slate-300">Add 'Self Study' to your device home screen for standalone mobile access.</p>
+                    <button onclick="triggerInstallPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow text-xs">Install App Now</button>
                 </div>
 
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
-                    <h4 class="font-semibold text-indigo-400 flex items-center space-x-2">
-                        <i class="fa-brands fa-chrome text-lg"></i>
-                        <span>Manual Installation on Mobile Chrome</span>
-                    </h4>
-                    <ol class="list-decimal list-inside space-y-2 text-xs text-slate-300 leading-relaxed">
-                        <li>Ensure you are viewing this page in <strong class="text-white">Google Chrome</strong> on Android/iOS.</li>
-                        <li>Tap the Chrome menu icon (<i class="fa-solid fa-ellipsis-vertical text-indigo-400"></i>) in the top-right corner.</li>
-                        <li>Tap <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong>.</li>
-                        <li>Confirm installation to launch 'Self Study' in standalone mode.</li>
-                    </ol>
+                <!-- Time Picker -->
+                <div class="space-y-2 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <label for="notif-time-input" class="block font-semibold text-indigo-400 text-xs uppercase tracking-wider">Daily Notification Time:</label>
+                    <div class="flex items-center space-x-3 pt-1">
+                        <input type="time" id="notif-time-input" value="09:00" class="bg-slate-800 border border-slate-700 text-white font-bold px-4 py-2.5 rounded-xl text-base focus:outline-none focus:border-indigo-500 transition">
+                        <button onclick="saveNotificationTime()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition shadow">Save Time</button>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Your browser/device will trigger your daily POTD notification at this scheduled time.</p>
                 </div>
 
+                <!-- Push Permission -->
                 <div class="space-y-3">
-                    <h4 class="font-semibold text-white">Enable Daily Topic Push Notifications</h4>
-                    <p class="text-xs text-slate-400">Click below to allow notifications so you receive a daily random question from your selected topic.</p>
-                    <button onclick="requestNotificationPermission()" id="push-permission-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-2xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                    <h4 class="font-semibold text-white text-xs">Mobile Push Permission</h4>
+                    <button onclick="requestPushPermission()" id="push-perm-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-bell"></i>
-                        <span>Turn on Daily Topic Notifications</span>
+                        <span>Allow Mobile Push Notifications</span>
                     </button>
+                </div>
+
+                <!-- Mobile Chrome Instructions -->
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <h4 class="font-semibold text-indigo-400 text-xs flex items-center space-x-2">
+                        <i class="fa-brands fa-chrome text-sm"></i>
+                        <span>How to Install on Mobile Chrome</span>
+                    </h4>
+                    <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-400 leading-relaxed">
+                        <li>Open this website in Google Chrome on Android/iOS.</li>
+                        <li>Tap the Chrome menu (<i class="fa-solid fa-ellipsis-vertical text-indigo-400"></i>) in top-right.</li>
+                        <li>Tap <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong>.</li>
+                    </ol>
                 </div>
             </div>
 
             <div class="pt-2">
-                <button onclick="closeInstallModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-3 rounded-2xl transition">Close</button>
+                <button onclick="closeSettingsModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-3 rounded-2xl transition text-xs">Close</button>
             </div>
         </div>
     </div>
@@ -247,11 +264,10 @@
         <p>Your self-study companion for algorithmic excellence.</p>
     </footer>
 
-    <!-- JavaScript Application Logic -->
     <script>
         let deferredPrompt = null;
 
-        // Generate valid manifest data URI dynamically for PWA compliance
+        // Dynamic Manifest Data URI generation for PWA compliance
         const manifestData = {
             "name": "Self Study - Striver DSA",
             "short_name": "Self Study",
@@ -279,10 +295,10 @@
         const blob = new Blob([stringManifest], {type: 'application/manifest+json'});
         document.getElementById('dynamic-manifest').setAttribute('href', URL.createObjectURL(blob));
 
-        // Register Service Worker for PWA install capability
+        // Register Service Worker for PWA support
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'self-study-v1';
+                const CACHE_NAME = 'self-study-cache-v1';
                 self.addEventListener('install', (event) => {
                     self.skipWaiting();
                 });
@@ -322,7 +338,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                openInstallModal();
+                openSettingsModal();
             }
         }
 
@@ -332,26 +348,7 @@
                 title: "Striver's A2Z DSA Sheet",
                 topics: [
                     {
-                        name: "Step 1: Learn the basics",
-                        questions: [
-                            { title: "C++ / Java / Python Introduction & Syntax", diff: "Easy", link: "https://takeuforward.org/c-plus-plus/c-plus-plus-basics" },
-                            { title: "Find character case (Upper/Lower)", diff: "Easy", link: "https://www.naukri.com/code360/problems/upper-or-lower_625150" },
-                            { title: "Check for Prime Number", diff: "Easy", link: "https://www.naukri.com/code360/problems/check-prime_624934" },
-                            { title: "GCD or HCF of two numbers", diff: "Easy", link: "https://www.naukri.com/code360/problems/gcd-or-hcf_840448" }
-                        ]
-                    },
-                    {
-                        name: "Step 2: Sorting Techniques",
-                        questions: [
-                            { title: "Selection Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/selection-sort_981162" },
-                            { title: "Bubble Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/bubble-sort_980538" },
-                            { title: "Insertion Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/insertion-sort_624381" },
-                            { title: "Merge Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/merge-sort_58461" },
-                            { title: "Quick Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/quick-sort_5844.html" }
-                        ]
-                    },
-                    {
-                        name: "Step 3: Arrays (Easy, Medium, Hard)",
+                        name: "Arrays (Easy, Medium, Hard)",
                         questions: [
                             { title: "Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/largest-element-in-the-array_5026279" },
                             { title: "Second Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/second-largest-element-in-the-array_873346" },
@@ -360,12 +357,12 @@
                             { title: "Rotate Array by K places", diff: "Medium", link: "https://leetcode.com/problems/rotate-array/" },
                             { title: "Move Zeros to End", diff: "Easy", link: "https://leetcode.com/problems/move-zeroes/" },
                             { title: "Two Sum", diff: "Easy", link: "https://leetcode.com/problems/two-sum/" },
-                            { title: "Sort an array of 0s, 1s and 2s (Dutch National Flag)", diff: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
+                            { title: "Sort an array of 0s, 1s and 2s", diff: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
                             { title: "Majority Element (>N/2 times)", diff: "Medium", link: "https://leetcode.com/problems/majority-element/" },
-                            { title: "Maximum Subarray Sum (Kadane's Algorithm)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+                            { title: "Maximum Subarray Sum (Kadane's)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
                             { title: "Stock Buy and Sell", diff: "Easy", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
                             { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
-                            { title: "Longest Consecutive Sequence in an Array", diff: "Medium", link: "https://leetcode.com/problems/longest-consecutive-sequence/" },
+                            { title: "Longest Consecutive Sequence", diff: "Medium", link: "https://leetcode.com/problems/longest-consecutive-sequence/" },
                             { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
                             { title: "Rotate Image by 90 degree", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
                             { title: "Spiral Matrix", diff: "Medium", link: "https://leetcode.com/problems/spiral-matrix/" },
@@ -376,7 +373,27 @@
                         ]
                     },
                     {
-                        name: "Step 4: Binary Search (1D, 2D, Search Space)",
+                        name: "Strings (Basic & Advanced)",
+                        questions: [
+                            { title: "Remove outermost parentheses", diff: "Easy", link: "https://leetcode.com/problems/remove-outermost-parentheses/" },
+                            { title: "Reverse words in a given string", diff: "Medium", link: "https://leetcode.com/problems/reverse-words-in-a-string/" },
+                            { title: "Largest Odd Number in String", diff: "Easy", link: "https://leetcode.com/problems/largest-odd-number-in-string/" },
+                            { title: "Longest Common Prefix", diff: "Easy", link: "https://leetcode.com/problems/longest-common-prefix/" },
+                            { title: "Isomorphic String", diff: "Easy", link: "https://leetcode.com/problems/isomorphic-strings/" },
+                            { title: "Check if string is rotated version of another", diff: "Easy", link: "https://leetcode.com/problems/rotate-string/" },
+                            { title: "Valid Anagram", diff: "Easy", link: "https://leetcode.com/problems/valid-anagram/" },
+                            { title: "Sort Characters By Frequency", diff: "Medium", link: "https://leetcode.com/problems/sort-characters-by-frequency/" },
+                            { title: "Maximum Nesting Depth of the Parentheses", diff: "Easy", link: "https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/" },
+                            { title: "Roman to Integer", diff: "Easy", link: "https://leetcode.com/problems/roman-to-integer/" },
+                            { title: "Implement ATOI", diff: "Medium", link: "https://leetcode.com/problems/string-to-integer-atoi/" },
+                            { title: "Count Number of Substrings", diff: "Medium", link: "https://www.naukri.com/code360/problems/count-number-of-substrings_3129224" },
+                            { title: "Longest Palindromic Substring", diff: "Medium", link: "https://leetcode.com/problems/longest-palindromic-substring/" },
+                            { title: "Sum of Beauty of All Substrings", diff: "Medium", link: "https://leetcode.com/problems/sum-of-beauty-of-all-substrings/" },
+                            { title: "KMP Algorithm / Minimum Add to Make Parentheses Valid", diff: "Hard", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" }
+                        ]
+                    },
+                    {
+                        name: "Binary Search (1D, 2D, Search Space)",
                         questions: [
                             { title: "Binary Search to find X in sorted array", diff: "Easy", link: "https://leetcode.com/problems/binary-search/" },
                             { title: "Lower Bound & Upper Bound", diff: "Easy", link: "https://www.naukri.com/code360/problems/lower-bound_8165382" },
@@ -392,12 +409,12 @@
                         ]
                     },
                     {
-                        name: "Step 6: Linked List",
+                        name: "Linked List (Single, Double, Medium, Hard)",
                         questions: [
                             { title: "Reverse a Singly Linked List", diff: "Easy", link: "https://leetcode.com/problems/reverse-linked-list/" },
                             { title: "Middle of the Linked List", diff: "Easy", link: "https://leetcode.com/problems/middle-of-the-linked-list/" },
                             { title: "Detect a loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle/" },
-                            { title: "Find the starting point of the Loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
+                            { title: "Find the starting point of Loop", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
                             { title: "Check if Linked List is palindrome", diff: "Medium", link: "https://leetcode.com/problems/palindrome-linked-list/" },
                             { title: "Add Two Numbers in Linked List", diff: "Medium", link: "https://leetcode.com/problems/add-two-numbers/" },
                             { title: "Reverse Nodes in k-Group", diff: "Hard", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/" },
@@ -405,31 +422,19 @@
                         ]
                     },
                     {
-                        name: "Step 9: Stack and Queues",
+                        name: "Trees (Binary Tree & BST)",
                         questions: [
-                            { title: "Valid Parentheses", diff: "Easy", link: "https://leetcode.com/problems/valid-parentheses/" },
-                            { title: "Min Stack", diff: "Medium", link: "https://leetcode.com/problems/min-stack/" },
-                            { title: "Next Greater Element I & II", diff: "Medium", link: "https://leetcode.com/problems/next-greater-element-ii/" },
-                            { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
-                            { title: "Largest Rectangle in Histogram", diff: "Hard", link: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
-                            { title: "Sliding Window Maximum", diff: "Hard", link: "https://leetcode.com/problems/sliding-window-maximum/" },
-                            { title: "LRU Cache", diff: "Medium", link: "https://leetcode.com/problems/lru-cache/" }
-                        ]
-                    },
-                    {
-                        name: "Step 13: Binary Trees",
-                        questions: [
-                            { title: "Binary Tree Traversals (Preorder, Inorder, Postorder)", diff: "Easy", link: "https://www.naukri.com/code360/problems/tree-traversal_981285" },
+                            { title: "Binary Tree Traversals (Pre, In, Post)", diff: "Easy", link: "https://www.naukri.com/code360/problems/tree-traversal_981285" },
                             { title: "Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
                             { title: "Maximum Depth of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
                             { title: "Diameter of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/diameter-of-binary-tree/" },
                             { title: "Binary Tree Maximum Path Sum", diff: "Hard", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/" },
                             { title: "Lowest Common Ancestor in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" },
-                            { title: "Construct Binary Tree from Inorder and Preorder/Postorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" }
+                            { title: "Construct Binary Tree from Inorder & Preorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" }
                         ]
                     },
                     {
-                        name: "Step 15: Graphs",
+                        name: "Graphs (BFS, DFS, Shortest Path, MST)",
                         questions: [
                             { title: "Breadth First Search (BFS)", diff: "Easy", link: "https://www.naukri.com/code360/problems/bfs-in-graph_973002" },
                             { title: "Number of Islands", diff: "Medium", link: "https://leetcode.com/problems/number-of-islands/" },
@@ -437,11 +442,11 @@
                             { title: "Cycle Detection in Undirected Graph", diff: "Medium", link: "https://www.naukri.com/code360/problems/cycle-detection-in-undirected-graph_1062670" },
                             { title: "Topological Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/topological-sort_982938" },
                             { title: "Dijkstra's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/dijkstras-shortest-path_920469" },
-                            { title: "Minimum Spanning Tree - Prim's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" }
+                            { title: "Minimum Spanning Tree - Prim's / Kruskal's", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" }
                         ]
                     },
                     {
-                        name: "Step 16: Dynamic Programming",
+                        name: "Dynamic Programming (1D, 2D, DP on Grids/Strings)",
                         questions: [
                             { title: "Climbing Stairs", diff: "Easy", link: "https://leetcode.com/problems/climbing-stairs/" },
                             { title: "Maximum Sum of Non-Adjacent Elements (House Robber)", diff: "Medium", link: "https://leetcode.com/problems/house-robber/" },
@@ -458,73 +463,148 @@
                 title: "Striver's SDE Sheet",
                 topics: [
                     {
-                        name: "Arrays & Matrices (SDE Core)",
+                        name: "SDE: Arrays & Matrices",
                         questions: [
                             { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
                             { title: "Pascal's Triangle", diff: "Medium", link: "https://leetcode.com/problems/pascals-triangle/" },
                             { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
-                            { title: "Kadane's Algorithm (Max Subarray Sum)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+                            { title: "Kadane's Algorithm", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
                             { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
                             { title: "Rotate Matrix by 90 Degrees", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" }
                         ]
                     },
                     {
-                        name: "Hashing & Two Pointers (SDE)",
+                        name: "SDE: Hashing & Two Pointers",
                         questions: [
                             { title: "Longest Substring Without Repeating Characters", diff: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
                             { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
                             { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
                             { title: "Remove Duplicate from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" }
                         ]
-                    },
-                    {
-                        name: "Greedy & Dynamic Programming (SDE)",
-                        questions: [
-                            { title: "N Meetings in One Room", diff: "Medium", link: "https://www.naukri.com/code360/problems/maximum-meetings_1062658" },
-                            { title: "Minimum Platforms", diff: "Medium", link: "https://www.naukri.com/code360/problems/minimum-number-of-platforms_799400" },
-                            { title: "Job Sequencing Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/job-sequencing-problem_1169462" },
-                            { title: "Coin Change", diff: "Medium", link: "https://leetcode.com/problems/coin-change/" },
-                            { title: "Edit Distance", diff: "Medium", link: "https://leetcode.com/problems/edit-distance/" }
-                        ]
                     }
                 ]
             }
         };
 
-        // State Management for Self Study Topic
+        // Application State
         let currentActiveSheet = 'a2z';
-        let activeStudyTopic = localStorage.getItem('self_study_topic') || "Step 3: Arrays (Easy, Medium, Hard)";
-        let activeRandomQuestions = [];
-        let currentRandomIndex = 0;
-        let currentRandomTopicName = '';
+        let selectedTopic = localStorage.getItem('self_study_topic') || "Arrays (Easy, Medium, Hard)";
+        let notifTime = localStorage.getItem('self_study_time') || "09:00";
+        let practiceQuestionsList = [];
+        let practiceIndex = 0;
 
         window.addEventListener('DOMContentLoaded', () => {
+            initTopicDropdown();
             renderSheet(currentActiveSheet);
-            setupActiveTopicBanner();
+            generateNewPOTD();
+            setupTimeDisplay();
             checkNotificationStatus();
-            setupRandomTopicGrid();
+            setupPracticeSession(selectedTopic);
+            
+            // Interval timer to check scheduled notification time every minute
+            setInterval(checkScheduledNotification, 60000);
         });
 
-        // Switch between Sheet view and Random Practice view
+        function initTopicDropdown() {
+            const dropdown = document.getElementById('topic-dropdown');
+            let allTopics = [];
+            
+            Object.keys(sheetsData).forEach(sKey => {
+                sheetsData[sKey].topics.forEach(t => {
+                    allTopics.push(t.name);
+                });
+            });
+
+            let html = '';
+            allTopics.forEach(topicName => {
+                const selected = topicName === selectedTopic ? 'selected' : '';
+                html += `<option value="${topicName}" ${selected}>${topicName}</option>`;
+            });
+            dropdown.innerHTML = html;
+        }
+
+        function onTopicDropdownChange(topicName) {
+            selectedTopic = topicName;
+            localStorage.setItem('self_study_topic', topicName);
+            generateNewPOTD();
+            setupPracticeSession(topicName);
+        }
+
+        function getQuestionsForTopic(topicName) {
+            let foundTopic = null;
+            Object.keys(sheetsData).forEach(sKey => {
+                sheetsData[sKey].topics.forEach(t => {
+                    if (t.name === topicName) foundTopic = t;
+                });
+            });
+            return foundTopic ? foundTopic.questions : sheetsData.a2z.topics[0].questions;
+        }
+
+        function generateNewPOTD() {
+            const questions = getQuestionsForTopic(selectedTopic);
+            if (!questions || questions.length === 0) return;
+            
+            const randomQ = questions[Math.floor(Math.random() * questions.length)];
+            
+            document.getElementById('potd-topic-tag').innerText = selectedTopic;
+            document.getElementById('potd-title').innerText = randomQ.title;
+            document.getElementById('potd-link').href = randomQ.link;
+            
+            const diffBadge = document.getElementById('potd-diff');
+            diffBadge.innerText = randomQ.diff;
+            diffBadge.className = randomQ.diff === 'Easy' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
+                                  randomQ.diff === 'Medium' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                                  'text-xs px-2.5 py-0.5 rounded-md border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
+        }
+
+        function setupPracticeSession(topicName) {
+            const questions = getQuestionsForTopic(topicName);
+            practiceQuestionsList = [...questions].sort(() => Math.random() - 0.5);
+            practiceIndex = 0;
+            
+            document.getElementById('practice-title').innerText = `Active Practice: ${topicName}`;
+            renderCurrentPracticeQuestion();
+        }
+
+        function renderCurrentPracticeQuestion() {
+            if (practiceQuestionsList.length === 0) return;
+            const q = practiceQuestionsList[practiceIndex];
+            
+            document.getElementById('practice-q-index').innerText = `Question ${practiceIndex + 1} of ${practiceQuestionsList.length}`;
+            document.getElementById('practice-q-title').innerText = q.title;
+            document.getElementById('practice-q-link').href = q.link;
+            
+            const diffBadge = document.getElementById('practice-q-diff');
+            diffBadge.innerText = q.diff;
+            diffBadge.className = q.diff === 'Easy' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
+                                  q.diff === 'Medium' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                                  'text-xs px-2.5 py-0.5 rounded-md border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
+        }
+
+        function nextPracticeQuestion() {
+            practiceIndex = (practiceIndex + 1) % practiceQuestionsList.length;
+            renderCurrentPracticeQuestion();
+        }
+
         function switchMainTab(tab) {
             const sheetsView = document.getElementById('sheets-view');
-            const randomView = document.getElementById('random-view');
-            const tabSheetsBtn = document.getElementById('tab-sheets-btn');
-            const tabRandomBtn = document.getElementById('tab-random-btn');
-            const searchBarWrapper = document.getElementById('search-bar-wrapper');
+            const practiceView = document.getElementById('practice-view');
+            const btnSheets = document.getElementById('tab-sheets-btn');
+            const btnPractice = document.getElementById('tab-practice-btn');
+            const searchBar = document.getElementById('search-bar-wrapper');
 
             if (tab === 'sheets') {
                 sheetsView.classList.remove('hidden');
-                randomView.classList.add('hidden');
-                searchBarWrapper.classList.remove('hidden');
-                tabSheetsBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
-                tabRandomBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2";
+                practiceView.classList.add('hidden');
+                searchBar.classList.remove('hidden');
+                btnSheets.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
+                btnPractice.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2";
             } else {
                 sheetsView.classList.add('hidden');
-                randomView.classList.remove('hidden');
-                searchBarWrapper.classList.add('hidden');
-                tabRandomBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow flex items-center space-x-2";
-                tabSheetsBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                practiceView.classList.remove('hidden');
+                searchBar.classList.add('hidden');
+                btnPractice.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow flex items-center space-x-2";
+                btnSheets.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
             }
         }
 
@@ -540,7 +620,6 @@
                 btnSde.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition";
                 btnA2z.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition";
             }
-
             renderSheet(sheetKey);
         }
 
@@ -551,30 +630,24 @@
 
             let html = '';
             data.topics.forEach((topic, tIdx) => {
-                let topicCompletedCount = 0;
+                let solvedCount = 0;
                 topic.questions.forEach((q, qIdx) => {
-                    const qId = `${sheetKey}_${tIdx}_${qIdx}`;
-                    if (savedProgress[qId]) topicCompletedCount++;
+                    if (savedProgress[`${sheetKey}_${tIdx}_${qIdx}`]) solvedCount++;
                 });
 
                 html += `
                     <div class="bg-darkCard border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition hover:border-slate-700">
-                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleTopicAccordion('${sheetKey}', ${tIdx})">
+                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleAccordion('${sheetKey}', ${tIdx})">
                             <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/20">
-                                    ${tIdx + 1}
-                                </div>
+                                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/20">${tIdx + 1}</div>
                                 <h3 class="font-bold text-base text-white">${topic.name}</h3>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">
-                                    ${topicCompletedCount}/${topic.questions.length} Solved
-                                </span>
-                                <i id="icon-topic-${sheetKey}-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">${solvedCount}/${topic.questions.length} Solved</span>
+                                <i id="icon-${sheetKey}-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
                             </div>
                         </div>
-                        
-                        <div id="topic-content-${sheetKey}-${tIdx}" class="divide-y divide-slate-800/50">
+                        <div id="content-${sheetKey}-${tIdx}" class="divide-y divide-slate-800/50">
                 `;
 
                 topic.questions.forEach((q, qIdx) => {
@@ -585,9 +658,9 @@
                                       'text-rose-400 bg-rose-500/10 border-rose-500/20';
 
                     html += `
-                        <div class="question-item px-6 py-3.5 flex items-center justify-between hover:bg-slate-800/30 transition gap-4" data-title="${q.title.toLowerCase()}">
+                        <div class="question-row px-6 py-3.5 flex items-center justify-between hover:bg-slate-800/30 transition gap-4" data-title="${q.title.toLowerCase()}">
                             <div class="flex items-center space-x-3.5 min-w-0">
-                                <input type="checkbox" ${isChecked} onchange="toggleQuestion('${qId}')" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900 cursor-pointer">
+                                <input type="checkbox" ${isChecked} onchange="toggleQuestion('${qId}')" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
                                 <a href="${q.link}" target="_blank" class="text-sm font-medium text-slate-200 hover:text-indigo-400 transition truncate flex items-center space-x-2">
                                     <span class="truncate">${q.title}</span>
                                     <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 flex-shrink-0"></i>
@@ -598,18 +671,15 @@
                     `;
                 });
 
-                html += `
-                        </div>
-                    </div>
-                `;
+                html += `</div></div>`;
             });
 
             container.innerHTML = html;
         }
 
-        function toggleTopicAccordion(sheetKey, tIdx) {
-            const content = document.getElementById(`topic-content-${sheetKey}-${tIdx}`);
-            const icon = document.getElementById(`icon-topic-${sheetKey}-${tIdx}`);
+        function toggleAccordion(sheetKey, tIdx) {
+            const content = document.getElementById(`content-${sheetKey}-${tIdx}`);
+            const icon = document.getElementById(`icon-${sheetKey}-${tIdx}`);
             if (content.style.display === 'none') {
                 content.style.display = 'block';
                 icon.style.transform = 'rotate(0deg)';
@@ -620,212 +690,109 @@
         }
 
         function toggleQuestion(qId) {
-            const savedProgress = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
-            savedProgress[qId] = !savedProgress[qId];
-            localStorage.setItem('dsa_progress', JSON.stringify(savedProgress));
+            const saved = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
+            saved[qId] = !saved[qId];
+            localStorage.setItem('dsa_progress', JSON.stringify(saved));
             renderSheet(currentActiveSheet);
         }
 
         function filterQuestions() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const items = document.querySelectorAll('.question-item');
-            items.forEach(item => {
-                const title = item.getAttribute('data-title');
-                if (title.includes(query)) {
-                    item.style.display = 'flex';
+            const q = document.getElementById('search-input').value.toLowerCase();
+            document.querySelectorAll('.question-row').forEach(row => {
+                const title = row.getAttribute('data-title');
+                row.style.display = title.includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        // Notification and Time Management
+        function setupTimeDisplay() {
+            document.getElementById('display-notif-time').innerText = formatTime12Hour(notifTime);
+            document.getElementById('notif-time-input').value = notifTime;
+        }
+
+        function formatTime12Hour(time24) {
+            if (!time24) return "09:00 AM";
+            const parts = time24.split(':');
+            let h = parseInt(parts[0], 10);
+            const m = parts[1];
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12;
+            return `${h}:${m} ${ampm}`;
+        }
+
+        function saveNotificationTime() {
+            const timeVal = document.getElementById('notif-time-input').value;
+            if (!timeVal) return;
+            notifTime = timeVal;
+            localStorage.setItem('self_study_time', timeVal);
+            setupTimeDisplay();
+            alert(`Daily POTD notification time successfully updated to ${formatTime12Hour(timeVal)}!`);
+        }
+
+        function requestPushPermission() {
+            if (!("Notification" in window)) {
+                alert("Your browser does not support web notifications.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('notif-badge').classList.remove('hidden');
+                    document.getElementById('push-perm-btn').innerText = "Notifications Enabled Successfully!";
+                    document.getElementById('push-perm-btn').className = "w-full bg-slate-800 text-emerald-400 font-semibold py-3 px-4 rounded-xl text-xs transition border border-emerald-500/30 flex items-center justify-center space-x-2";
+                    new Notification("Self Study App", {
+                        body: `Push notifications are active! You will receive daily POTD alerts from "${selectedTopic}" at ${formatTime12Hour(notifTime)}.`,
+                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
+                    });
                 } else {
-                    item.style.display = 'none';
+                    alert("Notification permission was denied. Check mobile browser settings.");
                 }
             });
         }
 
-        // Self Study Topic & Random Practice Setup
-        function setupRandomTopicGrid() {
-            const grid = document.getElementById('topic-selector-grid');
-            const data = sheetsData.a2z; // Use A2Z as comprehensive topic source
-            let html = '';
-
-            data.topics.forEach((topic) => {
-                const isSelected = topic.name === activeStudyTopic;
-                const borderClass = isSelected ? 'border-indigo-500 bg-indigo-600/10' : 'border-slate-800 bg-slate-900';
-                
-                html += `
-                    <div class="flex flex-col justify-between ${borderClass} hover:border-indigo-500/50 p-4 rounded-2xl transition group space-y-3">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <h4 class="font-semibold text-sm text-white">${topic.name}</h4>
-                                ${isSelected ? '<span class="text-[10px] bg-indigo-500 text-white px-2 py-0.5 rounded-full font-bold">Active Topic</span>' : ''}
-                            </div>
-                            <p class="text-xs text-slate-500 mt-1">${topic.questions.length} questions</p>
-                        </div>
-                        <div class="flex items-center space-x-2 pt-2 border-t border-slate-800/60">
-                            <button onclick="setAsActiveStudyTopic('${topic.name.replace(/'/g, "\\'")}')" class="flex-1 bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-xl transition">
-                                ${isSelected ? 'Active for Notifications' : 'Select for Notifications'}
-                            </button>
-                            <button onclick="startTopicPractice('${topic.name.replace(/'/g, "\\'")}')" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-xl transition flex items-center justify-center">
-                                <i class="fa-solid fa-shuffle"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            grid.innerHTML = html;
-        }
-
-        function setAsActiveStudyTopic(topicName) {
-            activeStudyTopic = topicName;
-            localStorage.setItem('self_study_topic', topicName);
-            setupActiveTopicBanner();
-            setupRandomTopicGrid();
+        function triggerTestNotificationNow() {
+            const questions = getQuestionsForTopic(selectedTopic);
+            const q = questions[Math.floor(Math.random() * questions.length)];
             
             if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("Self Study Updated", {
-                    body: `Your active study topic is now: "${topicName}". Daily random question notifications will come from this topic!`,
+                new Notification(`Self Study POTD [${selectedTopic}]`, {
+                    body: `Today's Question: ${q.title} (${q.diff})`,
                     icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
                 });
+                document.getElementById('notif-badge').classList.remove('hidden');
             } else {
-                alert(`Active study topic updated to "${topicName}".`);
+                alert(`[Self Study POTD Test]\nTopic: ${selectedTopic}\nQuestion: ${q.title} (${q.diff})\n\n(Allow mobile push notifications in settings to receive this natively).`);
             }
         }
 
-        function setupActiveTopicBanner() {
-            let foundTopic = null;
-            Object.keys(sheetsData).forEach(sKey => {
-                sheetsData[sKey].topics.forEach(t => {
-                    if (t.name === activeStudyTopic) {
-                        foundTopic = t;
-                    }
-                });
-            });
+        function checkScheduledNotification() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTimeStr = `${hours}:${minutes}`;
 
-            if (!foundTopic) {
-                foundTopic = sheetsData.a2z.topics[2]; // Default to Arrays
-                activeStudyTopic = foundTopic.name;
-            }
-
-            document.getElementById('active-topic-title').innerText = activeStudyTopic;
-            document.getElementById('active-topic-desc').innerText = `Daily push notifications and random practice questions are locked to "${activeStudyTopic}". You will receive a random question from this topic every day until you select a new one.`;
-            document.getElementById('active-topic-count').innerText = `Questions in Topic: ${foundTopic.questions.length}`;
-        }
-
-        function startTopicPractice(topicName) {
-            let targetTopic = null;
-            Object.keys(sheetsData).forEach(sKey => {
-                sheetsData[sKey].topics.forEach(t => {
-                    if (t.name === topicName) {
-                        targetTopic = t;
-                    }
-                });
-            });
-
-            if (!targetTopic) return;
-
-            currentRandomTopicName = targetTopic.name;
-            activeRandomQuestions = [...targetTopic.questions].sort(() => Math.random() - 0.5);
-            currentRandomIndex = 0;
-
-            document.getElementById('topic-selector-grid').parentElement.classList.add('hidden');
-            document.getElementById('random-practice-box').classList.remove('hidden');
-
-            displayCurrentRandomQuestion();
-        }
-
-        function displayCurrentRandomQuestion() {
-            if (activeRandomQuestions.length === 0) return;
-
-            const q = activeRandomQuestions[currentRandomIndex];
-            document.getElementById('rp-topic-name').innerText = currentRandomTopicName;
-            document.getElementById('rp-counter').innerText = `Question ${currentRandomIndex + 1} of ${activeRandomQuestions.length} (Random Practice)`;
-            document.getElementById('rp-question-title').innerText = q.title;
-            document.getElementById('rp-link').href = q.link;
-
-            const diffBadge = document.getElementById('rp-diff');
-            diffBadge.innerText = q.diff;
-            diffBadge.className = q.diff === 'Easy' ? 'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
-                                  q.diff === 'Medium' ? 'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                  'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
-        }
-
-        function throwNextRandomQuestion() {
-            currentRandomIndex = (currentRandomIndex + 1) % activeRandomQuestions.length;
-            displayCurrentRandomQuestion();
-        }
-
-        function exitRandomPractice() {
-            document.getElementById('random-practice-box').classList.add('hidden');
-            document.getElementById('topic-selector-grid').parentElement.classList.remove('hidden');
-        }
-
-        function triggerDailyRandomNotification() {
-            let targetTopic = null;
-            Object.keys(sheetsData).forEach(sKey => {
-                sheetsData[sKey].topics.forEach(t => {
-                    if (t.name === activeStudyTopic) {
-                        targetTopic = t;
-                    }
-                });
-            });
-
-            if (!targetTopic || targetTopic.questions.length === 0) {
-                alert("Please select a valid study topic first.");
-                return;
-            }
-
-            const randomQ = targetTopic.questions[Math.floor(Math.random() * targetTopic.questions.length)];
-
-            if (!("Notification" in window)) {
-                alert(`[Self Study Daily Alert]\nTopic: ${activeStudyTopic}\nQuestion: ${randomQ.title}`);
-                return;
-            }
-
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    new Notification(`Self Study Daily: ${activeStudyTopic}`, {
-                        body: `Today's random question: ${randomQ.title} (${randomQ.diff})`,
-                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
-                    });
-                    document.getElementById('notif-badge').classList.remove('hidden');
-                } else {
-                    alert(`[Self Study Daily Alert]\nTopic: ${activeStudyTopic}\nQuestion: ${randomQ.title}\n\n(Enable push notifications in PWA Guide to receive this automatically on your mobile device)`);
+            if (currentTimeStr === notifTime) {
+                const lastTriggered = localStorage.getItem('last_notif_date');
+                const todayStr = now.toDateString();
+                if (lastTriggered !== todayStr) {
+                    localStorage.setItem('last_notif_date', todayStr);
+                    triggerTestNotificationNow();
                 }
-            });
-        }
-
-        function openInstallModal() {
-            document.getElementById('install-modal').classList.remove('hidden');
-        }
-
-        function closeInstallModal() {
-            document.getElementById('install-modal').classList.add('hidden');
-        }
-
-        function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                alert("This browser does not support push notifications.");
-                return;
             }
-
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('notif-badge').classList.remove('hidden');
-                    document.getElementById('push-permission-btn').innerText = "Notifications Enabled Successfully!";
-                    document.getElementById('push-permission-btn').className = "w-full bg-slate-800 text-emerald-400 font-semibold py-3 px-4 rounded-2xl border border-emerald-500/30 flex items-center justify-center space-x-2";
-                    
-                    new Notification("Self Study App", {
-                        body: `Notifications are active! You will receive daily random questions from "${activeStudyTopic}".`,
-                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
-                    });
-                } else {
-                    alert("Notification permission was denied. You can enable notifications in your mobile browser settings.");
-                }
-            });
         }
 
         function checkNotificationStatus() {
             if ("Notification" in window && Notification.permission === "granted") {
                 document.getElementById('notif-badge').classList.remove('hidden');
             }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
         }
     </script>
 </body>
