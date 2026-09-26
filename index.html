@@ -1,908 +1,1078 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Self Tracker - DSA & Health Mastery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Self Tracker Pro - DSA & Health Mastery</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="manifest" id="dynamic-manifest">
-    <meta name="theme-color" content="#4f46e5">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-full flex flex-col overflow-hidden selection:bg-brand-500 selection:text-white">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-600/30">
-                    <i class="fa-solid fa-chart-line text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-                        Self Tracker <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Pro</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">DSA Mastery & Smart Nutrition Tracker</p>
-                </div>
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between z-30 shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
             </div>
-
-            <!-- Mode Selector Tabs -->
-            <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
-                <button onclick="switchTab('dsa')" id="tab-dsa" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md">
-                    <i class="fa-solid fa-code mr-1.5"></i> DSA Mode
-                </button>
-                <button onclick="switchTab('health')" id="tab-health" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-heart-pulse mr-1.5"></i> Health Mode
-                </button>
+            <div>
+                <h1 class="font-bold text-base leading-tight bg-gradient-to-r from-brand-600 to-indigo-500 bg-clip-text text-transparent">Self Tracker Pro</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">DSA & Health Command Center</p>
             </div>
-
-            <!-- PWA Install Button -->
-            <button id="install-btn" onclick="installPWA()" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/20 transition-all">
-                <i class="fa-solid fa-download"></i> Install App
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="app.toggleDarkMode()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95">
+                <i class="fa-solid fa-moon dark:hidden"></i>
+                <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+            </button>
+            <button onclick="app.openExportModal()" aria-label="Sync Data" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 overflow-y-auto pb-28 md:pb-6 relative flex flex-col max-w-7xl mx-auto w-full">
 
-        <!-- ==================== DSA MODE ==================== -->
-        <div id="section-dsa" class="space-y-8">
-            
-            <!-- Hero / Problem of the Day Banner -->
-            <div class="bg-gradient-to-r from-indigo-900/50 via-slate-900 to-purple-900/40 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
-                            <i class="fa-solid fa-bolt text-amber-400"></i> Daily Problem of the Day
-                        </div>
-                        <h2 class="text-2xl sm:text-3xl font-bold text-white" id="potd-title">Select a topic below to start daily challenge!</h2>
-                        <p class="text-slate-300 text-sm leading-relaxed" id="potd-desc">
-                            Choose your preferred topic from Striver's curated sheets, configure your reminder notification time, and receive daily random questions automatically.
-                        </p>
-                        <div class="flex flex-wrap gap-3 pt-2">
-                            <a id="potd-link" href="#" target="_blank" class="hidden inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Solve Problem
-                            </a>
-                            <button onclick="getRandomPotd()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-sm border border-slate-700 transition-all">
-                                <i class="fa-solid fa-rotate"></i> Pick Another Random
-                            </button>
+        <div class="hidden md:flex px-6 pt-4 pb-2 items-center justify-between">
+            <div class="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-xl">
+                <button onclick="app.switchTab('dsa')" id="tab-btn-dsa" class="px-5 py-2 rounded-lg font-semibold text-sm transition flex items-center space-x-2 bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm">
+                    <i class="fa-solid fa-code"></i><span>Striver DSA Sheet</span>
+                </button>
+                <button onclick="app.switchTab('health')" id="tab-btn-health" class="px-5 py-2 rounded-lg font-semibold text-sm transition flex items-center space-x-2 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-heart-pulse"></i><span>Indian Health & Diet</span>
+                </button>
+                <button onclick="app.switchTab('analytics')" id="tab-btn-analytics" class="px-5 py-2 rounded-lg font-semibold text-sm transition flex items-center space-x-2 text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-chart-pie"></i><span>Analytics & Reminders</span>
+                </button>
+            </div>
+            <div id="quick-streak-badge" class="flex items-center space-x-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 rounded-xl shadow-sm">
+                <i class="fa-solid fa-fire text-orange-500 text-lg"></i>
+                <div>
+                    <div class="text-xs text-slate-500">Active Streak</div>
+                    <div class="text-sm font-bold"><span id="streak-count">7</span> Days</div>
+                </div>
+            </div>
+        </div>
+
+        <section id="view-dsa" class="p-4 md:p-6 space-y-6 flex-1">
+            <div class="bg-gradient-to-r from-indigo-600 to-brand-700 rounded-3xl p-6 text-white shadow-xl shadow-indigo-500/10 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">Striver's SDE Sheet</span>
+                        <h2 class="text-2xl md:text-3xl font-bold mt-2">Master Curated Problems</h2>
+                        <p class="text-indigo-100 text-sm mt-1 max-w-xl">Track your revision cycles, solve top interview questions, and build unbeatable problem-solving intuition.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="app.pickRandomPotd()" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-sm font-semibold transition active:scale-95 flex items-center space-x-2">
+                            <i class="fa-solid fa-dice text-amber-300"></i>
+                            <span>Random POTD</span>
+                        </button>
+                        <div class="bg-white/15 backdrop-blur-md p-4 rounded-2xl border border-white/20 flex items-center space-x-4">
+                            <div class="relative w-12 h-12 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                    <path class="text-white/20" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    <path id="dsa-progress-circle" class="text-white transition-all duration-700 ease-out" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                </svg>
+                                <div class="absolute text-xs font-bold text-white"><span id="dsa-pct">0</span>%</div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] text-indigo-200 uppercase tracking-wide font-semibold">Completed</div>
+                                <div class="text-base font-bold"><span id="dsa-completed-count">0</span> / <span id="dsa-total-count">0</span></div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Notification & Topic Settings Widget -->
-                    <div class="bg-slate-950/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 space-y-4">
-                        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-bell text-indigo-400"></i> Notification & Topic Config
-                        </h3>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Select Focus Topic</label>
-                            <select id="topic-selector" onchange="updateSelectedTopic(this.value)" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
-                                <option value="">-- Choose Topic --</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Notification Reminder Time</label>
-                            <input type="time" id="notif-time" value="09:00" onchange="saveNotificationTime()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <button onclick="setupMobileNotifications()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl text-xs transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-calendar-plus"></i> Download Mobile Calendar (.ics)
+            <!-- Search and Filter Bar -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="dsa-search" oninput="app.filterDsa()" placeholder="Search problem name..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar" id="dsa-filters">
+                    <button onclick="app.setDsaFilter('all')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-brand-600 text-white shadow-sm transition">All Topics</button>
+                    <button onclick="app.setDsaFilter('Array')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">Arrays</button>
+                    <button onclick="app.setDsaFilter('DP')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">DP</button>
+                    <button onclick="app.setDsaFilter('Graph')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">Graphs</button>
+                    <button onclick="app.setDsaFilter('Tree')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">Trees</button>
+                    <button onclick="app.setDsaFilter('String')" class="dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition">Strings</button>
+                </div>
+            </div>
+
+            <!-- Accordion List for DSA -->
+            <div id="dsa-accordion-container" class="space-y-4">
+                <!-- Rendered via JS -->
+            </div>
+        </section>
+
+        <section id="view-health" class="p-4 md:p-6 space-y-6 hidden flex-1">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-3xl p-6 text-white shadow-xl shadow-emerald-500/10 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">Smart Indian Nutrition</span>
+                        <h2 class="text-2xl md:text-3xl font-bold mt-2">Macro & Calorie Balance</h2>
+                        <p class="text-emerald-100 text-sm mt-1 max-w-xl">Log Indian home-cooked items (raw paneer, sabji bowls, chapatis, milk, eggs) with direct quantity selectors to hit your daily fitness targets.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="app.openBmrModal()" class="bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-sm font-semibold transition active:scale-95 flex items-center space-x-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>BMR / TDEE Calculator</span>
+                        </button>
+                        <button onclick="app.openLogMealModal()" class="bg-white text-emerald-700 hover:bg-emerald-50 px-4 py-3 rounded-2xl font-bold text-sm shadow-lg transition active:scale-95 flex items-center space-x-2">
+                            <i class="fa-solid fa-plus-circle text-lg"></i>
+                            <span>Custom Item</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Striver Question Sheets Section -->
-            <div class="space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Striver's Complete DSA Tracker
-                        </h3>
-                        <p class="text-slate-400 text-xs">All Striver A2Z & SDE Sheet problems categorized by topic with direct links.</p>
+            <!-- Macro Progress Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-3xl shadow-sm">
+                    <div class="flex justify-between items-center text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Calories</span>
+                        <i class="fa-solid fa-fire text-amber-500"></i>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="dsa-search" oninput="filterQuestions(this.value)" placeholder="Search problem..." class="bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 w-60 focus:outline-none focus:border-indigo-500">
+                    <div class="text-xl md:text-2xl font-bold"><span id="cal-current">0</span> <span class="text-xs text-slate-400 font-normal">/ <span id="cal-target">2200</span> kcal</span></div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                        <div id="cal-bar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
-
-                <!-- Accordions / Topic Cards Container -->
-                <div id="dsa-topics-container" class="space-y-4">
-                    <!-- Dynamically populated -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-3xl shadow-sm">
+                    <div class="flex justify-between items-center text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Protein</span>
+                        <i class="fa-solid fa-drumstick-bite text-rose-500"></i>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold"><span id="protein-current">0</span> <span class="text-xs text-slate-400 font-normal">/ <span id="protein-target">130</span>g</span></div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                        <div id="protein-bar" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-3xl shadow-sm">
+                    <div class="flex justify-between items-center text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Carbs</span>
+                        <i class="fa-solid fa-wheat-awn text-blue-500"></i>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold"><span id="carbs-current">0</span> <span class="text-xs text-slate-400 font-normal">/ <span id="carbs-target">250</span>g</span></div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                        <div id="carbs-bar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-3xl shadow-sm">
+                    <div class="flex justify-between items-center text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider">Fats</span>
+                        <i class="fa-solid fa-droplet text-purple-500"></i>
+                    </div>
+                    <div class="text-xl md:text-2xl font-bold"><span id="fat-current">0</span> <span class="text-xs text-slate-400 font-normal">/ <span id="fat-target">65</span>g</span></div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3 overflow-hidden">
+                        <div id="fat-bar" class="bg-purple-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ==================== HEALTH MODE ==================== -->
-        <div id="section-health" class="space-y-8 hidden">
-            
-            <!-- Health Header & Setup Card -->
+            <!-- Indian Food Direct Dropdown Selector & Logged Items Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Body Metrics Form -->
-                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-user-gear text-emerald-400"></i> Body Metrics & Goal
-                        </h3>
-                        <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Setup</span>
+                <!-- Dropdown Selector Card -->
+                <div class="lg:col-span-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-base">Indian Food Database</h3>
+                        <span class="text-xs text-slate-400"><i class="fa-solid fa-utensils"></i> Direct Selection</span>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-3">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Weight (kg)</label>
-                            <input type="number" id="user-weight" value="70" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Height (cm)</label>
-                            <input type="number" id="user-height" value="175" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Age (yrs)</label>
-                            <input type="number" id="user-age" value="22" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Activity Level</label>
-                            <select id="user-activity" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                                <option value="1.2">Sedentary (Little/No exercise)</option>
-                                <option value="1.375">Lightly Active (1-3 days/wk)</option>
-                                <option value="1.55" selected>Moderately Active (3-5 days/wk)</option>
-                                <option value="1.725">Very Active (6-7 days/wk)</option>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5">Select Food Item</label>
+                            <select id="food-item-select" onchange="app.onFoodSelectChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                                <option value="" disabled selected>-- Choose Dish / Item --</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Nutrition & Fitness Goal</label>
-                        <select id="user-goal" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white font-medium text-emerald-400">
-                            <option value="maintenance">1. Average Minimum Required (Maintenance / Health)</option>
-                            <option value="muscle_gain" selected>2. Build Muscular Body & Gain Weight (Surplus + High Protein)</option>
-                        </select>
-                    </div>
-
-                    <button onclick="saveHealthMetrics()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/20">
-                        Update Targets & Metrics
-                    </button>
-                </div>
-
-                <!-- Daily Target & Intake Summary Card -->
-                <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-bullseye text-emerald-400"></i> Daily Target vs. Consumed Intake
-                            </h3>
-                            <span class="text-xs text-slate-400" id="current-goal-label">Goal: Build Muscular Body & Gain Weight</span>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5">Quantity / Multiplier</label>
+                            <input type="number" id="food-qty-input" oninput="app.updateFoodPreview()" value="1" min="0.25" step="0.25" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
-
-                        <!-- Macro Progress Grid -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <span class="text-xs text-slate-400">Calories</span>
-                                <div class="text-xl font-bold text-white mt-1"><span id="consumed-cal">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-cal">2800</span> kcal</span></div>
-                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div id="bar-cal" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <span class="text-xs text-slate-400">Protein</span>
-                                <div class="text-xl font-bold text-indigo-400 mt-1"><span id="consumed-protein">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-protein">140</span>g</span></div>
-                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div id="bar-protein" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <span class="text-xs text-slate-400">Carbs</span>
-                                <div class="text-xl font-bold text-amber-400 mt-1"><span id="consumed-carbs">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-carbs">350</span>g</span></div>
-                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div id="bar-carbs" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                <span class="text-xs text-slate-400">Fats</span>
-                                <div class="text-xl font-bold text-rose-400 mt-1"><span id="consumed-fats">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-fats">80</span>g</span></div>
-                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div id="bar-fats" class="bg-rose-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
+                        <div id="selected-food-preview" class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl text-xs text-slate-500 dark:text-slate-400 hidden space-y-1">
+                            <div class="font-semibold text-slate-700 dark:text-slate-200" id="preview-name">Item Name</div>
+                            <div id="preview-macros">Calories: 0 | Protein: 0g</div>
                         </div>
-                    </div>
-
-                    <!-- Vitamins & Minerals Indicator -->
-                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2 text-slate-300">
-                            <i class="fa-solid fa-leaf text-emerald-400"></i>
-                            <span>Estimated Micronutrients & Vitamins (Salad, Sabji & Fruits):</span>
-                        </div>
-                        <span id="vitamin-status" class="font-semibold text-emerald-400">Optimal (Good Fiber & Vitamin C/A)</span>
+                        <button onclick="app.logMealFromDropdown()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow-lg shadow-emerald-500/20 transition active:scale-95 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>Add to Today's Log</span>
+                        </button>
                     </div>
                 </div>
 
+                <!-- Today's Logged Items -->
+                <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-4 flex flex-col">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-base">Today's Logged Items</h3>
+                        <button onclick="app.clearMeals()" class="text-xs text-rose-500 hover:underline">Clear All</button>
+                    </div>
+                    <div id="logged-meals-list" class="space-y-3 flex-1 overflow-y-auto max-h-[380px] pr-1">
+                        <div class="text-center py-12 text-slate-400 text-sm">
+                            <i class="fa-solid fa-utensils text-3xl mb-2 opacity-40"></i>
+                            <p>No food logged today yet. Select items from the dropdown on the left or add custom!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-analytics" class="p-4 md:p-6 space-y-6 hidden flex-1">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-3xl p-6 text-white shadow-xl shadow-amber-500/10 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10">
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">Productivity & Sync</span>
+                    <h2 class="text-2xl md:text-3xl font-bold mt-2">Calendar Reminders & Export</h2>
+                    <p class="text-amber-100 text-sm mt-1 max-w-xl">Export your daily DSA revision schedule and workout reminders straight to Google Calendar, Apple Calendar, or Outlook via .ics files.</p>
+                </div>
             </div>
 
-            <!-- Detailed Indian Meal Logger -->
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-utensils text-emerald-400"></i> Indian Meal & Drink Logger
-                        </h3>
-                        <p class="text-slate-400 text-xs">Log your exact daily food quantities to auto-calculate macros & vitamins.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Calendar Reminder Generator -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-calendar-days text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base">Generate .ics Reminder</h3>
+                            <p class="text-xs text-slate-400">Download calendar invite for daily habit</p>
+                        </div>
                     </div>
-                    <button onclick="resetDailyLog()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-all">
-                        <i class="fa-solid fa-rotate-right mr-1"></i> Reset Today's Log
-                    </button>
+                    <div class="space-y-3 pt-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Reminder Title</label>
+                            <input type="text" id="ics-title" value="Striver DSA Daily Revision & Health Check" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Time (Daily)</label>
+                            <input type="time" id="ics-time" value="20:00" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <button onclick="app.generateIcsFile()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-2xl shadow-lg shadow-amber-500/20 transition active:scale-95 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                            <span>Download .ics Calendar File</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Input Grid for Meals -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    
-                    <!-- Rotis -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-amber-500 text-[8px]"></i> Rotis / Chapatis (Count)
-                        </label>
-                        <input type="number" id="log-rotis" min="0" value="0" placeholder="e.g. 4" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        <span class="text-[11px] text-slate-500 block">~70 kcal, 2.5g protein per roti</span>
-                    </div>
-
-                    <!-- Sabji -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> Sabji / Veg (Bowls / Grams)
-                        </label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <select id="log-sabji-type" onchange="calculateIntake()" class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-2 py-2 text-white">
-                                <option value="mixed">Mixed Veg / Aloo</option>
-                                <option value="dal">Dal Tadka</option>
-                                <option value="paneer_sabji">Paneer Curry</option>
-                                <option value="green_veg">Green Leafy Sabji</option>
-                            </select>
-                            <input type="number" id="log-sabji-qty" min="0" value="0" placeholder="Grams" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                <!-- Stats Summary Card -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-chart-line text-lg"></i>
                         </div>
-                        <span class="text-[11px] text-slate-500 block">Rich in fiber, minerals & carbs/proteins</span>
-                    </div>
-
-                    <!-- Salad -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-lime-500 text-[8px]"></i> Salad (Cucumber, Carrot, Onion in Grams)
-                        </label>
-                        <input type="number" id="log-salad" min="0" value="0" placeholder="e.g. 150" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        <span class="text-[11px] text-slate-500 block">Vitamins A, C, Minerals & Zero fat</span>
-                    </div>
-
-                    <!-- Paneer (Raw/Grilled) -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-indigo-400 text-[8px]"></i> Paneer (Grams)
-                        </label>
-                        <input type="number" id="log-paneer" min="0" value="0" placeholder="e.g. 100" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        <span class="text-[11px] text-slate-500 block">High Protein & Healthy Fats (~18g protein/100g)</span>
-                    </div>
-
-                    <!-- Rice / Pulao -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-amber-300 text-[8px]"></i> Cooked Rice / Pulao (Grams)
-                        </label>
-                        <input type="number" id="log-rice" min="0" value="0" placeholder="e.g. 200" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        <span class="text-[11px] text-slate-500 block">Carb source for energy & muscle mass</span>
-                    </div>
-
-                    <!-- Juice / Beverages -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-orange-400 text-[8px]"></i> Juice / Milk / Shake (ml)
-                        </label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <select id="log-drink-type" onchange="calculateIntake()" class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-2 py-2 text-white">
-                                <option value="milk">Milk (Full Cream)</option>
-                                <option value="juice">Fresh Fruit Juice</option>
-                                <option value="buttermilk">Chhaas / Buttermilk</option>
-                                <option value="protein_shake">Protein Shake</option>
-                            </select>
-                            <input type="number" id="log-drink-qty" min="0" value="0" placeholder="ml" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                        <div>
+                            <h3 class="font-bold text-base">Performance Breakdown</h3>
+                            <p class="text-xs text-slate-400">Overall progress metrics</p>
                         </div>
-                        <span class="text-[11px] text-slate-500 block">Hydration, calcium & vitamins</span>
                     </div>
-
-                    <!-- Eggs / Chicken / Sprouts -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-rose-400 text-[8px]"></i> Eggs (Count) or Sprouts (Grams)
-                        </label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="number" id="log-eggs" min="0" value="0" placeholder="Eggs" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
-                            <input type="number" id="log-sprouts" min="0" value="0" placeholder="Sprouts g" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                    <div class="space-y-4 pt-2">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>DSA Sheet Completion</span>
+                                <span id="stat-dsa-pct">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div id="stat-dsa-bar" class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
                         </div>
-                        <span class="text-[11px] text-slate-500 block">Complete protein & amino acids</span>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Calorie Goal Adherence</span>
+                                <span id="stat-cal-pct">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div id="stat-cal-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-sm">
+                            <span class="text-slate-500">Data Backup / Restore</span>
+                            <div class="space-x-2">
+                                <button onclick="app.exportJsonData()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold transition">Export JSON</button>
+                                <button onclick="document.getElementById('import-file').click()" class="px-3 py-1.5 bg-brand-50 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300 rounded-xl text-xs font-semibold transition">Import</button>
+                                <input type="file" id="import-file" onchange="app.importJsonData(event)" class="hidden" accept=".json">
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Extra Snacks / Ghee / Dry Fruits -->
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle text-yellow-400 text-[8px]"></i> Ghee / Dry Fruits / Snacks (Grams)
-                        </label>
-                        <input type="number" id="log-snacks" min="0" value="0" placeholder="e.g. 30" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
-                        <span class="text-[11px] text-slate-500 block">Healthy fats for hormone production</span>
-                    </div>
-
                 </div>
-
             </div>
-
-        </div>
+        </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>Self Tracker Pro &bull; Built for Striver DSA Mastery & Clean Nutrition</p>
-    </footer>
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-6 py-2.5 flex justify-around items-center z-40 shadow-2xl">
+        <button onclick="app.switchTab('dsa')" id="nav-btn-dsa" class="flex flex-col items-center py-1 text-brand-600 dark:text-brand-400 transition">
+            <i class="fa-solid fa-code text-xl mb-1"></i>
+            <span class="text-[10px] font-bold">DSA Sheet</span>
+        </button>
+        <button onclick="app.switchTab('health')" id="nav-btn-health" class="flex flex-col items-center py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+            <i class="fa-solid fa-heart-pulse text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Health</span>
+        </button>
+        <button onclick="app.switchTab('analytics')" id="nav-btn-analytics" class="flex flex-col items-center py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Analytics</span>
+        </button>
+    </nav>
 
-    <!-- JavaScript Application Logic -->
+    <div id="meal-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg">Add Custom Indian Meal / Item</h3>
+                <button onclick="app.closeLogMealModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Food / Dish Name</label>
+                    <input type="text" id="custom-meal-name" placeholder="e.g. Masala Dosa, Chicken Biryani" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Calories (kcal)</label>
+                        <input type="number" id="custom-meal-cal" placeholder="300" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Protein (g)</label>
+                        <input type="number" id="custom-meal-protein" placeholder="12" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Carbs (g)</label>
+                        <input type="number" id="custom-meal-carbs" placeholder="40" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Fats (g)</label>
+                        <input type="number" id="custom-meal-fat" placeholder="10" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <button onclick="app.addCustomMeal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow-lg shadow-emerald-500/20 transition active:scale-95">
+                    Save & Log Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BMR / TDEE Calculator Modal -->
+    <div id="bmr-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg">BMR & TDEE Calculator</h3>
+                <button onclick="app.closeBmrModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Weight (kg)</label>
+                        <input type="number" id="bmr-weight" value="70" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Height (cm)</label>
+                        <input type="number" id="bmr-height" value="175" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Age (years)</label>
+                        <input type="number" id="bmr-age" value="24" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Gender</label>
+                        <select id="bmr-gender" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Activity Level</label>
+                    <select id="bmr-activity" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm">
+                        <option value="1.2">Sedentary (Little or no exercise)</option>
+                        <option value="1.375">Lightly Active (1-3 days/week)</option>
+                        <option value="1.55" selected>Moderately Active (3-5 days/week)</option>
+                        <option value="1.725">Very Active (6-7 days/week)</option>
+                    </select>
+                </div>
+                <button onclick="app.calculateBmr()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow-lg transition active:scale-95">
+                    Calculate & Update Daily Targets
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="export-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg">Cloud Sync & Backup</h3>
+                <button onclick="app.closeExportModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">Your data is stored securely in your browser's local state. You can export a JSON backup anytime or import it on another device.</p>
+            <div class="space-y-3 pt-2">
+                <button onclick="app.exportJsonData()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Export JSON Backup File</span>
+                </button>
+                <button onclick="document.getElementById('import-file').click(); app.closeExportModal();" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold py-3 rounded-2xl transition active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>Import JSON Backup</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- Striver DSA Complete Question Bank ---
-        const striverDSAData = [
-            {
-                topic: "Arrays",
-                questions: [
-                    { title: "Set Matrix Zeroes", link: "https://leetcode.com/problems/set-matrix-zeroes/", difficulty: "Medium" },
-                    { title: "Pascal's Triangle", link: "https://leetcode.com/problems/pascals-triangle/", difficulty: "Easy" },
-                    { title: "Next Permutation", link: "https://leetcode.com/problems/next-permutation/", difficulty: "Medium" },
-                    { title: "Kadane's Algorithm (Max Subarray Sum)", link: "https://leetcode.com/problems/maximum-subarray/", difficulty: "Medium" },
-                    { title: "Sort Colors (0s, 1s and 2s)", link: "https://leetcode.com/problems/sort-colors/", difficulty: "Medium" },
-                    { title: "Stock Buy and Sell", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", difficulty: "Easy" },
-                    { title: "Rotate Image by 90 degree", link: "https://leetcode.com/problems/rotate-image/", difficulty: "Medium" },
-                    { title: "Merge Overlapping Subintervals", link: "https://leetcode.com/problems/merge-intervals/", difficulty: "Medium" },
-                    { title: "Merge Sorted Array without extra space", link: "https://leetcode.com/problems/merge-sorted-array/", difficulty: "Easy" },
-                    { title: "Find the Duplicate Number", link: "https://leetcode.com/problems/find-the-duplicate-number/", difficulty: "Medium" },
-                    { title: "Repeat and Missing Number Array", link: "https://www.interviewbit.com/problems/repeat-and-missing-number-array/", difficulty: "Medium" },
-                    { title: "Count Inversions", link: "https://www.codingninjas.com/studio/problems/count-inversions_615", difficulty: "Hard" },
-                    { title: "Reverse Pairs", link: "https://leetcode.com/problems/reverse-pairs/", difficulty: "Hard" },
-                    { title: "Maximum Product Subarray", link: "https://leetcode.com/problems/maximum-product-subarray/", difficulty: "Medium" },
-                    { title: "Longest Consecutive Sequence", link: "https://leetcode.com/problems/longest-consecutive-sequence/", difficulty: "Medium" },
-                    { title: "Two Sum", link: "https://leetcode.com/problems/two-sum/", difficulty: "Easy" },
-                    { title: "Subarray Sum Equals K", link: "https://leetcode.com/problems/subarray-sum-equals-k/", difficulty: "Medium" }
-                ]
-            },
-            {
-                topic: "Strings",
-                questions: [
-                    { title: "Reverse Words in a String", link: "https://leetcode.com/problems/reverse-words-in-a-string/", difficulty: "Medium" },
-                    { title: "Longest Palindromic Substring", link: "https://leetcode.com/problems/longest-palindromic-substring/", difficulty: "Medium" },
-                    { title: "Roman to Integer", link: "https://leetcode.com/problems/roman-to-integer/", difficulty: "Easy" },
-                    { title: "Longest Common Prefix", link: "https://leetcode.com/problems/longest-common-prefix/", difficulty: "Easy" },
-                    { title: "String to Integer (atoi)", link: "https://leetcode.com/problems/string-to-integer-atoi/", difficulty: "Medium" },
-                    { title: "Longest Substring Without Repeating Characters", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", difficulty: "Medium" },
-                    { title: "Rabin Karp / KMP Algorithm (Implement strStr)", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/", difficulty: "Medium" },
-                    { title: "Valid Anagram", link: "https://leetcode.com/problems/valid-anagram/", difficulty: "Easy" },
-                    { title: "Count and Say", link: "https://leetcode.com/problems/count-and-say/", difficulty: "Medium" },
-                    { title: "Compare Version Numbers", link: "https://leetcode.com/problems/compare-version-numbers/", difficulty: "Medium" }
-                ]
-            },
-            {
-                topic: "Linked List",
-                questions: [
-                    { title: "Reverse a Linked List", link: "https://leetcode.com/problems/reverse-linked-list/", difficulty: "Easy" },
-                    { title: "Middle of the Linked List", link: "https://leetcode.com/problems/middle-of-the-linked-list/", difficulty: "Easy" },
-                    { title: "Merge Two Sorted Lists", link: "https://leetcode.com/problems/merge-two-sorted-lists/", difficulty: "Easy" },
-                    { title: "Remove N-th node from the end of Linked List", link: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", difficulty: "Medium" },
-                    { title: "Add Two Numbers as Linked List", link: "https://leetcode.com/problems/add-two-numbers/", difficulty: "Medium" },
-                    { title: "Delete Node in a Linked List", link: "https://leetcode.com/problems/delete-node-in-a-linked-list/", difficulty: "Easy" },
-                    { title: "Intersection of Two Linked Lists", link: "https://leetcode.com/problems/intersection-of-two-linked-lists/", difficulty: "Easy" },
-                    { title: "Detect a Cycle in Linked List", link: "https://leetcode.com/problems/linked-list-cycle/", difficulty: "Easy" },
-                    { title: "Reverse Nodes in k-Group", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/", difficulty: "Hard" },
-                    { title: "Palindrome Linked List", link: "https://leetcode.com/problems/palindrome-linked-list/", difficulty: "Easy" },
-                    { title: "Find the starting point of the Loop", link: "https://leetcode.com/problems/linked-list-cycle-ii/", difficulty: "Medium" },
-                    { title: "Flattening a Linked List", link: "https://www.codingninjas.com/studio/problems/flatten-a-linked-list_1112655", difficulty: "Medium" },
-                    { title: "Rotate a Linked List", link: "https://leetcode.com/problems/rotate-list/", difficulty: "Medium" },
-                    { title: "Copy List with Random Pointer", link: "https://leetcode.com/problems/copy-list-with-random-pointer/", difficulty: "Medium" }
-                ]
-            },
-            {
-                topic: "Trees",
-                questions: [
-                    { title: "Binary Tree Inorder Traversal", link: "https://leetcode.com/problems/binary-tree-inorder-traversal/", difficulty: "Easy" },
-                    { title: "Binary Tree Preorder Traversal", link: "https://leetcode.com/problems/binary-tree-preorder-traversal/", difficulty: "Easy" },
-                    { title: "Binary Tree Postorder Traversal", link: "https://leetcode.com/problems/binary-tree-postorder-traversal/", difficulty: "Easy" },
-                    { title: "Maximum Depth of Binary Tree", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/", difficulty: "Easy" },
-                    { title: "Balanced Binary Tree", link: "https://leetcode.com/problems/balanced-binary-tree/", difficulty: "Easy" },
-                    { title: "Diameter of Binary Tree", link: "https://leetcode.com/problems/diameter-of-binary-tree/", difficulty: "Easy" },
-                    { title: "Binary Tree Maximum Path Sum", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/", difficulty: "Hard" },
-                    { title: "Same Tree", link: "https://leetcode.com/problems/same-tree/", difficulty: "Easy" },
-                    { title: "Binary Tree Zigzag Level Order Traversal", link: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/", difficulty: "Medium" },
-                    { title: "Boundary Traversal of Binary Tree", link: "https://www.codingninjas.com/studio/problems/boundary-traversal_790725", difficulty: "Medium" },
-                    { title: "Vertical Order Traversal of Binary Tree", link: "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/", difficulty: "Hard" },
-                    { title: "Top View of Binary Tree", link: "https://www.codingninjas.com/studio/problems/top-view-of-binary-tree_799401", difficulty: "Medium" },
-                    { title: "Bottom View of Binary Tree", link: "https://www.codingninjas.com/studio/problems/bottom-view-of-binary-tree_893550", difficulty: "Medium" },
-                    { title: "Symmetric Tree", link: "https://leetcode.com/problems/symmetric-tree/", difficulty: "Easy" },
-                    { title: "Lowest Common Ancestor of a Binary Search Tree", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/", difficulty: "Medium" },
-                    { title: "Validate Binary Search Tree", link: "https://leetcode.com/problems/validate-binary-search-tree/", difficulty: "Medium" }
-                ]
-            },
-            {
-                topic: "Graphs",
-                questions: [
-                    { title: "Breadth First Search (BFS)", link: "https://www.codingninjas.com/studio/problems/bfs-in-graph_973002", difficulty: "Easy" },
-                    { title: "Depth First Search (DFS)", link: "https://www.codingninjas.com/studio/problems/dfs-traversal_630469", difficulty: "Easy" },
-                    { title: "Detect Cycle in Undirected Graph (BFS/DFS)", link: "https://www.codingninjas.com/studio/problems/cycle-detection-in-undirected-graph_1062670", difficulty: "Medium" },
-                    { title: "Detect Cycle in Directed Graph (DFS)", link: "https://www.codingninjas.com/studio/problems/detect-cycle-in-a-directed-graph_920545", difficulty: "Medium" },
-                    { title: "Topological Sort (DFS)", link: "https://www.codingninjas.com/studio/problems/topological-sort_982938", difficulty: "Medium" },
-                    { title: "Number of Provinces", link: "https://leetcode.com/problems/number-of-provinces/", difficulty: "Medium" },
-                    { title: "Rotting Oranges", link: "https://leetcode.com/problems/rotting-oranges/", difficulty: "Medium" },
-                    { title: "01 Matrix (Distance of nearest cell having 1)", link: "https://leetcode.com/problems/01-matrix/", difficulty: "Medium" },
-                    { title: "Surrounded Regions", link: "https://leetcode.com/problems/surrounded-regions/", difficulty: "Medium" },
-                    { title: "Word Ladder", link: "https://leetcode.com/problems/word-ladder/", difficulty: "Hard" },
-                    { title: "Dijkstra's Algorithm (Priority Queue)", link: "https://www.codingninjas.com/studio/problems/dijkstra-s-shortest-path_920469", difficulty: "Medium" },
-                    { title: "Bellman Ford Algorithm", link: "https://www.codingninjas.com/studio/problems/bellman-ford_2041118", difficulty: "Medium" },
-                    { title: "Floyd Warshall Algorithm", link: "https://www.codingninjas.com/studio/problems/floyd-warshall_2041979", difficulty: "Medium" },
-                    { title: "Minimum Spanning Tree (Prim's Algorithm)", link: "https://www.codingninjas.com/studio/problems/prim-s-mst_1095633", difficulty: "Medium" },
-                    { title: "Kruskal's Algorithm", link: "https://www.codingninjas.com/studio/problems/kruskal-s-minimum-spanning-tree_1082553", difficulty: "Medium" },
-                    { title: "Kosaraju's Algorithm (Strongly Connected Components)", link: "https://www.codingninjas.com/studio/problems/count-strongly-connected-components-kosaraju-s-algorithm_1171151", difficulty: "Hard" }
-                ]
-            },
-            {
-                topic: "Dynamic Programming",
-                questions: [
-                    { title: "Climbing Stairs", link: "https://leetcode.com/problems/climbing-stairs/", difficulty: "Easy" },
-                    { title: "Frog Jump (DP-3)", link: "https://www.codingninjas.com/studio/problems/frog-jump_3621012", difficulty: "Medium" },
-                    { title: "Maximum Sum of Non-Adjacent Elements", link: "https://www.codingninjas.com/studio/problems/maximum-sum-of-non-adjacent-elements_843261", difficulty: "Medium" },
-                    { title: "House Robber II", link: "https://leetcode.com/problems/house-robber-ii/", difficulty: "Medium" },
-                    { title: "Ninja's Training", link: "https://www.codingninjas.com/studio/problems/ninja-s-training_3621003", difficulty: "Medium" },
-                    { title: "Grid Unique Paths", link: "https://leetcode.com/problems/unique-paths/", difficulty: "Medium" },
-                    { title: "Minimum Path Sum in Grid", link: "https://leetcode.com/problems/minimum-path-sum/", difficulty: "Medium" },
-                    { title: "Triangle Path Sum", link: "https://leetcode.com/problems/triangle/", difficulty: "Medium" },
-                    { title: "Minimum Falling Path Sum", link: "https://leetcode.com/problems/minimum-falling-path-sum/", difficulty: "Medium" },
-                    { title: "Subset Sum Equal to K", link: "https://www.codingninjas.com/studio/problems/subset-sum-equal-to-k_1550954", difficulty: "Medium" },
-                    { title: "Coin Change", link: "https://leetcode.com/problems/coin-change/", difficulty: "Medium" },
-                    { title: "Longest Common Subsequence", link: "https://leetcode.com/problems/longest-common-subsequence/", difficulty: "Medium" },
-                    { title: "Longest Increasing Subsequence", link: "https://leetcode.com/problems/longest-increasing-subsequence/", difficulty: "Medium" },
-                    { title: "Edit Distance", link: "https://leetcode.com/problems/edit-distance/", difficulty: "Medium" },
-                    { title: "Matrix Chain Multiplication", link: "https://www.codingninjas.com/studio/problems/matrix-chain-multiplication_975344", difficulty: "Hard" }
-                ]
-            },
-            {
-                topic: "Binary Search",
-                questions: [
-                    { title: "Binary Search to find X in sorted array", link: "https://leetcode.com/problems/binary-search/", difficulty: "Easy" },
-                    { title: "Lower Bound and Upper Bound", link: "https://www.codingninjas.com/studio/problems/lower-bound_8165382", difficulty: "Easy" },
-                    { title: "Search Insert Position", link: "https://leetcode.com/problems/search-insert-position/", difficulty: "Easy" },
-                    { title: "Find First and Last Position of Element in Sorted Array", link: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/", difficulty: "Medium" },
-                    { title: "Search in Rotated Sorted Array I & II", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/", difficulty: "Medium" },
-                    { title: "Find Minimum in Rotated Sorted Array", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/", difficulty: "Medium" },
-                    { title: "Single Element in a Sorted Array", link: "https://leetcode.com/problems/single-element-in-a-sorted-array/", difficulty: "Medium" },
-                    { title: "Peak Element", link: "https://leetcode.com/problems/find-peak-element/", difficulty: "Medium" },
-                    { title: "Square Root of a number using Binary Search", link: "https://www.codingninjas.com/studio/problems/square-root_893351", difficulty: "Easy" },
-                    { title: "Koko Eating Bananas", link: "https://leetcode.com/problems/koko-eating-bananas/", difficulty: "Medium" },
-                    { title: "Book Allocation Problem", link: "https://www.codingninjas.com/studio/problems/allocate-books_1090540", difficulty: "Hard" },
-                    { title: "Median of Two Sorted Arrays", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/", difficulty: "Hard" }
-                ]
-            }
+        const INDIAN_FOOD_DATABASE = [
+            { name: "Raw Paneer / Cottage Cheese", unit: "100g", cal: 265, protein: 18, carbs: 4, fat: 20 },
+            { name: "Sabji / Curry Bowl", unit: "1 bowl (200ml)", cal: 180, protein: 4, carbs: 15, fat: 12 },
+            { name: "Chapati / Roti (Wheat)", unit: "1 medium piece", cal: 70, protein: 3, carbs: 15, fat: 0.5 },
+            { name: "Ghee / Butter", unit: "1 tablespoon (15g)", cal: 135, protein: 0, carbs: 0, fat: 15 },
+            { name: "Boiled Eggs", unit: "2 whole eggs", cal: 140, protein: 13, carbs: 1, fat: 10 },
+            { name: "Whey Protein Isolate", unit: "1 scoop (30g)", cal: 120, protein: 25, carbs: 3, fat: 1.5 },
+            { name: "Cooked Basmati Rice", unit: "1 cup (150g)", cal: 200, protein: 4, carbs: 44, fat: 0.5 },
+            { name: "Dal Tadka / Yellow Dal", unit: "1 bowl (200ml)", cal: 160, protein: 9, carbs: 22, fat: 4 },
+            { name: "Milk (Full Cream)", unit: "1 glass (250ml)", cal: 150, protein: 8, carbs: 12, fat: 8 },
+            { name: "Sprouts / Moong Chaat", unit: "1 bowl (150g)", cal: 150, protein: 9, carbs: 24, fat: 2 },
+            { name: "Roasted Chana", unit: "1 small bowl (50g)", cal: 180, protein: 11, carbs: 29, fat: 3 },
+            { name: "Poha", unit: "1 plate (200g)", cal: 250, protein: 4, carbs: 45, fat: 6 }
         ];
 
-        // --- App State & Initialization ---
-        let selectedTopic = localStorage.getItem('self_tracker_topic') || '';
-        let notifTime = localStorage.getItem('self_tracker_time') || '09:00';
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            initDSAUI();
-            initHealthUI();
-            document.getElementById('notif-time').value = notifTime;
-            if (selectedTopic) {
-                document.getElementById('topic-selector').value = selectedTopic;
-                getRandomPotd();
-            }
-            registerServiceWorker();
-        });
+        const STRIVER_DSA_DATA = [
+            { id: 1, topic: "Array", title: "Set Matrix Zeroes", difficulty: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
+            { id: 2, topic: "Array", title: "Pascal's Triangle", difficulty: "Easy", link: "https://leetcode.com/problems/pascals-triangle/" },
+            { id: 3, topic: "Array", title: "Next Permutation", difficulty: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
+            { id: 4, topic: "Array", title: "Kadane's Algorithm (Max Subarray)", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+            { id: 5, topic: "Array", title: "Sort Colors (0s, 1s, 2s)", difficulty: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
+            { id: 6, topic: "Array", title: "Stock Buy and Sell", difficulty: "Easy", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
+            { id: 7, topic: "Array", title: "Rotate Matrix", difficulty: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
+            { id: 8, topic: "Array", title: "Merge Overlapping Subintervals", difficulty: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
+            { id: 9, topic: "DP", title: "Maximum Product Subarray", difficulty: "Medium", link: "https://leetcode.com/problems/maximum-product-subarray/" },
+            { id: 10, topic: "DP", title: "Longest Increasing Subsequence", difficulty: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
+            { id: 11, topic: "DP", title: "Edit Distance", difficulty: "Hard", link: "https://leetcode.com/problems/edit-distance/" },
+            { id: 12, topic: "DP", title: "Maximum Path Sum in Matrix", difficulty: "Medium", link: "https://leetcode.com/problems/minimum-path-sum/" },
+            { id: 13, topic: "Graph", title: "Clone Graph", difficulty: "Medium", link: "https://leetcode.com/problems/clone-graph/" },
+            { id: 14, topic: "Graph", title: "DFS & BFS Traversal", difficulty: "Easy", link: "https://www.geeksforgeeks.org/bfs-traversal-of-graph/" },
+            { id: 15, topic: "Graph", title: "Detect Cycle in Directed Graph", difficulty: "Medium", link: "https://leetcode.com/problems/course-schedule/" },
+            { id: 16, topic: "Graph", title: "Dijkstra's Algorithm", difficulty: "Medium", link: "https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/" },
+            { id: 17, topic: "Tree", title: "Binary Tree Level Order Traversal", difficulty: "Medium", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
+            { id: 18, topic: "Tree", title: "Maximum Depth of Binary Tree", difficulty: "Easy", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
+            { id: 19, topic: "Tree", title: "Diameter of Binary Tree", difficulty: "Easy", link: "https://leetcode.com/problems/diameter-of-binary-tree/" },
+            { id: 20, topic: "Tree", title: "Binary Tree Zigzag Level Order", difficulty: "Medium", link: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/" },
+            { id: 21, topic: "String", title: "Longest Palindromic Substring", difficulty: "Medium", link: "https://leetcode.com/problems/longest-palindromic-substring/" },
+            { id: 22, topic: "String", title: "Roman to Integer", difficulty: "Easy", link: "https://leetcode.com/problems/roman-to-integer/" },
+            { id: 23, topic: "String", title: "Implement Atoi", difficulty: "Medium", link: "https://leetcode.com/problems/string-to-integer-atoi/" },
+            { id: 24, topic: "String", title: "Longest Common Prefix", difficulty: "Easy", link: "https://leetcode.com/problems/longest-common-prefix/" }
+        ];
 
-        function switchTab(tab) {
-            const dsaSec = document.getElementById('section-dsa');
-            const healthSec = document.getElementById('section-health');
-            const dsaTab = document.getElementById('tab-dsa');
-            const healthTab = document.getElementById('tab-health');
-
-            if (tab === 'dsa') {
-                dsaSec.classList.remove('hidden');
-                healthSec.classList.add('hidden');
-                dsaTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md";
-                healthTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white";
-            } else {
-                dsaSec.classList.add('hidden');
-                healthSec.classList.remove('hidden');
-                healthTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-emerald-600 text-white shadow-md";
-                dsaTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white";
-                calculateIntake();
-            }
-        }
-
-        // --- DSA UI Builder ---
-        function initDSAUI() {
-            const selector = document.getElementById('topic-selector');
-            const container = document.getElementById('dsa-topics-container');
-            
-            selector.innerHTML = '<option value="">-- Choose Topic --</option>';
-            container.innerHTML = '';
-
-            striverDSAData.forEach(group => {
-                // Populate dropdown
-                const opt = document.createElement('option');
-                opt.value = group.topic;
-                opt.textContent = `${group.topic} (${group.questions.length} problems)`;
-                selector.appendChild(opt);
-
-                // Build accordion card
-                const card = document.createElement('div');
-                card.className = 'bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md';
-                card.innerHTML = `
-                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-4 flex items-center justify-between bg-slate-900 hover:bg-slate-850 transition-all text-left">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
-                                <i class="fa-solid fa-folder-open"></i>
-                            </div>
-                            <span class="font-bold text-white text-base">${group.topic}</span>
-                            <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full">${group.questions.length} problems</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
-                    </button>
-                    <div class="hidden border-t border-slate-800 p-4 bg-slate-950/40 space-y-2">
-                        ${group.questions.map(q => `
-                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700 transition-all">
-                                <span class="text-sm font-medium text-slate-200">${q.title}</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${                                         q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :                                         q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :                                         'bg-rose-500/10 text-rose-400 border border-rose-500/20'                                     }">${q.difficulty}</span>
-                                    <a href="${q.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg text-xs transition-all shadow-sm">
-                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function toggleAccordion(btn) {
-            const content = btn.nextElementSibling;
-            const icon = btn.querySelector('.fa-chevron-down');
-            content.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
-        }
-
-        function filterQuestions(keyword) {
-            keyword = keyword.toLowerCase();
-            const container = document.getElementById('dsa-topics-container');
-            container.innerHTML = '';
-
-            striverDSAData.forEach(group => {
-                const filtered = group.questions.filter(q => q.title.toLowerCase().includes(keyword));
-                if (filtered.length === 0 && keyword !== '') return;
-
-                const card = document.createElement('div');
-                card.className = 'bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md';
-                card.innerHTML = `
-                    <div class="px-6 py-4 flex items-center justify-between bg-slate-900">
-                        <span class="font-bold text-white text-base">${group.topic}</span>
-                        <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full">${filtered.length} matches</span>
-                    </div>
-                    <div class="border-t border-slate-800 p-4 bg-slate-950/40 space-y-2">
-                        ${(keyword === '' ? group.questions : filtered).map(q => `
-                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/80">
-                                <span class="text-sm font-medium text-slate-200">${q.title}</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400' : q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400' : 'bg-rose-500/10 text-rose-400'}">${q.difficulty}</span>
-                                    <a href="${q.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg text-xs">
-                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function updateSelectedTopic(topic) {
-            selectedTopic = topic;
-            localStorage.setItem('self_tracker_topic', topic);
-            getRandomPotd();
-        }
-
-        function saveNotificationTime() {
-            notifTime = document.getElementById('notif-time').value;
-            localStorage.setItem('self_tracker_time', notifTime);
-        }
-
-        function getRandomPotd() {
-            let pool = [];
-            if (selectedTopic) {
-                const found = striverDSAData.find(g => g.topic === selectedTopic);
-                if (found) pool = found.questions;
-            }
-            if (pool.length === 0) {
-                striverDSAData.forEach(g => pool.push(...g.questions));
+        class SelfTrackerApp {
+            constructor() {
+                this.state = {
+                    darkMode: false,
+                    activeTab: 'dsa',
+                    dsaFilter: 'all',
+                    dsaSearchQuery: '',
+                    completedProblems: [],
+                    loggedMeals: [],
+                    targets: { cal: 2200, protein: 130, carbs: 250, fat: 65 },
+                    collapsedTopics: {}
+                };
+                this.loadState();
+                this.initFoodDropdowns();
             }
 
-            const randQ = pool[Math.floor(Math.random() * pool.length)];
-            document.getElementById('potd-title').textContent = randQ.title;
-            document.getElementById('potd-desc').textContent = `Selected Topic: ${selectedTopic || 'All Topics'} • Difficulty: ${randQ.difficulty}`;
-            const linkBtn = document.getElementById('potd-link');
-            linkBtn.href = randQ.link;
-            linkBtn.classList.remove('hidden');
-        }
-
-        // --- Mobile Notifications & .ics Calendar Download ---
-        function setupMobileNotifications() {
-            if (!selectedTopic) {
-                alert('Please select a focus topic from the dropdown first!');
-                return;
-            }
-
-            const [hours, minutes] = notifTime.split(':');
-            
-            // Create .ics file content for calendar reminder
-            const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Self Tracker//DSA Daily Reminder//EN
-BEGIN:VEVENT
-SUMMARY:Self Tracker DSA: Practice ${selectedTopic} Problem
-DESCRIPTION:Your daily Striver DSA challenge is ready in Self Tracker! Topic: ${selectedTopic}
-RRULE:FREQ=DAILY;BYHOUR=${hours};BYMINUTE=${minutes};BYSECOND=0
-BEGIN:VALARM
-TRIGGER:-PT0M
-ACTION:DISPLAY
-DESCRIPTION:Reminder: Self Tracker DSA Challenge
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `SelfTracker_${selectedTopic}_Reminder.ics`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            alert(`Calendar reminder (.ics) downloaded for ${selectedTopic} at ${notifTime} daily! Open this file on your mobile to import into Google or Apple Calendar for guaranteed push notifications.`);
-        }
-
-        // --- Health Mode & Nutrition Calculations ---
-        function initHealthUI() {
-            const savedWeight = localStorage.getItem('st_weight') || '70';
-            const savedHeight = localStorage.getItem('st_height') || '175';
-            const savedAge = localStorage.getItem('st_age') || '22';
-            const savedActivity = localStorage.getItem('st_activity') || '1.55';
-            const savedGoal = localStorage.getItem('st_goal') || 'muscle_gain';
-
-            document.getElementById('user-weight').value = savedWeight;
-            document.getElementById('user-height').value = savedHeight;
-            document.getElementById('user-age').value = savedAge;
-            document.getElementById('user-activity').value = savedActivity;
-            document.getElementById('user-goal').value = savedGoal;
-
-            calculateIntake();
-        }
-
-        function saveHealthMetrics() {
-            localStorage.setItem('st_weight', document.getElementById('user-weight').value);
-            localStorage.setItem('st_height', document.getElementById('user-height').value);
-            localStorage.setItem('st_age', document.getElementById('user-age').value);
-            localStorage.setItem('st_activity', document.getElementById('user-activity').value);
-            localStorage.setItem('st_goal', document.getElementById('user-goal').value);
-
-            calculateIntake();
-            alert('Health targets updated successfully!');
-        }
-
-        function calculateIntake() {
-            const weight = parseFloat(document.getElementById('user-weight').value) || 70;
-            const height = parseFloat(document.getElementById('user-height').value) || 175;
-            const age = parseFloat(document.getElementById('user-age').value) || 22;
-            const activity = parseFloat(document.getElementById('user-activity').value) || 1.55;
-            const goal = document.getElementById('user-goal').value;
-
-            // BMR Calculation (Mifflin-St Jeor equation for men)
-            const bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-            let maintenanceCals = Math.round(bmr * activity);
-
-            let targetCals = maintenanceCals;
-            let targetProtein = Math.round(weight * 1.2); // min
-            let targetCarbs = 300;
-            let targetFats = 70;
-
-            if (goal === 'maintenance') {
-                targetCals = maintenanceCals;
-                targetProtein = Math.round(weight * 1.2);
-                targetCarbs = Math.round((targetCals * 0.5) / 4);
-                targetFats = Math.round((targetCals * 0.25) / 9);
-                document.getElementById('current-goal-label').textContent = 'Goal: Average Minimum Required (Maintenance)';
-            } else {
-                // Build Muscular Body & Gain Weight (Surplus + High Protein)
-                targetCals = maintenanceCals + 400; // 400 kcal surplus
-                targetProtein = Math.round(weight * 1.8); // 1.8g - 2g per kg for hypertrophy
-                targetCarbs = Math.round((targetCals * 0.50) / 4);
-                targetFats = Math.round((targetCals * 0.25) / 9);
-                document.getElementById('current-goal-label').textContent = 'Goal: Build Muscular Body & Gain Weight (Surplus)';
-            }
-
-            document.getElementById('target-cal').textContent = targetCals;
-            document.getElementById('target-protein').textContent = targetProtein;
-            document.getElementById('target-carbs').textContent = targetCarbs;
-            document.getElementById('target-fats').textContent = targetFats;
-
-            // Gather inputs from Indian Meal Logger
-            const rotis = parseFloat(document.getElementById('log-rotis').value) || 0;
-            const sabjiType = document.getElementById('log-sabji-type').value;
-            const sabjiQty = parseFloat(document.getElementById('log-sabji-qty').value) || 0; // grams
-            const salad = parseFloat(document.getElementById('log-salad').value) || 0; // grams
-            const paneer = parseFloat(document.getElementById('log-paneer').value) || 0; // grams
-            const rice = parseFloat(document.getElementById('log-rice').value) || 0; // grams
-            const drinkType = document.getElementById('log-drink-type').value;
-            const drinkQty = parseFloat(document.getElementById('log-drink-qty').value) || 0; // ml
-            const eggs = parseFloat(document.getElementById('log-eggs').value) || 0;
-            const sprouts = parseFloat(document.getElementById('log-sprouts').value) || 0; // grams
-            const snacks = parseFloat(document.getElementById('log-snacks').value) || 0; // grams
-
-            // Nutrition estimations per unit/gram
-            // Roti: ~70 kcal, 2.5g protein, 14g carb, 0.4g fat
-            let cals = rotis * 70;
-            let prot = rotis * 2.5;
-            let carb = rotis * 14;
-            let fat = rotis * 0.4;
-
-            // Sabji (per 100g)
-            let sabjiCalsPer100 = sabjiType === 'paneer_sabji' ? 160 : sabjiType === 'dal' ? 110 : 90;
-            let sabjiProtPer100 = sabjiType === 'paneer_sabji' ? 7 : sabjiType === 'dal' ? 6 : 3;
-            let sabjiCarbPer100 = 12;
-            let sabjiFatPer100 = sabjiType === 'paneer_sabji' ? 10 : 4;
-
-            cals += (sabjiQty / 100) * sabjiCalsPer100;
-            prot += (sabjiQty / 100) * sabjiProtPer100;
-            carb += (sabjiQty / 100) * sabjiCarbPer100;
-            fat += (sabjiQty / 100) * sabjiFatPer100;
-
-            // Salad (per 100g: 20 kcal, 1g protein, 4g carb, 0.2g fat)
-            cals += (salad / 100) * 20;
-            prot += (salad / 100) * 1;
-            carb += (salad / 100) * 4;
-            fat += (salad / 100) * 0.2;
-
-            // Paneer (per 100g: 265 kcal, 18g protein, 1.2g carb, 20g fat)
-            cals += (paneer / 100) * 265;
-            prot += (paneer / 100) * 18;
-            carb += (paneer / 100) * 1.2;
-            fat += (paneer / 100) * 20;
-
-            // Cooked Rice (per 100g: 130 kcal, 2.7g protein, 28g carb, 0.3g fat)
-            cals += (rice / 100) * 130;
-            prot += (rice / 100) * 2.7;
-            carb += (rice / 100) * 28;
-            fat += (rice / 100) * 0.3;
-
-            // Drink (per 100ml)
-            let drinkCalsPer100 = drinkType === 'milk' ? 65 : drinkType === 'protein_shake' ? 120 : drinkType === 'juice' ? 50 : 40;
-            let drinkProtPer100 = drinkType === 'protein_shake' ? 24 : drinkType === 'milk' ? 3.2 : drinkType === 'buttermilk' ? 2 : 0.5;
-            cals += (drinkQty / 100) * drinkCalsPer100;
-            prot += (drinkQty / 100) * drinkProtPer100;
-            carb += (drinkQty / 100) * 8;
-            fat += (drinkQty / 100) * 2;
-
-            // Eggs (1 egg: 70 kcal, 6g protein, 0.4g carb, 5g fat) & Sprouts (per 100g: 95 kcal, 9g protein, 18g carb, 0.5g fat)
-            cals += (eggs * 70) + ((sprouts / 100) * 95);
-            prot += (eggs * 6) + ((sprouts / 100) * 9);
-            carb += (eggs * 0.4) + ((sprouts / 100) * 18);
-            fat += (eggs * 5) + ((sprouts / 100) * 0.5);
-
-            // Snacks / Ghee (per 100g: 500 kcal, 2g protein, 20g carb, 45g fat)
-            cals += (snacks / 100) * 500;
-            prot += (snacks / 100) * 2;
-            carb += (snacks / 100) * 20;
-            fat += (snacks / 100) * 45;
-
-            // Update UI consumed numbers
-            document.getElementById('consumed-cal').textContent = Math.round(cals);
-            document.getElementById('consumed-protein').textContent = Math.round(prot);
-            document.getElementById('consumed-carbs').textContent = Math.round(carb);
-            document.getElementById('consumed-fats').textContent = Math.round(fat);
-
-            // Update Progress bars
-            document.getElementById('bar-cal').style.width = Math.min(100, (cals / targetCals) * 100) + '%';
-            document.getElementById('bar-protein').style.width = Math.min(100, (prot / targetProtein) * 100) + '%';
-            document.getElementById('bar-carbs').style.width = Math.min(100, (carb / targetCarbs) * 100) + '%';
-            document.getElementById('bar-fats').style.width = Math.min(100, (fat / targetFats) * 100) + '%';
-
-            // Vitamins status feedback
-            const vitaminStatus = document.getElementById('vitamin-status');
-            if (salad >= 100 || sabjiQty >= 150) {
-                vitaminStatus.textContent = "Optimal (Good Fiber, Vitamins A & C)";
-                vitaminStatus.className = "font-semibold text-emerald-400";
-            } else {
-                vitaminStatus.textContent = "Low Salad/Veg (Add more cucumber/carrots)";
-                vitaminStatus.className = "font-semibold text-amber-400";
-            }
-        }
-
-        function resetDailyLog() {
-            document.getElementById('log-rotis').value = 0;
-            document.getElementById('log-sabji-qty').value = 0;
-            document.getElementById('log-salad').value = 0;
-            document.getElementById('log-paneer').value = 0;
-            document.getElementById('log-rice').value = 0;
-            document.getElementById('log-drink-qty').value = 0;
-            document.getElementById('log-eggs').value = 0;
-            document.getElementById('log-sprouts').value = 0;
-            document.getElementById('log-snacks').value = 0;
-            calculateIntake();
-        }
-
-        // --- PWA Setup & Manifest Generation ---
-        let deferredPrompt;
-        const manifestData = {
-            name: "Self Tracker Pro",
-            short_name: "SelfTracker",
-            start_url: "./",
-            display: "standalone",
-            background_color: "#030712",
-            theme_color: "#4f46e5",
-            icons: [
-                { src: "https://img.icons8.com/fluency/96/source-code.png", sizes: "96x96", type: "image/png" },
-                { src: "https://img.icons8.com/fluency/512/source-code.png", sizes: "512x512", type: "image/png" }
-            ]
-        };
-        const stringManifest = JSON.stringify(manifestData);
-        const blob = new Blob([stringManifest], { type: 'application/json' });
-        document.getElementById('dynamic-manifest').setAttribute('href', URL.createObjectURL(blob));
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').classList.remove('hidden');
-            document.getElementById('install-btn').classList.add('flex');
-        });
-
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('install-btn').classList.add('hidden');
+            loadState() {
+                try {
+                    const saved = localStorage.getItem('self_tracker_pro_state');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        this.state = { ...this.state, ...parsed };
                     }
-                    deferredPrompt = null;
+                } catch(e) {
+                    console.error("Error loading saved state", e);
+                }
+
+                if (this.state.darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+
+                this.render();
+            }
+
+            saveState() {
+                try {
+                    localStorage.setItem('self_tracker_pro_state', JSON.stringify(this.state));
+                } catch(e) {
+                    console.error("Error saving state", e);
+                }
+            }
+
+            toggleDarkMode() {
+                this.state.darkMode = !this.state.darkMode;
+                if (this.state.darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                this.saveState();
+            }
+
+            switchTab(tabId) {
+                this.state.activeTab = tabId;
+                
+                ['dsa', 'health', 'analytics'].forEach(t => {
+                    const el = document.getElementById(`view-${t}`);
+                    if (el) el.classList.toggle('hidden', t !== tabId);
                 });
-            } else {
-                alert('To install Self Tracker on mobile Chrome: Tap the browser menu (3 dots) at the top right and select "Install app" or "Add to Home screen".');
+
+                ['dsa', 'health', 'analytics'].forEach(t => {
+                    const btn = document.getElementById(`tab-btn-${t}`);
+                    if (btn) {
+                        if (t === tabId) {
+                            btn.className = "px-5 py-2 rounded-lg font-semibold text-sm transition flex items-center space-x-2 bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm";
+                        } else {
+                            btn.className = "px-5 py-2 rounded-lg font-semibold text-sm transition flex items-center space-x-2 text-slate-600 dark:text-slate-300";
+                        }
+                    }
+                });
+
+                ['dsa', 'health', 'analytics'].forEach(t => {
+                    const navBtn = document.getElementById(`nav-btn-${t}`);
+                    if (navBtn) {
+                        if (t === tabId) {
+                            navBtn.className = "flex flex-col items-center py-1 text-brand-600 dark:text-brand-400 transition";
+                        } else {
+                            navBtn.className = "flex flex-col items-center py-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition";
+                        }
+                    }
+                });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                this.render();
+            }
+
+            setDsaFilter(topic) {
+                this.state.dsaFilter = topic;
+                document.querySelectorAll('.dsa-filter-btn').forEach(btn => {
+                    const isMatch = btn.textContent.toLowerCase().includes(topic.toLowerCase()) || (topic === 'all' && btn.textContent.includes('All'));
+                    if (isMatch) {
+                        btn.className = "dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-brand-600 text-white shadow-sm transition";
+                    } else {
+                        btn.className = "dsa-filter-btn px-4 py-3 rounded-2xl text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition";
+                    }
+                });
+                this.renderDsaAccordion();
+            }
+
+            filterDsa() {
+                const input = document.getElementById('dsa-search');
+                this.state.dsaSearchQuery = input ? input.value.toLowerCase() : '';
+                this.renderDsaAccordion();
+            }
+
+            toggleProblem(id) {
+                const idx = this.state.completedProblems.indexOf(id);
+                if (idx > -1) {
+                    this.state.completedProblems.splice(idx, 1);
+                } else {
+                    this.state.completedProblems.push(id);
+                }
+                this.saveState();
+                this.renderDsaStats();
+                this.renderDsaAccordion();
+            }
+
+            toggleTopicCollapse(topic) {
+                this.state.collapsedTopics[topic] = !this.state.collapsedTopics[topic];
+                this.saveState();
+                this.renderDsaAccordion();
+            }
+
+            pickRandomPotd() {
+                const uncompleted = STRIVER_DSA_DATA.filter(item => !this.state.completedProblems.includes(item.id));
+                const pool = uncompleted.length > 0 ? uncompleted : STRIVER_DSA_DATA;
+                const randomItem = pool[Math.floor(Math.random() * pool.length)];
+                
+                const customMsg = document.createElement('div');
+                customMsg.className = 'fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                customMsg.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
+                        <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-dice"></i></div>
+                        <h3 class="font-bold text-lg">Problem of the Day</h3>
+                        <p class="text-sm font-semibold text-brand-600 dark:text-brand-400">${randomItem.title}</p>
+                        <p class="text-xs text-slate-500">${randomItem.topic} - ${randomItem.difficulty}</p>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="window.open('${randomItem.link}', '_blank'); this.closest('.fixed').remove();" class="flex-1 bg-brand-600 text-white font-bold py-2.5 rounded-xl text-sm">Solve Now</button>
+                            <button onclick="this.closest('.fixed').remove();" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-2.5 rounded-xl text-sm">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(customMsg);
+            }
+
+            renderDsaStats() {
+                const total = STRIVER_DSA_DATA.length;
+                const completed = this.state.completedProblems.length;
+                const pct = Math.round((completed / total) * 100) || 0;
+
+                const pctEl = document.getElementById('dsa-pct');
+                const compEl = document.getElementById('dsa-completed-count');
+                const totalEl = document.getElementById('dsa-total-count');
+                const circleEl = document.getElementById('dsa-progress-circle');
+
+                if (pctEl) pctEl.innerText = pct;
+                if (compEl) compEl.innerText = completed;
+                if (totalEl) totalEl.innerText = total;
+                if (circleEl) circleEl.setAttribute('stroke-dasharray', `${pct}, 100`);
+
+                const statPct = document.getElementById('stat-dsa-pct');
+                const statBar = document.getElementById('stat-dsa-bar');
+                if (statPct) statPct.innerText = `${pct}%`;
+                if (statBar) statBar.style.width = `${pct}%`;
+            }
+
+            renderDsaAccordion() {
+                const container = document.getElementById('dsa-accordion-container');
+                if (!container) return;
+
+                const filtered = STRIVER_DSA_DATA.filter(item => {
+                    const matchesTopic = this.state.dsaFilter === 'all' || item.topic === this.state.dsaFilter;
+                    const matchesSearch = item.title.toLowerCase().includes(this.state.dsaSearchQuery) || item.topic.toLowerCase().includes(this.state.dsaSearchQuery);
+                    return matchesTopic && matchesSearch;
+                });
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-slate-400 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl">
+                            <i class="fa-solid fa-face-grimace text-3xl mb-2 opacity-40"></i>
+                            <p>No problems found matching your query.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Group by topic
+                const grouped = {};
+                filtered.forEach(item => {
+                    if (!grouped[item.topic]) grouped[item.topic] = [];
+                    grouped[item.topic].push(item);
+                });
+
+                container.innerHTML = Object.keys(grouped).map(topic => {
+                    const items = grouped[topic];
+                    const completedInTopic = items.filter(i => this.state.completedProblems.includes(i.id)).length;
+                    const isCollapsed = !!this.state.collapsedTopics[topic];
+
+                    return `
+                        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+                            <div onclick="app.toggleTopicCollapse('${topic}')" class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center cursor-pointer select-none">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-sm md:text-base">${topic}</h3>
+                                        <p class="text-xs text-slate-400">${completedInTopic} / ${items.length} completed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300">${Math.round((completedInTopic/items.length)*100)}%</span>
+                                    <i class="fa-solid fa-chevron-down transition-transform duration-300 ${isCollapsed ? '-rotate-90' : ''}"></i>
+                                </div>
+                            </div>
+                            <div class="${isCollapsed ? 'hidden' : 'p-4 space-y-3 border-t border-slate-100 dark:border-slate-800'}">
+                                ${items.map(item => {
+                                    const isCompleted = this.state.completedProblems.includes(item.id);
+                                    const diffColor = item.difficulty === 'Easy' ? 'text-emerald-500 bg-emerald-500/10' : (item.difficulty === 'Medium' ? 'text-amber-500 bg-amber-500/10' : 'text-rose-500 bg-rose-500/10');
+
+                                    return `
+                                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between hover:border-brand-500/50 transition">
+                                            <div class="flex items-center space-x-3 flex-1 min-w-0 pr-3">
+                                                <button onclick="app.toggleProblem(${item.id})" class="w-8 h-8 rounded-xl flex items-center justify-center transition shrink-0 ${isCompleted ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30' : 'border-2 border-slate-300 dark:border-slate-700 hover:border-brand-500'}">
+                                                    ${isCompleted ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                                </button>
+                                                <div class="min-w-0 flex-1">
+                                                    <h4 class="font-semibold text-sm truncate ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${item.title}</h4>
+                                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-medium ${diffColor}">${item.difficulty}</span>
+                                                </div>
+                                            </div>
+                                            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-600 flex items-center justify-center text-slate-400 transition shrink-0 shadow-sm" title="Solve on LeetCode">
+                                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                            </a>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            initFoodDropdowns() {
+                const itemSelect = document.getElementById('food-item-select');
+                if (!itemSelect) return;
+
+                itemSelect.innerHTML = '<option value="" disabled selected>-- Choose Dish / Item --</option>' + 
+                    INDIAN_FOOD_DATABASE.map((item, idx) => `<option value="${idx}">${item.name} (${item.unit})</option>`).join('');
+            }
+
+            onFoodSelectChange() {
+                this.updateFoodPreview();
+            }
+
+            updateFoodPreview() {
+                const itemSelect = document.getElementById('food-item-select');
+                const qtyInput = document.getElementById('food-qty-input');
+                const previewEl = document.getElementById('selected-food-preview');
+
+                if (!itemSelect || !qtyInput || itemSelect.value === "") return;
+
+                const idx = itemSelect.value;
+                const food = INDIAN_FOOD_DATABASE[idx];
+                const qty = parseFloat(qtyInput.value) || 1;
+
+                if (food && previewEl) {
+                    previewEl.classList.remove('hidden');
+                    document.getElementById('preview-name').innerText = `${food.name} (${food.unit})`;
+                    document.getElementById('preview-macros').innerText = `Calories: ${Math.round(food.cal * qty)} kcal | Protein: ${Math.round(food.protein * qty)}g | Carbs: ${Math.round(food.carbs * qty)}g | Fat: ${Math.round(food.fat * qty)}g`;
+                }
+            }
+
+            logMealFromDropdown() {
+                const itemSelect = document.getElementById('food-item-select');
+                const qtyInput = document.getElementById('food-qty-input');
+
+                if (!itemSelect || itemSelect.value === "") return;
+
+                const idx = itemSelect.value;
+                const food = INDIAN_FOOD_DATABASE[idx];
+                const qty = parseFloat(qtyInput.value) || 1;
+
+                if (!food) return;
+
+                this.state.loggedMeals.push({
+                    id: Date.now(),
+                    name: `${food.name} (${qty}x ${food.unit})`,
+                    cal: Math.round(food.cal * qty),
+                    protein: Math.round(food.protein * qty),
+                    carbs: Math.round(food.carbs * qty),
+                    fat: Math.round(food.fat * qty),
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+
+                itemSelect.value = "";
+                qtyInput.value = "1";
+                
+                const previewEl = document.getElementById('selected-food-preview');
+                if (previewEl) previewEl.classList.add('hidden');
+
+                this.saveState();
+                this.renderHealthStats();
+            }
+
+            openLogMealModal() {
+                const modal = document.getElementById('meal-modal');
+                if (modal) modal.classList.remove('hidden');
+            }
+
+            closeLogMealModal() {
+                const modal = document.getElementById('meal-modal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            openBmrModal() {
+                const modal = document.getElementById('bmr-modal');
+                if (modal) modal.classList.remove('hidden');
+            }
+
+            closeBmrModal() {
+                const modal = document.getElementById('bmr-modal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            calculateBmr() {
+                const w = parseFloat(document.getElementById('bmr-weight').value) || 70;
+                const h = parseFloat(document.getElementById('bmr-height').value) || 175;
+                const a = parseInt(document.getElementById('bmr-age').value) || 24;
+                const gender = document.getElementById('bmr-gender').value;
+                const mult = parseFloat(document.getElementById('bmr-activity').value) || 1.55;
+
+                // Mifflin-St Jeor Equation
+                let bmr = (10 * w) + (6.25 * h) - (5 * a);
+                bmr += (gender === 'male' ? 5 : -161);
+
+                const tdee = Math.round(bmr * mult);
+                this.state.targets.cal = tdee;
+                this.state.targets.protein = Math.round(w * 1.8);
+                this.state.targets.carbs = Math.round((tdee * 0.45) / 4);
+                this.state.targets.fat = Math.round((tdee * 0.25) / 9);
+
+                this.closeBmrModal();
+                this.saveState();
+                this.renderHealthStats();
+                
+                const alertBox = document.createElement('div');
+                alertBox.className = 'fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                alertBox.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
+                        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-calculator"></i></div>
+                        <h3 class="font-bold text-lg">Targets Updated!</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Calculated TDEE: <span class="font-bold text-emerald-600">${tdee} kcal</span>/day</p>
+                        <button onclick="this.closest('.fixed').remove();" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-sm">Awesome</button>
+                    </div>
+                `;
+                document.body.appendChild(alertBox);
+            }
+
+            addCustomMeal() {
+                const nameInput = document.getElementById('custom-meal-name');
+                const calInput = document.getElementById('custom-meal-cal');
+                const proteinInput = document.getElementById('custom-meal-protein');
+                const carbsInput = document.getElementById('custom-meal-carbs');
+                const fatInput = document.getElementById('custom-meal-fat');
+
+                const name = nameInput ? nameInput.value.trim() : '';
+                const cal = parseInt(calInput ? calInput.value : 0) || 0;
+                const protein = parseInt(proteinInput ? proteinInput.value : 0) || 0;
+                const carbs = parseInt(carbsInput ? carbsInput.value : 0) || 0;
+                const fat = parseInt(fatInput ? fatInput.value : 0) || 0;
+
+                if (!name) return;
+
+                this.state.loggedMeals.push({
+                    id: Date.now(),
+                    name,
+                    cal,
+                    protein,
+                    carbs,
+                    fat,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+
+                if (nameInput) nameInput.value = '';
+                if (calInput) calInput.value = '';
+                if (proteinInput) proteinInput.value = '';
+                if (carbsInput) carbsInput.value = '';
+                if (fatInput) fatInput.value = '';
+
+                this.closeLogMealModal();
+                this.saveState();
+                this.renderHealthStats();
+            }
+
+            removeMeal(id) {
+                this.state.loggedMeals = this.state.loggedMeals.filter(m => m.id !== id);
+                this.saveState();
+                this.renderHealthStats();
+            }
+
+            clearMeals() {
+                this.state.loggedMeals = [];
+                this.saveState();
+                this.renderHealthStats();
+            }
+
+            renderHealthStats() {
+                let totalCal = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+                this.state.loggedMeals.forEach(m => {
+                    totalCal += m.cal;
+                    totalProtein += m.protein;
+                    totalCarbs += m.carbs;
+                    totalFat += m.fat;
+                });
+
+                const t = this.state.targets;
+
+                document.getElementById('cal-current').innerText = totalCal;
+                document.getElementById('cal-target').innerText = t.cal;
+                document.getElementById('cal-bar').style.width = `${Math.min(100, Math.round((totalCal / t.cal) * 100))}%`;
+
+                document.getElementById('protein-current').innerText = totalProtein;
+                document.getElementById('protein-target').innerText = t.protein;
+                document.getElementById('protein-bar').style.width = `${Math.min(100, Math.round((totalProtein / t.protein) * 100))}%`;
+
+                document.getElementById('carbs-current').innerText = totalCarbs;
+                document.getElementById('carbs-target').innerText = t.carbs;
+                document.getElementById('carbs-bar').style.width = `${Math.min(100, Math.round((totalCarbs / t.carbs) * 100))}%`;
+
+                document.getElementById('fat-current').innerText = totalFat;
+                document.getElementById('fat-target').innerText = t.fat;
+                document.getElementById('fat-bar').style.width = `${Math.min(100, Math.round((totalFat / t.fat) * 100))}%`;
+
+                const statCalPct = document.getElementById('stat-cal-pct');
+                const statCalBar = document.getElementById('stat-cal-bar');
+                const calPct = Math.min(100, Math.round((totalCal / t.cal) * 100));
+                if (statCalPct) statCalPct.innerText = `${calPct}%`;
+                if (statCalBar) statCalBar.style.width = `${calPct}%`;
+
+                const listEl = document.getElementById('logged-meals-list');
+                if (listEl) {
+                    if (this.state.loggedMeals.length === 0) {
+                        listEl.innerHTML = `
+                            <div class="text-center py-12 text-slate-400 text-sm">
+                                <i class="fa-solid fa-utensils text-3xl mb-2 opacity-40"></i>
+                                <p>No food logged today yet. Select items from the dropdown on the left or add custom!</p>
+                            </div>
+                        `;
+                    } else {
+                        listEl.innerHTML = this.state.loggedMeals.map(m => `
+                            <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-4 flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <h4 class="font-semibold text-sm">${m.name}</h4>
+                                        <span class="text-[10px] text-slate-400">(${m.time})</span>
+                                    </div>
+                                    <div class="text-xs text-slate-500 mt-1"><span class="font-bold text-amber-500">${m.cal} kcal</span> | P: ${m.protein}g | C: ${m.carbs}g | F: ${m.fat}g</div>
+                                </div>
+                                <button onclick="app.removeMeal(${m.id})" class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-500 flex items-center justify-center hover:bg-rose-100 transition" title="Delete">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                }
+            }
+
+            generateIcsFile() {
+                const titleInput = document.getElementById('ics-title');
+                const timeInput = document.getElementById('ics-time');
+                const title = titleInput ? titleInput.value : "Striver DSA & Health Check";
+                const timeStr = timeInput ? timeInput.value : "20:00";
+                
+                const [hours, minutes] = timeStr.split(':');
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+
+                const icsContent = [
+                    "BEGIN:VCALENDAR",
+                    "VERSION:2.0",
+                    "PRODID:-//Self Tracker Pro//EN",
+                    "BEGIN:VEVENT",
+                    `UID:${Date.now()}@selftrackerpro.app`,
+                    `DTSTAMP:${year}${month}${day}T120000Z`,
+                    `DTSTART:${year}${month}${day}T${hours}${minutes}00`,
+                    `SUMMARY:${title}`,
+                    "DESCRIPTION:Time to complete your Striver DSA daily revision and log Indian health macros!",
+                    "RRULE:FREQ=DAILY",
+                    "END:VEVENT",
+                    "END:VCALENDAR"
+                ].join("\r\n");
+
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute('download', 'self-tracker-reminder.ics');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            exportJsonData() {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `self-tracker-pro-backup-${new Date().toISOString().slice(0,10)}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            }
+
+            importJsonData(event) {
+                const fileReader = new FileReader();
+                if (event.target.files && event.target.files[0]) {
+                    fileReader.readAsText(event.target.files[0], "UTF-8");
+                    fileReader.onload = (e) => {
+                        try {
+                            const parsed = JSON.parse(e.target.result);
+                            if (parsed && typeof parsed === 'object') {
+                                this.state = { ...this.state, ...parsed };
+                                this.saveState();
+                                this.render();
+                                
+                                const succBox = document.createElement('div');
+                                succBox.className = 'fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                                succBox.innerHTML = `
+                                    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
+                                        <div class="w-12 h-12 bg-indigo-500/10 text-indigo-500 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                                        <h3 class="font-bold text-lg">Import Successful</h3>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300">Your backup data has been successfully restored.</p>
+                                        <button onclick="this.closest('.fixed').remove();" class="w-full bg-brand-600 text-white font-bold py-2.5 rounded-xl text-sm">Great</button>
+                                    </div>
+                                `;
+                                document.body.appendChild(succBox);
+                            }
+                        } catch (err) {
+                            const errBox = document.createElement('div');
+                            errBox.className = 'fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+                            errBox.innerHTML = `
+                                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 w-full max-w-sm shadow-2xl space-y-4 text-center">
+                                    <div class="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                    <h3 class="font-bold text-lg">Invalid File</h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-300">Could not parse JSON backup file.</p>
+                                    <button onclick="this.closest('.fixed').remove();" class="w-full bg-rose-600 text-white font-bold py-2.5 rounded-xl text-sm">OK</button>
+                                </div>
+                            `;
+                            document.body.appendChild(errBox);
+                        }
+                    };
+                }
+            }
+
+            openExportModal() {
+                const modal = document.getElementById('export-modal');
+                if (modal) modal.classList.remove('hidden');
+            }
+
+            closeExportModal() {
+                const modal = document.getElementById('export-modal');
+                if (modal) modal.classList.add('hidden');
+            }
+
+            render() {
+                this.renderDsaStats();
+                this.renderDsaAccordion();
+                this.renderHealthStats();
             }
         }
 
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', (e) => { self.skipWaiting(); });
-                    self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
-                    self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });
-                `;
-                const swBlob = new Blob([swCode], { type: 'text/javascript' });
-                const swUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
-            }
-        }
+        const app = new SelfTrackerApp();
     </script>
 </body>
 </html>
