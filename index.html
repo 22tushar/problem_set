@@ -1,798 +1,907 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Self Study">
-    <title>Self Study - Striver DSA & Daily POTD</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self Tracker - DSA & Health Mastery</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkBg: '#0f172a',
-                        darkCard: '#1e293b',
-                        accent: '#6366f1',
-                        accentHover: '#4f46e5'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    </style>
-    
-    <!-- Dynamic Web App Manifest Link -->
     <link rel="manifest" id="dynamic-manifest">
+    <meta name="theme-color" content="#4f46e5">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-darkBg/80 border-b border-slate-800">
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-accent text-white p-2 rounded-xl shadow-lg shadow-accent/30 flex items-center justify-center font-bold text-lg w-10 h-10">
-                    <i class="fa-solid fa-graduation-cap"></i>
+                <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-chart-line text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Self Study</h1>
-                    <p class="text-xs text-slate-400">Striver DSA & Daily POTD</p>
+                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        Self Tracker <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Pro</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">DSA Mastery & Smart Nutrition Tracker</p>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-3">
-                <button id="pwa-install-btn" onclick="triggerInstallPrompt()" class="hidden bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl text-sm font-medium shadow-md shadow-indigo-500/20 transition-all items-center space-x-2">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
-                    <span>Install App</span>
+
+            <!-- Mode Selector Tabs -->
+            <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button onclick="switchTab('dsa')" id="tab-dsa" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md">
+                    <i class="fa-solid fa-code mr-1.5"></i> DSA Mode
                 </button>
-                <button onclick="openSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-2">
-                    <i class="fa-solid fa-gear text-indigo-400"></i>
-                    <span>Settings & Time</span>
+                <button onclick="switchTab('health')" id="tab-health" class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-heart-pulse mr-1.5"></i> Health Mode
                 </button>
-                <div class="relative">
-                    <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
-                        <i class="fa-solid fa-bell text-lg"></i>
-                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full hidden"></span>
-                    </button>
-                </div>
             </div>
+
+            <!-- PWA Install Button -->
+            <button id="install-btn" onclick="installPWA()" class="hidden items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/20 transition-all">
+                <i class="fa-solid fa-download"></i> Install App
+            </button>
         </div>
     </header>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Problem of the Day & Topic Selection Control Card -->
-        <section class="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
-                <div class="space-y-4 flex-1">
-                    <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-500/30">
-                        <i class="fa-solid fa-bolt text-amber-400"></i>
-                        <span>PROBLEM OF THE DAY (POTD)</span>
-                    </div>
-                    
-                    <!-- Topic Selector Dropdown -->
-                    <div class="space-y-2 max-w-md">
-                        <label for="topic-dropdown" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Select Practice Topic:</label>
-                        <select id="topic-dropdown" onchange="onTopicDropdownChange(this.value)" class="w-full bg-slate-900 border border-indigo-500/40 rounded-2xl px-4 py-3 text-sm text-white font-semibold focus:outline-none focus:border-indigo-400 transition shadow-inner">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-
-                    <div id="potd-container" class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span id="potd-topic-tag" class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">Arrays</span>
-                            <span id="potd-diff" class="text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20">Easy</span>
+        <!-- ==================== DSA MODE ==================== -->
+        <div id="section-dsa" class="space-y-8">
+            
+            <!-- Hero / Problem of the Day Banner -->
+            <div class="bg-gradient-to-r from-indigo-900/50 via-slate-900 to-purple-900/40 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
+                            <i class="fa-solid fa-bolt text-amber-400"></i> Daily Problem of the Day
                         </div>
-                        <h3 id="potd-title" class="text-lg font-bold text-white">Loading Problem of the Day...</h3>
-                        <div class="flex flex-wrap items-center gap-3 pt-2">
-                            <a id="potd-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition flex items-center space-x-2 shadow-lg shadow-indigo-600/30">
-                                <span>Solve on Platform</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white" id="potd-title">Select a topic below to start daily challenge!</h2>
+                        <p class="text-slate-300 text-sm leading-relaxed" id="potd-desc">
+                            Choose your preferred topic from Striver's curated sheets, configure your reminder notification time, and receive daily random questions automatically.
+                        </p>
+                        <div class="flex flex-wrap gap-3 pt-2">
+                            <a id="potd-link" href="#" target="_blank" class="hidden inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-indigo-600/30 transition-all">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Solve Problem
                             </a>
-                            <button onclick="generateNewPOTD()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-4 py-2.5 rounded-xl text-xs transition border border-slate-700 flex items-center space-x-2">
-                                <i class="fa-solid fa-shuffle text-amber-400"></i>
-                                <span>Get Another Random Question</span>
+                            <button onclick="getRandomPotd()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-sm border border-slate-700 transition-all">
+                                <i class="fa-solid fa-rotate"></i> Pick Another Random
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex flex-col justify-center space-y-3 lg:border-l lg:border-slate-800 lg:pl-8">
-                    <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
-                        <div class="flex items-center justify-between text-xs text-slate-400">
-                            <span>Daily Notification Time:</span>
-                            <span id="display-notif-time" class="text-indigo-400 font-bold">09:00 AM</span>
+                    <!-- Notification & Topic Settings Widget -->
+                    <div class="bg-slate-950/80 backdrop-blur-md p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bell text-indigo-400"></i> Notification & Topic Config
+                        </h3>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Select Focus Topic</label>
+                            <select id="topic-selector" onchange="updateSelectedTopic(this.value)" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                                <option value="">-- Choose Topic --</option>
+                            </select>
                         </div>
-                        <button onclick="openSettingsModal()" class="w-full bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 border border-indigo-500/30">
-                            <i class="fa-solid fa-clock"></i>
-                            <span>Configure Notification Time</span>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Notification Reminder Time</label>
+                            <input type="time" id="notif-time" value="09:00" onchange="saveNotificationTime()" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <button onclick="setupMobileNotifications()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl text-xs transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calendar-plus"></i> Download Mobile Calendar (.ics)
                         </button>
                     </div>
+                </div>
+            </div>
 
-                    <button onclick="triggerTestNotificationNow()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>Test Notification Now</span>
+            <!-- Striver Question Sheets Section -->
+            <div class="space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Striver's Complete DSA Tracker
+                        </h3>
+                        <p class="text-slate-400 text-xs">All Striver A2Z & SDE Sheet problems categorized by topic with direct links.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="dsa-search" oninput="filterQuestions(this.value)" placeholder="Search problem..." class="bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 w-60 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Accordions / Topic Cards Container -->
+                <div id="dsa-topics-container" class="space-y-4">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== HEALTH MODE ==================== -->
+        <div id="section-health" class="space-y-8 hidden">
+            
+            <!-- Health Header & Setup Card -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Body Metrics Form -->
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-user-gear text-emerald-400"></i> Body Metrics & Goal
+                        </h3>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Setup</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Weight (kg)</label>
+                            <input type="number" id="user-weight" value="70" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Height (cm)</label>
+                            <input type="number" id="user-height" value="175" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Age (yrs)</label>
+                            <input type="number" id="user-age" value="22" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Activity Level</label>
+                            <select id="user-activity" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                                <option value="1.2">Sedentary (Little/No exercise)</option>
+                                <option value="1.375">Lightly Active (1-3 days/wk)</option>
+                                <option value="1.55" selected>Moderately Active (3-5 days/wk)</option>
+                                <option value="1.725">Very Active (6-7 days/wk)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Nutrition & Fitness Goal</label>
+                        <select id="user-goal" class="w-full bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white font-medium text-emerald-400">
+                            <option value="maintenance">1. Average Minimum Required (Maintenance / Health)</option>
+                            <option value="muscle_gain" selected>2. Build Muscular Body & Gain Weight (Surplus + High Protein)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="saveHealthMetrics()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-emerald-600/20">
+                        Update Targets & Metrics
                     </button>
                 </div>
-            </div>
-        </section>
 
-        <!-- Navigation Tabs for Curriculum vs Study Mode -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
-            <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
-                <button onclick="switchMainTab('sheets')" id="tab-sheets-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow">Curriculum Sheets</button>
-                <button onclick="switchMainTab('practice')" id="tab-practice-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-laptop-code text-amber-400"></i>
-                    <span>Topic Practice Session</span>
-                </button>
-            </div>
-            
-            <div id="search-bar-wrapper" class="relative w-full md:w-80">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="search-input" oninput="filterQuestions()" placeholder="Search questions by title..." class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
-            </div>
-        </div>
+                <!-- Daily Target & Intake Summary Card -->
+                <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bullseye text-emerald-400"></i> Daily Target vs. Consumed Intake
+                            </h3>
+                            <span class="text-xs text-slate-400" id="current-goal-label">Goal: Build Muscular Body & Gain Weight</span>
+                        </div>
 
-        <!-- Sheet View Container -->
-        <div id="sheets-view" class="space-y-6">
-            <div class="flex items-center space-x-3">
-                <button onclick="switchSheet('a2z')" id="tab-a2z" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition">A2Z Sheet</button>
-                <button onclick="switchSheet('sde')" id="tab-sde" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">SDE Sheet</button>
-            </div>
-            <div id="topics-container" class="space-y-6">
-                <!-- Dynamically populated by JS -->
-            </div>
-        </div>
+                        <!-- Macro Progress Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400">Calories</span>
+                                <div class="text-xl font-bold text-white mt-1"><span id="consumed-cal">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-cal">2800</span> kcal</span></div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="bar-cal" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                                </div>
+                            </div>
 
-        <!-- Dedicated Topic Practice View -->
-        <div id="practice-view" class="hidden space-y-8">
-            <div class="bg-darkCard border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-6 max-w-3xl mx-auto text-center">
-                <div class="w-16 h-16 bg-indigo-600/20 border border-indigo-500/30 rounded-3xl flex items-center justify-center text-indigo-400 text-2xl mx-auto">
-                    <i class="fa-solid fa-brain"></i>
-                </div>
-                <div class="space-y-2">
-                    <h3 id="practice-title" class="text-2xl font-bold text-white">Active Practice: Arrays</h3>
-                    <p class="text-xs text-slate-400">Solving questions one by one from your chosen topic. Practice without limits!</p>
-                </div>
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400">Protein</span>
+                                <div class="text-xl font-bold text-indigo-400 mt-1"><span id="consumed-protein">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-protein">140</span>g</span></div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="bar-protein" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
+                                </div>
+                            </div>
 
-                <div id="practice-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span id="practice-q-index" class="text-xs text-slate-400 font-medium">Question 1 of 10</span>
-                        <span id="practice-q-diff" class="text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20">Medium</span>
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400">Carbs</span>
+                                <div class="text-xl font-bold text-amber-400 mt-1"><span id="consumed-carbs">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-carbs">350</span>g</span></div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="bar-carbs" class="bg-amber-500 h-full w-0 transition-all duration-500"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                <span class="text-xs text-slate-400">Fats</span>
+                                <div class="text-xl font-bold text-rose-400 mt-1"><span id="consumed-fats">0</span> <span class="text-xs font-normal text-slate-400">/ <span id="target-fats">80</span>g</span></div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div id="bar-fats" class="bg-rose-500 h-full w-0 transition-all duration-500"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h4 id="practice-q-title" class="text-xl font-bold text-white">Question title goes here</h4>
-                    <div class="flex items-center space-x-3 pt-2">
-                        <a id="practice-q-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl text-xs transition flex items-center space-x-2">
-                            <span>Solve on Platform</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                        </a>
-                        <button onclick="nextPracticeQuestion()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-5 py-2.5 rounded-xl text-xs transition border border-slate-700">
-                            Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
+
+                    <!-- Vitamins & Minerals Indicator -->
+                    <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2 text-slate-300">
+                            <i class="fa-solid fa-leaf text-emerald-400"></i>
+                            <span>Estimated Micronutrients & Vitamins (Salad, Sabji & Fruits):</span>
+                        </div>
+                        <span id="vitamin-status" class="font-semibold text-emerald-400">Optimal (Good Fiber & Vitamin C/A)</span>
                     </div>
                 </div>
+
             </div>
+
+            <!-- Detailed Indian Meal Logger -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-utensils text-emerald-400"></i> Indian Meal & Drink Logger
+                        </h3>
+                        <p class="text-slate-400 text-xs">Log your exact daily food quantities to auto-calculate macros & vitamins.</p>
+                    </div>
+                    <button onclick="resetDailyLog()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-all">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Reset Today's Log
+                    </button>
+                </div>
+
+                <!-- Input Grid for Meals -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <!-- Rotis -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-amber-500 text-[8px]"></i> Rotis / Chapatis (Count)
+                        </label>
+                        <input type="number" id="log-rotis" min="0" value="0" placeholder="e.g. 4" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        <span class="text-[11px] text-slate-500 block">~70 kcal, 2.5g protein per roti</span>
+                    </div>
+
+                    <!-- Sabji -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-emerald-500 text-[8px]"></i> Sabji / Veg (Bowls / Grams)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="log-sabji-type" onchange="calculateIntake()" class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-2 py-2 text-white">
+                                <option value="mixed">Mixed Veg / Aloo</option>
+                                <option value="dal">Dal Tadka</option>
+                                <option value="paneer_sabji">Paneer Curry</option>
+                                <option value="green_veg">Green Leafy Sabji</option>
+                            </select>
+                            <input type="number" id="log-sabji-qty" min="0" value="0" placeholder="Grams" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                        </div>
+                        <span class="text-[11px] text-slate-500 block">Rich in fiber, minerals & carbs/proteins</span>
+                    </div>
+
+                    <!-- Salad -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-lime-500 text-[8px]"></i> Salad (Cucumber, Carrot, Onion in Grams)
+                        </label>
+                        <input type="number" id="log-salad" min="0" value="0" placeholder="e.g. 150" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        <span class="text-[11px] text-slate-500 block">Vitamins A, C, Minerals & Zero fat</span>
+                    </div>
+
+                    <!-- Paneer (Raw/Grilled) -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-indigo-400 text-[8px]"></i> Paneer (Grams)
+                        </label>
+                        <input type="number" id="log-paneer" min="0" value="0" placeholder="e.g. 100" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        <span class="text-[11px] text-slate-500 block">High Protein & Healthy Fats (~18g protein/100g)</span>
+                    </div>
+
+                    <!-- Rice / Pulao -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-amber-300 text-[8px]"></i> Cooked Rice / Pulao (Grams)
+                        </label>
+                        <input type="number" id="log-rice" min="0" value="0" placeholder="e.g. 200" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        <span class="text-[11px] text-slate-500 block">Carb source for energy & muscle mass</span>
+                    </div>
+
+                    <!-- Juice / Beverages -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-orange-400 text-[8px]"></i> Juice / Milk / Shake (ml)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="log-drink-type" onchange="calculateIntake()" class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-2 py-2 text-white">
+                                <option value="milk">Milk (Full Cream)</option>
+                                <option value="juice">Fresh Fruit Juice</option>
+                                <option value="buttermilk">Chhaas / Buttermilk</option>
+                                <option value="protein_shake">Protein Shake</option>
+                            </select>
+                            <input type="number" id="log-drink-qty" min="0" value="0" placeholder="ml" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                        </div>
+                        <span class="text-[11px] text-slate-500 block">Hydration, calcium & vitamins</span>
+                    </div>
+
+                    <!-- Eggs / Chicken / Sprouts -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-rose-400 text-[8px]"></i> Eggs (Count) or Sprouts (Grams)
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="log-eggs" min="0" value="0" placeholder="Eggs" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                            <input type="number" id="log-sprouts" min="0" value="0" placeholder="Sprouts g" oninput="calculateIntake()" class="bg-slate-900 border border-slate-700 text-sm rounded-xl px-2 py-2 text-white">
+                        </div>
+                        <span class="text-[11px] text-slate-500 block">Complete protein & amino acids</span>
+                    </div>
+
+                    <!-- Extra Snacks / Ghee / Dry Fruits -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle text-yellow-400 text-[8px]"></i> Ghee / Dry Fruits / Snacks (Grams)
+                        </label>
+                        <input type="number" id="log-snacks" min="0" value="0" placeholder="e.g. 30" oninput="calculateIntake()" class="w-full bg-slate-900 border border-slate-700 text-sm rounded-xl px-3 py-2 text-white">
+                        <span class="text-[11px] text-slate-500 block">Healthy fats for hormone production</span>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </main>
 
-    <!-- Settings & Time Picker Modal -->
-    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-darkCard border border-slate-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6">
-            <button onclick="closeSettingsModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-indigo-400 text-2xl">
-                    <i class="fa-solid fa-bell"></i>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-white">Notification & Time Settings</h3>
-                    <p class="text-xs text-slate-400">Schedule your daily Problem of the Day push notification</p>
-                </div>
-            </div>
-
-            <div class="space-y-5 text-sm text-slate-300">
-                <!-- Native PWA Install Box -->
-                <div id="native-install-box" class="hidden bg-indigo-600/10 border border-indigo-500/30 p-4 rounded-2xl space-y-2">
-                    <h4 class="font-semibold text-indigo-300 text-xs">One-Click App Installation Ready!</h4>
-                    <p class="text-xs text-slate-300">Add 'Self Study' to your device home screen for standalone mobile access.</p>
-                    <button onclick="triggerInstallPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow text-xs">Install App Now</button>
-                </div>
-
-                <!-- Time Picker -->
-                <div class="space-y-2 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                    <label for="notif-time-input" class="block font-semibold text-indigo-400 text-xs uppercase tracking-wider">Daily Notification Time:</label>
-                    <div class="flex items-center space-x-3 pt-1">
-                        <input type="time" id="notif-time-input" value="09:00" class="bg-slate-800 border border-slate-700 text-white font-bold px-4 py-2.5 rounded-xl text-base focus:outline-none focus:border-indigo-500 transition">
-                        <button onclick="saveNotificationTime()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition shadow">Save Time</button>
-                    </div>
-                    <p class="text-[11px] text-slate-500">Your browser/device will trigger your daily POTD notification at this scheduled time.</p>
-                </div>
-
-                <!-- Push Permission -->
-                <div class="space-y-3">
-                    <h4 class="font-semibold text-white text-xs">Mobile Push Permission</h4>
-                    <button onclick="requestPushPermission()" id="push-perm-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl text-xs transition shadow flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-bell"></i>
-                        <span>Allow Mobile Push Notifications</span>
-                    </button>
-                </div>
-
-                <!-- Mobile Chrome Instructions -->
-                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2">
-                    <h4 class="font-semibold text-indigo-400 text-xs flex items-center space-x-2">
-                        <i class="fa-brands fa-chrome text-sm"></i>
-                        <span>How to Install on Mobile Chrome</span>
-                    </h4>
-                    <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-400 leading-relaxed">
-                        <li>Open this website in Google Chrome on Android/iOS.</li>
-                        <li>Tap the Chrome menu (<i class="fa-solid fa-ellipsis-vertical text-indigo-400"></i>) in top-right.</li>
-                        <li>Tap <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong>.</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div class="pt-2">
-                <button onclick="closeSettingsModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-3 rounded-2xl transition text-xs">Close</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="border-t border-slate-800 py-8 mt-12 bg-darkCard/30 text-center text-xs text-slate-500 space-y-2">
-        <p>Self Study &copy; 2026. Powered by Striver's A2Z & SDE DSA Sheets.</p>
-        <p>Your self-study companion for algorithmic excellence.</p>
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>Self Tracker Pro &bull; Built for Striver DSA Mastery & Clean Nutrition</p>
     </footer>
 
+    <!-- JavaScript Application Logic -->
     <script>
-        let deferredPrompt = null;
+        // --- Striver DSA Complete Question Bank ---
+        const striverDSAData = [
+            {
+                topic: "Arrays",
+                questions: [
+                    { title: "Set Matrix Zeroes", link: "https://leetcode.com/problems/set-matrix-zeroes/", difficulty: "Medium" },
+                    { title: "Pascal's Triangle", link: "https://leetcode.com/problems/pascals-triangle/", difficulty: "Easy" },
+                    { title: "Next Permutation", link: "https://leetcode.com/problems/next-permutation/", difficulty: "Medium" },
+                    { title: "Kadane's Algorithm (Max Subarray Sum)", link: "https://leetcode.com/problems/maximum-subarray/", difficulty: "Medium" },
+                    { title: "Sort Colors (0s, 1s and 2s)", link: "https://leetcode.com/problems/sort-colors/", difficulty: "Medium" },
+                    { title: "Stock Buy and Sell", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", difficulty: "Easy" },
+                    { title: "Rotate Image by 90 degree", link: "https://leetcode.com/problems/rotate-image/", difficulty: "Medium" },
+                    { title: "Merge Overlapping Subintervals", link: "https://leetcode.com/problems/merge-intervals/", difficulty: "Medium" },
+                    { title: "Merge Sorted Array without extra space", link: "https://leetcode.com/problems/merge-sorted-array/", difficulty: "Easy" },
+                    { title: "Find the Duplicate Number", link: "https://leetcode.com/problems/find-the-duplicate-number/", difficulty: "Medium" },
+                    { title: "Repeat and Missing Number Array", link: "https://www.interviewbit.com/problems/repeat-and-missing-number-array/", difficulty: "Medium" },
+                    { title: "Count Inversions", link: "https://www.codingninjas.com/studio/problems/count-inversions_615", difficulty: "Hard" },
+                    { title: "Reverse Pairs", link: "https://leetcode.com/problems/reverse-pairs/", difficulty: "Hard" },
+                    { title: "Maximum Product Subarray", link: "https://leetcode.com/problems/maximum-product-subarray/", difficulty: "Medium" },
+                    { title: "Longest Consecutive Sequence", link: "https://leetcode.com/problems/longest-consecutive-sequence/", difficulty: "Medium" },
+                    { title: "Two Sum", link: "https://leetcode.com/problems/two-sum/", difficulty: "Easy" },
+                    { title: "Subarray Sum Equals K", link: "https://leetcode.com/problems/subarray-sum-equals-k/", difficulty: "Medium" }
+                ]
+            },
+            {
+                topic: "Strings",
+                questions: [
+                    { title: "Reverse Words in a String", link: "https://leetcode.com/problems/reverse-words-in-a-string/", difficulty: "Medium" },
+                    { title: "Longest Palindromic Substring", link: "https://leetcode.com/problems/longest-palindromic-substring/", difficulty: "Medium" },
+                    { title: "Roman to Integer", link: "https://leetcode.com/problems/roman-to-integer/", difficulty: "Easy" },
+                    { title: "Longest Common Prefix", link: "https://leetcode.com/problems/longest-common-prefix/", difficulty: "Easy" },
+                    { title: "String to Integer (atoi)", link: "https://leetcode.com/problems/string-to-integer-atoi/", difficulty: "Medium" },
+                    { title: "Longest Substring Without Repeating Characters", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", difficulty: "Medium" },
+                    { title: "Rabin Karp / KMP Algorithm (Implement strStr)", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/", difficulty: "Medium" },
+                    { title: "Valid Anagram", link: "https://leetcode.com/problems/valid-anagram/", difficulty: "Easy" },
+                    { title: "Count and Say", link: "https://leetcode.com/problems/count-and-say/", difficulty: "Medium" },
+                    { title: "Compare Version Numbers", link: "https://leetcode.com/problems/compare-version-numbers/", difficulty: "Medium" }
+                ]
+            },
+            {
+                topic: "Linked List",
+                questions: [
+                    { title: "Reverse a Linked List", link: "https://leetcode.com/problems/reverse-linked-list/", difficulty: "Easy" },
+                    { title: "Middle of the Linked List", link: "https://leetcode.com/problems/middle-of-the-linked-list/", difficulty: "Easy" },
+                    { title: "Merge Two Sorted Lists", link: "https://leetcode.com/problems/merge-two-sorted-lists/", difficulty: "Easy" },
+                    { title: "Remove N-th node from the end of Linked List", link: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", difficulty: "Medium" },
+                    { title: "Add Two Numbers as Linked List", link: "https://leetcode.com/problems/add-two-numbers/", difficulty: "Medium" },
+                    { title: "Delete Node in a Linked List", link: "https://leetcode.com/problems/delete-node-in-a-linked-list/", difficulty: "Easy" },
+                    { title: "Intersection of Two Linked Lists", link: "https://leetcode.com/problems/intersection-of-two-linked-lists/", difficulty: "Easy" },
+                    { title: "Detect a Cycle in Linked List", link: "https://leetcode.com/problems/linked-list-cycle/", difficulty: "Easy" },
+                    { title: "Reverse Nodes in k-Group", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/", difficulty: "Hard" },
+                    { title: "Palindrome Linked List", link: "https://leetcode.com/problems/palindrome-linked-list/", difficulty: "Easy" },
+                    { title: "Find the starting point of the Loop", link: "https://leetcode.com/problems/linked-list-cycle-ii/", difficulty: "Medium" },
+                    { title: "Flattening a Linked List", link: "https://www.codingninjas.com/studio/problems/flatten-a-linked-list_1112655", difficulty: "Medium" },
+                    { title: "Rotate a Linked List", link: "https://leetcode.com/problems/rotate-list/", difficulty: "Medium" },
+                    { title: "Copy List with Random Pointer", link: "https://leetcode.com/problems/copy-list-with-random-pointer/", difficulty: "Medium" }
+                ]
+            },
+            {
+                topic: "Trees",
+                questions: [
+                    { title: "Binary Tree Inorder Traversal", link: "https://leetcode.com/problems/binary-tree-inorder-traversal/", difficulty: "Easy" },
+                    { title: "Binary Tree Preorder Traversal", link: "https://leetcode.com/problems/binary-tree-preorder-traversal/", difficulty: "Easy" },
+                    { title: "Binary Tree Postorder Traversal", link: "https://leetcode.com/problems/binary-tree-postorder-traversal/", difficulty: "Easy" },
+                    { title: "Maximum Depth of Binary Tree", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/", difficulty: "Easy" },
+                    { title: "Balanced Binary Tree", link: "https://leetcode.com/problems/balanced-binary-tree/", difficulty: "Easy" },
+                    { title: "Diameter of Binary Tree", link: "https://leetcode.com/problems/diameter-of-binary-tree/", difficulty: "Easy" },
+                    { title: "Binary Tree Maximum Path Sum", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/", difficulty: "Hard" },
+                    { title: "Same Tree", link: "https://leetcode.com/problems/same-tree/", difficulty: "Easy" },
+                    { title: "Binary Tree Zigzag Level Order Traversal", link: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/", difficulty: "Medium" },
+                    { title: "Boundary Traversal of Binary Tree", link: "https://www.codingninjas.com/studio/problems/boundary-traversal_790725", difficulty: "Medium" },
+                    { title: "Vertical Order Traversal of Binary Tree", link: "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/", difficulty: "Hard" },
+                    { title: "Top View of Binary Tree", link: "https://www.codingninjas.com/studio/problems/top-view-of-binary-tree_799401", difficulty: "Medium" },
+                    { title: "Bottom View of Binary Tree", link: "https://www.codingninjas.com/studio/problems/bottom-view-of-binary-tree_893550", difficulty: "Medium" },
+                    { title: "Symmetric Tree", link: "https://leetcode.com/problems/symmetric-tree/", difficulty: "Easy" },
+                    { title: "Lowest Common Ancestor of a Binary Search Tree", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/", difficulty: "Medium" },
+                    { title: "Validate Binary Search Tree", link: "https://leetcode.com/problems/validate-binary-search-tree/", difficulty: "Medium" }
+                ]
+            },
+            {
+                topic: "Graphs",
+                questions: [
+                    { title: "Breadth First Search (BFS)", link: "https://www.codingninjas.com/studio/problems/bfs-in-graph_973002", difficulty: "Easy" },
+                    { title: "Depth First Search (DFS)", link: "https://www.codingninjas.com/studio/problems/dfs-traversal_630469", difficulty: "Easy" },
+                    { title: "Detect Cycle in Undirected Graph (BFS/DFS)", link: "https://www.codingninjas.com/studio/problems/cycle-detection-in-undirected-graph_1062670", difficulty: "Medium" },
+                    { title: "Detect Cycle in Directed Graph (DFS)", link: "https://www.codingninjas.com/studio/problems/detect-cycle-in-a-directed-graph_920545", difficulty: "Medium" },
+                    { title: "Topological Sort (DFS)", link: "https://www.codingninjas.com/studio/problems/topological-sort_982938", difficulty: "Medium" },
+                    { title: "Number of Provinces", link: "https://leetcode.com/problems/number-of-provinces/", difficulty: "Medium" },
+                    { title: "Rotting Oranges", link: "https://leetcode.com/problems/rotting-oranges/", difficulty: "Medium" },
+                    { title: "01 Matrix (Distance of nearest cell having 1)", link: "https://leetcode.com/problems/01-matrix/", difficulty: "Medium" },
+                    { title: "Surrounded Regions", link: "https://leetcode.com/problems/surrounded-regions/", difficulty: "Medium" },
+                    { title: "Word Ladder", link: "https://leetcode.com/problems/word-ladder/", difficulty: "Hard" },
+                    { title: "Dijkstra's Algorithm (Priority Queue)", link: "https://www.codingninjas.com/studio/problems/dijkstra-s-shortest-path_920469", difficulty: "Medium" },
+                    { title: "Bellman Ford Algorithm", link: "https://www.codingninjas.com/studio/problems/bellman-ford_2041118", difficulty: "Medium" },
+                    { title: "Floyd Warshall Algorithm", link: "https://www.codingninjas.com/studio/problems/floyd-warshall_2041979", difficulty: "Medium" },
+                    { title: "Minimum Spanning Tree (Prim's Algorithm)", link: "https://www.codingninjas.com/studio/problems/prim-s-mst_1095633", difficulty: "Medium" },
+                    { title: "Kruskal's Algorithm", link: "https://www.codingninjas.com/studio/problems/kruskal-s-minimum-spanning-tree_1082553", difficulty: "Medium" },
+                    { title: "Kosaraju's Algorithm (Strongly Connected Components)", link: "https://www.codingninjas.com/studio/problems/count-strongly-connected-components-kosaraju-s-algorithm_1171151", difficulty: "Hard" }
+                ]
+            },
+            {
+                topic: "Dynamic Programming",
+                questions: [
+                    { title: "Climbing Stairs", link: "https://leetcode.com/problems/climbing-stairs/", difficulty: "Easy" },
+                    { title: "Frog Jump (DP-3)", link: "https://www.codingninjas.com/studio/problems/frog-jump_3621012", difficulty: "Medium" },
+                    { title: "Maximum Sum of Non-Adjacent Elements", link: "https://www.codingninjas.com/studio/problems/maximum-sum-of-non-adjacent-elements_843261", difficulty: "Medium" },
+                    { title: "House Robber II", link: "https://leetcode.com/problems/house-robber-ii/", difficulty: "Medium" },
+                    { title: "Ninja's Training", link: "https://www.codingninjas.com/studio/problems/ninja-s-training_3621003", difficulty: "Medium" },
+                    { title: "Grid Unique Paths", link: "https://leetcode.com/problems/unique-paths/", difficulty: "Medium" },
+                    { title: "Minimum Path Sum in Grid", link: "https://leetcode.com/problems/minimum-path-sum/", difficulty: "Medium" },
+                    { title: "Triangle Path Sum", link: "https://leetcode.com/problems/triangle/", difficulty: "Medium" },
+                    { title: "Minimum Falling Path Sum", link: "https://leetcode.com/problems/minimum-falling-path-sum/", difficulty: "Medium" },
+                    { title: "Subset Sum Equal to K", link: "https://www.codingninjas.com/studio/problems/subset-sum-equal-to-k_1550954", difficulty: "Medium" },
+                    { title: "Coin Change", link: "https://leetcode.com/problems/coin-change/", difficulty: "Medium" },
+                    { title: "Longest Common Subsequence", link: "https://leetcode.com/problems/longest-common-subsequence/", difficulty: "Medium" },
+                    { title: "Longest Increasing Subsequence", link: "https://leetcode.com/problems/longest-increasing-subsequence/", difficulty: "Medium" },
+                    { title: "Edit Distance", link: "https://leetcode.com/problems/edit-distance/", difficulty: "Medium" },
+                    { title: "Matrix Chain Multiplication", link: "https://www.codingninjas.com/studio/problems/matrix-chain-multiplication_975344", difficulty: "Hard" }
+                ]
+            },
+            {
+                topic: "Binary Search",
+                questions: [
+                    { title: "Binary Search to find X in sorted array", link: "https://leetcode.com/problems/binary-search/", difficulty: "Easy" },
+                    { title: "Lower Bound and Upper Bound", link: "https://www.codingninjas.com/studio/problems/lower-bound_8165382", difficulty: "Easy" },
+                    { title: "Search Insert Position", link: "https://leetcode.com/problems/search-insert-position/", difficulty: "Easy" },
+                    { title: "Find First and Last Position of Element in Sorted Array", link: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/", difficulty: "Medium" },
+                    { title: "Search in Rotated Sorted Array I & II", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/", difficulty: "Medium" },
+                    { title: "Find Minimum in Rotated Sorted Array", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/", difficulty: "Medium" },
+                    { title: "Single Element in a Sorted Array", link: "https://leetcode.com/problems/single-element-in-a-sorted-array/", difficulty: "Medium" },
+                    { title: "Peak Element", link: "https://leetcode.com/problems/find-peak-element/", difficulty: "Medium" },
+                    { title: "Square Root of a number using Binary Search", link: "https://www.codingninjas.com/studio/problems/square-root_893351", difficulty: "Easy" },
+                    { title: "Koko Eating Bananas", link: "https://leetcode.com/problems/koko-eating-bananas/", difficulty: "Medium" },
+                    { title: "Book Allocation Problem", link: "https://www.codingninjas.com/studio/problems/allocate-books_1090540", difficulty: "Hard" },
+                    { title: "Median of Two Sorted Arrays", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/", difficulty: "Hard" }
+                ]
+            }
+        ];
 
-        // Dynamic Manifest Data URI generation for PWA compliance
+        // --- App State & Initialization ---
+        let selectedTopic = localStorage.getItem('self_tracker_topic') || '';
+        let notifTime = localStorage.getItem('self_tracker_time') || '09:00';
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            initDSAUI();
+            initHealthUI();
+            document.getElementById('notif-time').value = notifTime;
+            if (selectedTopic) {
+                document.getElementById('topic-selector').value = selectedTopic;
+                getRandomPotd();
+            }
+            registerServiceWorker();
+        });
+
+        function switchTab(tab) {
+            const dsaSec = document.getElementById('section-dsa');
+            const healthSec = document.getElementById('section-health');
+            const dsaTab = document.getElementById('tab-dsa');
+            const healthTab = document.getElementById('tab-health');
+
+            if (tab === 'dsa') {
+                dsaSec.classList.remove('hidden');
+                healthSec.classList.add('hidden');
+                dsaTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-md";
+                healthTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white";
+            } else {
+                dsaSec.classList.add('hidden');
+                healthSec.classList.remove('hidden');
+                healthTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all bg-emerald-600 text-white shadow-md";
+                dsaTab.className = "px-4 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white";
+                calculateIntake();
+            }
+        }
+
+        // --- DSA UI Builder ---
+        function initDSAUI() {
+            const selector = document.getElementById('topic-selector');
+            const container = document.getElementById('dsa-topics-container');
+            
+            selector.innerHTML = '<option value="">-- Choose Topic --</option>';
+            container.innerHTML = '';
+
+            striverDSAData.forEach(group => {
+                // Populate dropdown
+                const opt = document.createElement('option');
+                opt.value = group.topic;
+                opt.textContent = `${group.topic} (${group.questions.length} problems)`;
+                selector.appendChild(opt);
+
+                // Build accordion card
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md';
+                card.innerHTML = `
+                    <button onclick="toggleAccordion(this)" class="w-full px-6 py-4 flex items-center justify-between bg-slate-900 hover:bg-slate-850 transition-all text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <span class="font-bold text-white text-base">${group.topic}</span>
+                            <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full">${group.questions.length} problems</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden border-t border-slate-800 p-4 bg-slate-950/40 space-y-2">
+                        ${group.questions.map(q => `
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700 transition-all">
+                                <span class="text-sm font-medium text-slate-200">${q.title}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${                                         q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :                                         q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :                                         'bg-rose-500/10 text-rose-400 border border-rose-500/20'                                     }">${q.difficulty}</span>
+                                    <a href="${q.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg text-xs transition-all shadow-sm">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('.fa-chevron-down');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function filterQuestions(keyword) {
+            keyword = keyword.toLowerCase();
+            const container = document.getElementById('dsa-topics-container');
+            container.innerHTML = '';
+
+            striverDSAData.forEach(group => {
+                const filtered = group.questions.filter(q => q.title.toLowerCase().includes(keyword));
+                if (filtered.length === 0 && keyword !== '') return;
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-md';
+                card.innerHTML = `
+                    <div class="px-6 py-4 flex items-center justify-between bg-slate-900">
+                        <span class="font-bold text-white text-base">${group.topic}</span>
+                        <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-0.5 rounded-full">${filtered.length} matches</span>
+                    </div>
+                    <div class="border-t border-slate-800 p-4 bg-slate-950/40 space-y-2">
+                        ${(keyword === '' ? group.questions : filtered).map(q => `
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                                <span class="text-sm font-medium text-slate-200">${q.title}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full ${q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400' : q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400' : 'bg-rose-500/10 text-rose-400'}">${q.difficulty}</span>
+                                    <a href="${q.link}" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg text-xs">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateSelectedTopic(topic) {
+            selectedTopic = topic;
+            localStorage.setItem('self_tracker_topic', topic);
+            getRandomPotd();
+        }
+
+        function saveNotificationTime() {
+            notifTime = document.getElementById('notif-time').value;
+            localStorage.setItem('self_tracker_time', notifTime);
+        }
+
+        function getRandomPotd() {
+            let pool = [];
+            if (selectedTopic) {
+                const found = striverDSAData.find(g => g.topic === selectedTopic);
+                if (found) pool = found.questions;
+            }
+            if (pool.length === 0) {
+                striverDSAData.forEach(g => pool.push(...g.questions));
+            }
+
+            const randQ = pool[Math.floor(Math.random() * pool.length)];
+            document.getElementById('potd-title').textContent = randQ.title;
+            document.getElementById('potd-desc').textContent = `Selected Topic: ${selectedTopic || 'All Topics'} • Difficulty: ${randQ.difficulty}`;
+            const linkBtn = document.getElementById('potd-link');
+            linkBtn.href = randQ.link;
+            linkBtn.classList.remove('hidden');
+        }
+
+        // --- Mobile Notifications & .ics Calendar Download ---
+        function setupMobileNotifications() {
+            if (!selectedTopic) {
+                alert('Please select a focus topic from the dropdown first!');
+                return;
+            }
+
+            const [hours, minutes] = notifTime.split(':');
+            
+            // Create .ics file content for calendar reminder
+            const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Self Tracker//DSA Daily Reminder//EN
+BEGIN:VEVENT
+SUMMARY:Self Tracker DSA: Practice ${selectedTopic} Problem
+DESCRIPTION:Your daily Striver DSA challenge is ready in Self Tracker! Topic: ${selectedTopic}
+RRULE:FREQ=DAILY;BYHOUR=${hours};BYMINUTE=${minutes};BYSECOND=0
+BEGIN:VALARM
+TRIGGER:-PT0M
+ACTION:DISPLAY
+DESCRIPTION:Reminder: Self Tracker DSA Challenge
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SelfTracker_${selectedTopic}_Reminder.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert(`Calendar reminder (.ics) downloaded for ${selectedTopic} at ${notifTime} daily! Open this file on your mobile to import into Google or Apple Calendar for guaranteed push notifications.`);
+        }
+
+        // --- Health Mode & Nutrition Calculations ---
+        function initHealthUI() {
+            const savedWeight = localStorage.getItem('st_weight') || '70';
+            const savedHeight = localStorage.getItem('st_height') || '175';
+            const savedAge = localStorage.getItem('st_age') || '22';
+            const savedActivity = localStorage.getItem('st_activity') || '1.55';
+            const savedGoal = localStorage.getItem('st_goal') || 'muscle_gain';
+
+            document.getElementById('user-weight').value = savedWeight;
+            document.getElementById('user-height').value = savedHeight;
+            document.getElementById('user-age').value = savedAge;
+            document.getElementById('user-activity').value = savedActivity;
+            document.getElementById('user-goal').value = savedGoal;
+
+            calculateIntake();
+        }
+
+        function saveHealthMetrics() {
+            localStorage.setItem('st_weight', document.getElementById('user-weight').value);
+            localStorage.setItem('st_height', document.getElementById('user-height').value);
+            localStorage.setItem('st_age', document.getElementById('user-age').value);
+            localStorage.setItem('st_activity', document.getElementById('user-activity').value);
+            localStorage.setItem('st_goal', document.getElementById('user-goal').value);
+
+            calculateIntake();
+            alert('Health targets updated successfully!');
+        }
+
+        function calculateIntake() {
+            const weight = parseFloat(document.getElementById('user-weight').value) || 70;
+            const height = parseFloat(document.getElementById('user-height').value) || 175;
+            const age = parseFloat(document.getElementById('user-age').value) || 22;
+            const activity = parseFloat(document.getElementById('user-activity').value) || 1.55;
+            const goal = document.getElementById('user-goal').value;
+
+            // BMR Calculation (Mifflin-St Jeor equation for men)
+            const bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            let maintenanceCals = Math.round(bmr * activity);
+
+            let targetCals = maintenanceCals;
+            let targetProtein = Math.round(weight * 1.2); // min
+            let targetCarbs = 300;
+            let targetFats = 70;
+
+            if (goal === 'maintenance') {
+                targetCals = maintenanceCals;
+                targetProtein = Math.round(weight * 1.2);
+                targetCarbs = Math.round((targetCals * 0.5) / 4);
+                targetFats = Math.round((targetCals * 0.25) / 9);
+                document.getElementById('current-goal-label').textContent = 'Goal: Average Minimum Required (Maintenance)';
+            } else {
+                // Build Muscular Body & Gain Weight (Surplus + High Protein)
+                targetCals = maintenanceCals + 400; // 400 kcal surplus
+                targetProtein = Math.round(weight * 1.8); // 1.8g - 2g per kg for hypertrophy
+                targetCarbs = Math.round((targetCals * 0.50) / 4);
+                targetFats = Math.round((targetCals * 0.25) / 9);
+                document.getElementById('current-goal-label').textContent = 'Goal: Build Muscular Body & Gain Weight (Surplus)';
+            }
+
+            document.getElementById('target-cal').textContent = targetCals;
+            document.getElementById('target-protein').textContent = targetProtein;
+            document.getElementById('target-carbs').textContent = targetCarbs;
+            document.getElementById('target-fats').textContent = targetFats;
+
+            // Gather inputs from Indian Meal Logger
+            const rotis = parseFloat(document.getElementById('log-rotis').value) || 0;
+            const sabjiType = document.getElementById('log-sabji-type').value;
+            const sabjiQty = parseFloat(document.getElementById('log-sabji-qty').value) || 0; // grams
+            const salad = parseFloat(document.getElementById('log-salad').value) || 0; // grams
+            const paneer = parseFloat(document.getElementById('log-paneer').value) || 0; // grams
+            const rice = parseFloat(document.getElementById('log-rice').value) || 0; // grams
+            const drinkType = document.getElementById('log-drink-type').value;
+            const drinkQty = parseFloat(document.getElementById('log-drink-qty').value) || 0; // ml
+            const eggs = parseFloat(document.getElementById('log-eggs').value) || 0;
+            const sprouts = parseFloat(document.getElementById('log-sprouts').value) || 0; // grams
+            const snacks = parseFloat(document.getElementById('log-snacks').value) || 0; // grams
+
+            // Nutrition estimations per unit/gram
+            // Roti: ~70 kcal, 2.5g protein, 14g carb, 0.4g fat
+            let cals = rotis * 70;
+            let prot = rotis * 2.5;
+            let carb = rotis * 14;
+            let fat = rotis * 0.4;
+
+            // Sabji (per 100g)
+            let sabjiCalsPer100 = sabjiType === 'paneer_sabji' ? 160 : sabjiType === 'dal' ? 110 : 90;
+            let sabjiProtPer100 = sabjiType === 'paneer_sabji' ? 7 : sabjiType === 'dal' ? 6 : 3;
+            let sabjiCarbPer100 = 12;
+            let sabjiFatPer100 = sabjiType === 'paneer_sabji' ? 10 : 4;
+
+            cals += (sabjiQty / 100) * sabjiCalsPer100;
+            prot += (sabjiQty / 100) * sabjiProtPer100;
+            carb += (sabjiQty / 100) * sabjiCarbPer100;
+            fat += (sabjiQty / 100) * sabjiFatPer100;
+
+            // Salad (per 100g: 20 kcal, 1g protein, 4g carb, 0.2g fat)
+            cals += (salad / 100) * 20;
+            prot += (salad / 100) * 1;
+            carb += (salad / 100) * 4;
+            fat += (salad / 100) * 0.2;
+
+            // Paneer (per 100g: 265 kcal, 18g protein, 1.2g carb, 20g fat)
+            cals += (paneer / 100) * 265;
+            prot += (paneer / 100) * 18;
+            carb += (paneer / 100) * 1.2;
+            fat += (paneer / 100) * 20;
+
+            // Cooked Rice (per 100g: 130 kcal, 2.7g protein, 28g carb, 0.3g fat)
+            cals += (rice / 100) * 130;
+            prot += (rice / 100) * 2.7;
+            carb += (rice / 100) * 28;
+            fat += (rice / 100) * 0.3;
+
+            // Drink (per 100ml)
+            let drinkCalsPer100 = drinkType === 'milk' ? 65 : drinkType === 'protein_shake' ? 120 : drinkType === 'juice' ? 50 : 40;
+            let drinkProtPer100 = drinkType === 'protein_shake' ? 24 : drinkType === 'milk' ? 3.2 : drinkType === 'buttermilk' ? 2 : 0.5;
+            cals += (drinkQty / 100) * drinkCalsPer100;
+            prot += (drinkQty / 100) * drinkProtPer100;
+            carb += (drinkQty / 100) * 8;
+            fat += (drinkQty / 100) * 2;
+
+            // Eggs (1 egg: 70 kcal, 6g protein, 0.4g carb, 5g fat) & Sprouts (per 100g: 95 kcal, 9g protein, 18g carb, 0.5g fat)
+            cals += (eggs * 70) + ((sprouts / 100) * 95);
+            prot += (eggs * 6) + ((sprouts / 100) * 9);
+            carb += (eggs * 0.4) + ((sprouts / 100) * 18);
+            fat += (eggs * 5) + ((sprouts / 100) * 0.5);
+
+            // Snacks / Ghee (per 100g: 500 kcal, 2g protein, 20g carb, 45g fat)
+            cals += (snacks / 100) * 500;
+            prot += (snacks / 100) * 2;
+            carb += (snacks / 100) * 20;
+            fat += (snacks / 100) * 45;
+
+            // Update UI consumed numbers
+            document.getElementById('consumed-cal').textContent = Math.round(cals);
+            document.getElementById('consumed-protein').textContent = Math.round(prot);
+            document.getElementById('consumed-carbs').textContent = Math.round(carb);
+            document.getElementById('consumed-fats').textContent = Math.round(fat);
+
+            // Update Progress bars
+            document.getElementById('bar-cal').style.width = Math.min(100, (cals / targetCals) * 100) + '%';
+            document.getElementById('bar-protein').style.width = Math.min(100, (prot / targetProtein) * 100) + '%';
+            document.getElementById('bar-carbs').style.width = Math.min(100, (carb / targetCarbs) * 100) + '%';
+            document.getElementById('bar-fats').style.width = Math.min(100, (fat / targetFats) * 100) + '%';
+
+            // Vitamins status feedback
+            const vitaminStatus = document.getElementById('vitamin-status');
+            if (salad >= 100 || sabjiQty >= 150) {
+                vitaminStatus.textContent = "Optimal (Good Fiber, Vitamins A & C)";
+                vitaminStatus.className = "font-semibold text-emerald-400";
+            } else {
+                vitaminStatus.textContent = "Low Salad/Veg (Add more cucumber/carrots)";
+                vitaminStatus.className = "font-semibold text-amber-400";
+            }
+        }
+
+        function resetDailyLog() {
+            document.getElementById('log-rotis').value = 0;
+            document.getElementById('log-sabji-qty').value = 0;
+            document.getElementById('log-salad').value = 0;
+            document.getElementById('log-paneer').value = 0;
+            document.getElementById('log-rice').value = 0;
+            document.getElementById('log-drink-qty').value = 0;
+            document.getElementById('log-eggs').value = 0;
+            document.getElementById('log-sprouts').value = 0;
+            document.getElementById('log-snacks').value = 0;
+            calculateIntake();
+        }
+
+        // --- PWA Setup & Manifest Generation ---
+        let deferredPrompt;
         const manifestData = {
-            "name": "Self Study - Striver DSA",
-            "short_name": "Self Study",
-            "start_url": window.location.href.split('#')[0],
-            "display": "standalone",
-            "background_color": "#0f172a",
-            "theme_color": "#6366f1",
-            "orientation": "portrait-primary",
-            "icons": [
-                {
-                    "src": "https://placehold.co/192x192/6366f1/ffffff?text=Study",
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": "https://placehold.co/512x512/6366f1/ffffff?text=Study",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }
+            name: "Self Tracker Pro",
+            short_name: "SelfTracker",
+            start_url: "./",
+            display: "standalone",
+            background_color: "#030712",
+            theme_color: "#4f46e5",
+            icons: [
+                { src: "https://img.icons8.com/fluency/96/source-code.png", sizes: "96x96", type: "image/png" },
+                { src: "https://img.icons8.com/fluency/512/source-code.png", sizes: "512x512", type: "image/png" }
             ]
         };
         const stringManifest = JSON.stringify(manifestData);
-        const blob = new Blob([stringManifest], {type: 'application/manifest+json'});
+        const blob = new Blob([stringManifest], { type: 'application/json' });
         document.getElementById('dynamic-manifest').setAttribute('href', URL.createObjectURL(blob));
-
-        // Register Service Worker for PWA support
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                const CACHE_NAME = 'self-study-cache-v1';
-                self.addEventListener('install', (event) => {
-                    self.skipWaiting();
-                });
-                self.addEventListener('activate', (event) => {
-                    event.waitUntil(clients.claim());
-                });
-                self.addEventListener('fetch', (event) => {
-                    event.respondWith(
-                        fetch(event.request).catch(() => caches.match(event.request))
-                    );
-                });
-            `;
-            const swBlob = new Blob([swCode], {type: 'text/javascript'});
-            const swUrl = URL.createObjectURL(swBlob);
-            
-            navigator.serviceWorker.register(swUrl)
-                .then(reg => console.log('Service Worker registered successfully:', reg.scope))
-                .catch(err => console.error('Service Worker registration failed:', err));
-        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            const installBtn = document.getElementById('pwa-install-btn');
-            if (installBtn) installBtn.classList.remove('hidden');
-            const nativeBox = document.getElementById('native-install-box');
-            if (nativeBox) nativeBox.classList.remove('hidden');
+            document.getElementById('install-btn').classList.remove('hidden');
+            document.getElementById('install-btn').classList.add('flex');
         });
 
-        function triggerInstallPrompt() {
+        function installPWA() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
+                        document.getElementById('install-btn').classList.add('hidden');
                     }
                     deferredPrompt = null;
                 });
             } else {
-                openSettingsModal();
+                alert('To install Self Tracker on mobile Chrome: Tap the browser menu (3 dots) at the top right and select "Install app" or "Add to Home screen".');
             }
         }
 
-        // Comprehensive Striver DSA Question Database
-        const sheetsData = {
-            a2z: {
-                title: "Striver's A2Z DSA Sheet",
-                topics: [
-                    {
-                        name: "Arrays (Easy, Medium, Hard)",
-                        questions: [
-                            { title: "Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/largest-element-in-the-array_5026279" },
-                            { title: "Second Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/second-largest-element-in-the-array_873346" },
-                            { title: "Check if Array Is Sorted and Rotated", diff: "Easy", link: "https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/" },
-                            { title: "Remove duplicates from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" },
-                            { title: "Rotate Array by K places", diff: "Medium", link: "https://leetcode.com/problems/rotate-array/" },
-                            { title: "Move Zeros to End", diff: "Easy", link: "https://leetcode.com/problems/move-zeroes/" },
-                            { title: "Two Sum", diff: "Easy", link: "https://leetcode.com/problems/two-sum/" },
-                            { title: "Sort an array of 0s, 1s and 2s", diff: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
-                            { title: "Majority Element (>N/2 times)", diff: "Medium", link: "https://leetcode.com/problems/majority-element/" },
-                            { title: "Maximum Subarray Sum (Kadane's)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
-                            { title: "Stock Buy and Sell", diff: "Easy", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
-                            { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
-                            { title: "Longest Consecutive Sequence", diff: "Medium", link: "https://leetcode.com/problems/longest-consecutive-sequence/" },
-                            { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
-                            { title: "Rotate Image by 90 degree", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
-                            { title: "Spiral Matrix", diff: "Medium", link: "https://leetcode.com/problems/spiral-matrix/" },
-                            { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
-                            { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
-                            { title: "Merge two sorted arrays without extra space", diff: "Hard", link: "https://leetcode.com/problems/merge-sorted-array/" },
-                            { title: "Count Inversions in an Array", diff: "Hard", link: "https://www.naukri.com/code360/problems/number-of-inversions_615.html" }
-                        ]
-                    },
-                    {
-                        name: "Strings (Basic & Advanced)",
-                        questions: [
-                            { title: "Remove outermost parentheses", diff: "Easy", link: "https://leetcode.com/problems/remove-outermost-parentheses/" },
-                            { title: "Reverse words in a given string", diff: "Medium", link: "https://leetcode.com/problems/reverse-words-in-a-string/" },
-                            { title: "Largest Odd Number in String", diff: "Easy", link: "https://leetcode.com/problems/largest-odd-number-in-string/" },
-                            { title: "Longest Common Prefix", diff: "Easy", link: "https://leetcode.com/problems/longest-common-prefix/" },
-                            { title: "Isomorphic String", diff: "Easy", link: "https://leetcode.com/problems/isomorphic-strings/" },
-                            { title: "Check if string is rotated version of another", diff: "Easy", link: "https://leetcode.com/problems/rotate-string/" },
-                            { title: "Valid Anagram", diff: "Easy", link: "https://leetcode.com/problems/valid-anagram/" },
-                            { title: "Sort Characters By Frequency", diff: "Medium", link: "https://leetcode.com/problems/sort-characters-by-frequency/" },
-                            { title: "Maximum Nesting Depth of the Parentheses", diff: "Easy", link: "https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/" },
-                            { title: "Roman to Integer", diff: "Easy", link: "https://leetcode.com/problems/roman-to-integer/" },
-                            { title: "Implement ATOI", diff: "Medium", link: "https://leetcode.com/problems/string-to-integer-atoi/" },
-                            { title: "Count Number of Substrings", diff: "Medium", link: "https://www.naukri.com/code360/problems/count-number-of-substrings_3129224" },
-                            { title: "Longest Palindromic Substring", diff: "Medium", link: "https://leetcode.com/problems/longest-palindromic-substring/" },
-                            { title: "Sum of Beauty of All Substrings", diff: "Medium", link: "https://leetcode.com/problems/sum-of-beauty-of-all-substrings/" },
-                            { title: "KMP Algorithm / Minimum Add to Make Parentheses Valid", diff: "Hard", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" }
-                        ]
-                    },
-                    {
-                        name: "Binary Search (1D, 2D, Search Space)",
-                        questions: [
-                            { title: "Binary Search to find X in sorted array", diff: "Easy", link: "https://leetcode.com/problems/binary-search/" },
-                            { title: "Lower Bound & Upper Bound", diff: "Easy", link: "https://www.naukri.com/code360/problems/lower-bound_8165382" },
-                            { title: "Search Insert Position", diff: "Easy", link: "https://leetcode.com/problems/search-insert-position/" },
-                            { title: "Search in Rotated Sorted Array I & II", diff: "Medium", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
-                            { title: "Find Minimum in Rotated Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
-                            { title: "Single Element in a Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/single-element-in-a-sorted-array/" },
-                            { title: "Koko Eating Bananas", diff: "Medium", link: "https://leetcode.com/problems/koko-eating-bananas/" },
-                            { title: "Aggressive Cows", diff: "Medium", link: "https://www.naukri.com/code360/problems/aggressive-cows_1082559" },
-                            { title: "Book Allocation Problem", diff: "Hard", link: "https://www.naukri.com/code360/problems/allocate-books_1090540" },
-                            { title: "Median of Two Sorted Arrays", diff: "Hard", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/" },
-                            { title: "Search in a 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/search-a-2d-matrix/" }
-                        ]
-                    },
-                    {
-                        name: "Linked List (Single, Double, Medium, Hard)",
-                        questions: [
-                            { title: "Reverse a Singly Linked List", diff: "Easy", link: "https://leetcode.com/problems/reverse-linked-list/" },
-                            { title: "Middle of the Linked List", diff: "Easy", link: "https://leetcode.com/problems/middle-of-the-linked-list/" },
-                            { title: "Detect a loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle/" },
-                            { title: "Find the starting point of Loop", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
-                            { title: "Check if Linked List is palindrome", diff: "Medium", link: "https://leetcode.com/problems/palindrome-linked-list/" },
-                            { title: "Add Two Numbers in Linked List", diff: "Medium", link: "https://leetcode.com/problems/add-two-numbers/" },
-                            { title: "Reverse Nodes in k-Group", diff: "Hard", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/" },
-                            { title: "Flatten a Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/flatten-a-linked-list_1112655" }
-                        ]
-                    },
-                    {
-                        name: "Trees (Binary Tree & BST)",
-                        questions: [
-                            { title: "Binary Tree Traversals (Pre, In, Post)", diff: "Easy", link: "https://www.naukri.com/code360/problems/tree-traversal_981285" },
-                            { title: "Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
-                            { title: "Maximum Depth of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
-                            { title: "Diameter of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/diameter-of-binary-tree/" },
-                            { title: "Binary Tree Maximum Path Sum", diff: "Hard", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/" },
-                            { title: "Lowest Common Ancestor in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" },
-                            { title: "Construct Binary Tree from Inorder & Preorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" }
-                        ]
-                    },
-                    {
-                        name: "Graphs (BFS, DFS, Shortest Path, MST)",
-                        questions: [
-                            { title: "Breadth First Search (BFS)", diff: "Easy", link: "https://www.naukri.com/code360/problems/bfs-in-graph_973002" },
-                            { title: "Number of Islands", diff: "Medium", link: "https://leetcode.com/problems/number-of-islands/" },
-                            { title: "Rotting Oranges", diff: "Medium", link: "https://leetcode.com/problems/rotting-oranges/" },
-                            { title: "Cycle Detection in Undirected Graph", diff: "Medium", link: "https://www.naukri.com/code360/problems/cycle-detection-in-undirected-graph_1062670" },
-                            { title: "Topological Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/topological-sort_982938" },
-                            { title: "Dijkstra's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/dijkstras-shortest-path_920469" },
-                            { title: "Minimum Spanning Tree - Prim's / Kruskal's", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" }
-                        ]
-                    },
-                    {
-                        name: "Dynamic Programming (1D, 2D, DP on Grids/Strings)",
-                        questions: [
-                            { title: "Climbing Stairs", diff: "Easy", link: "https://leetcode.com/problems/climbing-stairs/" },
-                            { title: "Maximum Sum of Non-Adjacent Elements (House Robber)", diff: "Medium", link: "https://leetcode.com/problems/house-robber/" },
-                            { title: "Grid Unique Paths", diff: "Medium", link: "https://leetcode.com/problems/unique-paths/" },
-                            { title: "0/1 Knapsack Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/0-1-knapsack_920542" },
-                            { title: "Longest Common Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-common-subsequence/" },
-                            { title: "Longest Increasing Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
-                            { title: "Matrix Chain Multiplication", diff: "Hard", link: "https://www.naukri.com/code360/problems/matrix-chain-multiplication_975344" }
-                        ]
-                    }
-                ]
-            },
-            sde: {
-                title: "Striver's SDE Sheet",
-                topics: [
-                    {
-                        name: "SDE: Arrays & Matrices",
-                        questions: [
-                            { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
-                            { title: "Pascal's Triangle", diff: "Medium", link: "https://leetcode.com/problems/pascals-triangle/" },
-                            { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
-                            { title: "Kadane's Algorithm", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
-                            { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
-                            { title: "Rotate Matrix by 90 Degrees", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" }
-                        ]
-                    },
-                    {
-                        name: "SDE: Hashing & Two Pointers",
-                        questions: [
-                            { title: "Longest Substring Without Repeating Characters", diff: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
-                            { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
-                            { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
-                            { title: "Remove Duplicate from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" }
-                        ]
-                    }
-                ]
-            }
-        };
-
-        // Application State
-        let currentActiveSheet = 'a2z';
-        let selectedTopic = localStorage.getItem('self_study_topic') || "Arrays (Easy, Medium, Hard)";
-        let notifTime = localStorage.getItem('self_study_time') || "09:00";
-        let practiceQuestionsList = [];
-        let practiceIndex = 0;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initTopicDropdown();
-            renderSheet(currentActiveSheet);
-            generateNewPOTD();
-            setupTimeDisplay();
-            checkNotificationStatus();
-            setupPracticeSession(selectedTopic);
-            
-            // Interval timer to check scheduled notification time every minute
-            setInterval(checkScheduledNotification, 60000);
-        });
-
-        function initTopicDropdown() {
-            const dropdown = document.getElementById('topic-dropdown');
-            let allTopics = [];
-            
-            Object.keys(sheetsData).forEach(sKey => {
-                sheetsData[sKey].topics.forEach(t => {
-                    allTopics.push(t.name);
-                });
-            });
-
-            let html = '';
-            allTopics.forEach(topicName => {
-                const selected = topicName === selectedTopic ? 'selected' : '';
-                html += `<option value="${topicName}" ${selected}>${topicName}</option>`;
-            });
-            dropdown.innerHTML = html;
-        }
-
-        function onTopicDropdownChange(topicName) {
-            selectedTopic = topicName;
-            localStorage.setItem('self_study_topic', topicName);
-            generateNewPOTD();
-            setupPracticeSession(topicName);
-        }
-
-        function getQuestionsForTopic(topicName) {
-            let foundTopic = null;
-            Object.keys(sheetsData).forEach(sKey => {
-                sheetsData[sKey].topics.forEach(t => {
-                    if (t.name === topicName) foundTopic = t;
-                });
-            });
-            return foundTopic ? foundTopic.questions : sheetsData.a2z.topics[0].questions;
-        }
-
-        function generateNewPOTD() {
-            const questions = getQuestionsForTopic(selectedTopic);
-            if (!questions || questions.length === 0) return;
-            
-            const randomQ = questions[Math.floor(Math.random() * questions.length)];
-            
-            document.getElementById('potd-topic-tag').innerText = selectedTopic;
-            document.getElementById('potd-title').innerText = randomQ.title;
-            document.getElementById('potd-link').href = randomQ.link;
-            
-            const diffBadge = document.getElementById('potd-diff');
-            diffBadge.innerText = randomQ.diff;
-            diffBadge.className = randomQ.diff === 'Easy' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
-                                  randomQ.diff === 'Medium' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                  'text-xs px-2.5 py-0.5 rounded-md border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
-        }
-
-        function setupPracticeSession(topicName) {
-            const questions = getQuestionsForTopic(topicName);
-            practiceQuestionsList = [...questions].sort(() => Math.random() - 0.5);
-            practiceIndex = 0;
-            
-            document.getElementById('practice-title').innerText = `Active Practice: ${topicName}`;
-            renderCurrentPracticeQuestion();
-        }
-
-        function renderCurrentPracticeQuestion() {
-            if (practiceQuestionsList.length === 0) return;
-            const q = practiceQuestionsList[practiceIndex];
-            
-            document.getElementById('practice-q-index').innerText = `Question ${practiceIndex + 1} of ${practiceQuestionsList.length}`;
-            document.getElementById('practice-q-title').innerText = q.title;
-            document.getElementById('practice-q-link').href = q.link;
-            
-            const diffBadge = document.getElementById('practice-q-diff');
-            diffBadge.innerText = q.diff;
-            diffBadge.className = q.diff === 'Easy' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
-                                  q.diff === 'Medium' ? 'text-xs px-2.5 py-0.5 rounded-md border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                  'text-xs px-2.5 py-0.5 rounded-md border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
-        }
-
-        function nextPracticeQuestion() {
-            practiceIndex = (practiceIndex + 1) % practiceQuestionsList.length;
-            renderCurrentPracticeQuestion();
-        }
-
-        function switchMainTab(tab) {
-            const sheetsView = document.getElementById('sheets-view');
-            const practiceView = document.getElementById('practice-view');
-            const btnSheets = document.getElementById('tab-sheets-btn');
-            const btnPractice = document.getElementById('tab-practice-btn');
-            const searchBar = document.getElementById('search-bar-wrapper');
-
-            if (tab === 'sheets') {
-                sheetsView.classList.remove('hidden');
-                practiceView.classList.add('hidden');
-                searchBar.classList.remove('hidden');
-                btnSheets.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
-                btnPractice.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2";
-            } else {
-                sheetsView.classList.add('hidden');
-                practiceView.classList.remove('hidden');
-                searchBar.classList.add('hidden');
-                btnPractice.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow flex items-center space-x-2";
-                btnSheets.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
-            }
-        }
-
-        function switchSheet(sheetKey) {
-            currentActiveSheet = sheetKey;
-            const btnA2z = document.getElementById('tab-a2z');
-            const btnSde = document.getElementById('tab-sde');
-
-            if (sheetKey === 'a2z') {
-                btnA2z.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition";
-                btnSde.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition";
-            } else {
-                btnSde.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition";
-                btnA2z.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition";
-            }
-            renderSheet(sheetKey);
-        }
-
-        function renderSheet(sheetKey) {
-            const container = document.getElementById('topics-container');
-            const data = sheetsData[sheetKey];
-            const savedProgress = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
-
-            let html = '';
-            data.topics.forEach((topic, tIdx) => {
-                let solvedCount = 0;
-                topic.questions.forEach((q, qIdx) => {
-                    if (savedProgress[`${sheetKey}_${tIdx}_${qIdx}`]) solvedCount++;
-                });
-
-                html += `
-                    <div class="bg-darkCard border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition hover:border-slate-700">
-                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleAccordion('${sheetKey}', ${tIdx})">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/20">${tIdx + 1}</div>
-                                <h3 class="font-bold text-base text-white">${topic.name}</h3>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">${solvedCount}/${topic.questions.length} Solved</span>
-                                <i id="icon-${sheetKey}-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
-                            </div>
-                        </div>
-                        <div id="content-${sheetKey}-${tIdx}" class="divide-y divide-slate-800/50">
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    self.addEventListener('install', (e) => { self.skipWaiting(); });
+                    self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+                    self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });
                 `;
-
-                topic.questions.forEach((q, qIdx) => {
-                    const qId = `${sheetKey}_${tIdx}_${qIdx}`;
-                    const isChecked = savedProgress[qId] ? 'checked' : '';
-                    const diffColor = q.diff === 'Easy' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
-                                      q.diff === 'Medium' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
-                                      'text-rose-400 bg-rose-500/10 border-rose-500/20';
-
-                    html += `
-                        <div class="question-row px-6 py-3.5 flex items-center justify-between hover:bg-slate-800/30 transition gap-4" data-title="${q.title.toLowerCase()}">
-                            <div class="flex items-center space-x-3.5 min-w-0">
-                                <input type="checkbox" ${isChecked} onchange="toggleQuestion('${qId}')" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                <a href="${q.link}" target="_blank" class="text-sm font-medium text-slate-200 hover:text-indigo-400 transition truncate flex items-center space-x-2">
-                                    <span class="truncate">${q.title}</span>
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 flex-shrink-0"></i>
-                                </a>
-                            </div>
-                            <span class="text-xs px-2.5 py-0.5 rounded-md border font-medium flex-shrink-0 ${diffColor}">${q.diff}</span>
-                        </div>
-                    `;
-                });
-
-                html += `</div></div>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function toggleAccordion(sheetKey, tIdx) {
-            const content = document.getElementById(`content-${sheetKey}-${tIdx}`);
-            const icon = document.getElementById(`icon-${sheetKey}-${tIdx}`);
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.display = 'none';
-                icon.style.transform = 'rotate(-90deg)';
+                const swBlob = new Blob([swCode], { type: 'text/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
             }
-        }
-
-        function toggleQuestion(qId) {
-            const saved = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
-            saved[qId] = !saved[qId];
-            localStorage.setItem('dsa_progress', JSON.stringify(saved));
-            renderSheet(currentActiveSheet);
-        }
-
-        function filterQuestions() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            document.querySelectorAll('.question-row').forEach(row => {
-                const title = row.getAttribute('data-title');
-                row.style.display = title.includes(q) ? 'flex' : 'none';
-            });
-        }
-
-        // Notification and Time Management
-        function setupTimeDisplay() {
-            document.getElementById('display-notif-time').innerText = formatTime12Hour(notifTime);
-            document.getElementById('notif-time-input').value = notifTime;
-        }
-
-        function formatTime12Hour(time24) {
-            if (!time24) return "09:00 AM";
-            const parts = time24.split(':');
-            let h = parseInt(parts[0], 10);
-            const m = parts[1];
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            h = h % 12;
-            h = h ? h : 12;
-            return `${h}:${m} ${ampm}`;
-        }
-
-        function saveNotificationTime() {
-            const timeVal = document.getElementById('notif-time-input').value;
-            if (!timeVal) return;
-            notifTime = timeVal;
-            localStorage.setItem('self_study_time', timeVal);
-            setupTimeDisplay();
-            alert(`Daily POTD notification time successfully updated to ${formatTime12Hour(timeVal)}!`);
-        }
-
-        function requestPushPermission() {
-            if (!("Notification" in window)) {
-                alert("Your browser does not support web notifications.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('notif-badge').classList.remove('hidden');
-                    document.getElementById('push-perm-btn').innerText = "Notifications Enabled Successfully!";
-                    document.getElementById('push-perm-btn').className = "w-full bg-slate-800 text-emerald-400 font-semibold py-3 px-4 rounded-xl text-xs transition border border-emerald-500/30 flex items-center justify-center space-x-2";
-                    new Notification("Self Study App", {
-                        body: `Push notifications are active! You will receive daily POTD alerts from "${selectedTopic}" at ${formatTime12Hour(notifTime)}.`,
-                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
-                    });
-                } else {
-                    alert("Notification permission was denied. Check mobile browser settings.");
-                }
-            });
-        }
-
-        function triggerTestNotificationNow() {
-            const questions = getQuestionsForTopic(selectedTopic);
-            const q = questions[Math.floor(Math.random() * questions.length)];
-            
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification(`Self Study POTD [${selectedTopic}]`, {
-                    body: `Today's Question: ${q.title} (${q.diff})`,
-                    icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
-                });
-                document.getElementById('notif-badge').classList.remove('hidden');
-            } else {
-                alert(`[Self Study POTD Test]\nTopic: ${selectedTopic}\nQuestion: ${q.title} (${q.diff})\n\n(Allow mobile push notifications in settings to receive this natively).`);
-            }
-        }
-
-        function checkScheduledNotification() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${hours}:${minutes}`;
-
-            if (currentTimeStr === notifTime) {
-                const lastTriggered = localStorage.getItem('last_notif_date');
-                const todayStr = now.toDateString();
-                if (lastTriggered !== todayStr) {
-                    localStorage.setItem('last_notif_date', todayStr);
-                    triggerTestNotificationNow();
-                }
-            }
-        }
-
-        function checkNotificationStatus() {
-            if ("Notification" in window && Notification.permission === "granted") {
-                document.getElementById('notif-badge').classList.remove('hidden');
-            }
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settings-modal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settings-modal').classList.add('hidden');
         }
     </script>
 </body>
