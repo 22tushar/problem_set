@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Striver DSA Hub">
-    <title>Striver DSA Hub & Daily POTD PWA</title>
+    <meta name="apple-mobile-web-app-title" content="Self Study">
+    <title>Self Study - Striver DSA & Daily Practice</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,15 +43,16 @@
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
 
+    <!-- Header -->
     <header class="sticky top-0 z-50 backdrop-blur-md bg-darkBg/80 border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="bg-accent text-white p-2 rounded-xl shadow-lg shadow-accent/30 flex items-center justify-center font-bold text-lg w-10 h-10">
-                    <i class="fa-solid fa-code"></i>
+                    <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Striver DSA Hub</h1>
-                    <p class="text-xs text-slate-400">A2Z & SDE Sheet + Mobile PWA</p>
+                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Self Study</h1>
+                    <p class="text-xs text-slate-400">Striver DSA Hub & Daily Practice</p>
                 </div>
             </div>
             
@@ -65,7 +66,7 @@
                     <span class="hidden sm:inline">PWA Guide</span>
                 </button>
                 <div class="relative">
-                    <button onclick="toggleNotificationSettings()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
+                    <button onclick="openInstallModal()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
                         <i class="fa-solid fa-bell text-lg"></i>
                         <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full hidden"></span>
                     </button>
@@ -74,43 +75,52 @@
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
 
+        <!-- Self Study Topic & Daily Notification Banner -->
         <section class="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
                 <div class="space-y-3">
                     <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-500/30">
-                        <i class="fa-solid fa-fire text-amber-400"></i>
-                        <span>PROBLEM OF THE DAY (POTD)</span>
+                        <i class="fa-solid fa-bullseye text-amber-400"></i>
+                        <span>ACTIVE SELF STUDY TOPIC</span>
                     </div>
-                    <h2 id="potd-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Loading today's challenge...</h2>
-                    <p id="potd-desc" class="text-slate-400 text-sm sm:text-base max-w-2xl">Handpicked daily question from Striver's Sheets to keep your streak alive and sharpen core algorithmic logic.</p>
+                    <h2 id="active-topic-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Loading your target topic...</h2>
+                    <p id="active-topic-desc" class="text-slate-400 text-sm sm:text-base max-w-2xl">Daily mobile notifications and random questions will be served specifically from this chosen topic until you change it.</p>
                     <div class="flex flex-wrap items-center gap-3 pt-1">
-                        <span id="potd-topic" class="bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-lg border border-slate-700 font-medium">Topic: Loading</span>
-                        <span id="potd-diff" class="bg-amber-500/10 text-amber-400 text-xs px-3 py-1 rounded-lg border border-amber-500/20 font-medium">Difficulty: Medium</span>
+                        <span id="active-topic-count" class="bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-lg border border-slate-700 font-medium">Questions: 0</span>
+                        <span class="bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-lg border border-emerald-500/20 font-medium flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Daily Notification Active</span>
+                        </span>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <a id="potd-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center space-x-2">
-                        <span>Solve Problem</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                    </a>
-                    <button onclick="subscribeDailyPOTD()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-3 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-bell text-indigo-400"></i>
-                        <span id="sub-btn-text">Enable Daily Mobile Alert</span>
+                    <button onclick="triggerDailyRandomNotification()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                        <span>Test Topic Notification Now</span>
+                    </button>
+                    <button onclick="switchMainTab('random')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-3 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-sliders text-indigo-400"></i>
+                        <span>Change Study Topic</span>
                     </button>
                 </div>
             </div>
         </section>
 
+        <!-- Navigation Tabs for Main Curriculum vs Self Study Practice -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
             <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
-                <button onclick="switchSheet('a2z')" id="tab-a2z" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow">Striver's A2Z Sheet</button>
-                <button onclick="switchSheet('sde')" id="tab-sde" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white">Striver's SDE Sheet</button>
+                <button onclick="switchMainTab('sheets')" id="tab-sheets-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow">Curriculum Sheets</button>
+                <button onclick="switchMainTab('random')" id="tab-random-btn" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-shuffle text-amber-400"></i>
+                    <span>Self Study Topic & Practice</span>
+                </button>
             </div>
             
-            <div class="relative w-full md:w-80">
+            <div id="search-bar-wrapper" class="relative w-full md:w-80">
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </span>
@@ -118,12 +128,67 @@
             </div>
         </div>
 
-        <div id="topics-container" class="space-y-6">
-            <!-- Dynamically populated by JS -->
+        <!-- Sheet View Container -->
+        <div id="sheets-view" class="space-y-6">
+            <div class="flex items-center space-x-3">
+                <button onclick="switchSheet('a2z')" id="tab-a2z" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition">A2Z Sheet</button>
+                <button onclick="switchSheet('sde')" id="tab-sde" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">SDE Sheet</button>
+            </div>
+            <div id="topics-container" class="space-y-6">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+
+        <!-- Self Study Topic & Random Practice Mode Container -->
+        <div id="random-view" class="hidden space-y-8">
+            <div class="bg-darkCard border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+                <div class="max-w-2xl space-y-2">
+                    <h3 class="text-xl font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-bullseye text-amber-400"></i>
+                        <span>Select Your Self Study Topic</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">Choose any topic below. This will become your active focus topic. You will receive random questions from this topic for your daily mobile notification until you select a different topic.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="topic-selector-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Active Random Quiz Box -->
+            <div id="random-practice-box" class="hidden bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <span id="rp-topic-name" class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Topic Name</span>
+                        <h4 id="rp-counter" class="text-xs text-slate-400 mt-2">Question 1 of X</h4>
+                    </div>
+                    <button onclick="exitRandomPractice()" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl text-xs font-medium transition">Back to Topics</button>
+                </div>
+
+                <div class="space-y-4 py-4 text-center sm:text-left">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h3 id="rp-question-title" class="text-xl sm:text-2xl font-bold text-white">Question title goes here</h3>
+                        <span id="rp-diff" class="self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium">Medium</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Solve this question or throw another random question from your selected Self Study topic.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 pt-2">
+                    <a id="rp-link" href="#" target="_blank" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3.5 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2">
+                        <span>Solve on Platform</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                    <button onclick="throwNextRandomQuestion()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3.5 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-shuffle text-amber-400"></i>
+                        <span>Throw Another Random Question</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
     </main>
 
+    <!-- Install Modal / PWA Guide -->
     <div id="install-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-darkCard border border-slate-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6">
             <button onclick="closeInstallModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
@@ -135,15 +200,15 @@
                     <i class="fa-solid fa-mobile-screen"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white">Install App & Mobile Alerts</h3>
-                    <p class="text-xs text-slate-400">Get Striver's POTD notifications & offline access</p>
+                    <h3 class="text-xl font-bold text-white">Install 'Self Study' App</h3>
+                    <p class="text-xs text-slate-400">Get daily topic random question push notifications</p>
                 </div>
             </div>
 
             <div class="space-y-4 text-sm text-slate-300">
                 <div id="native-install-box" class="hidden bg-indigo-600/10 border border-indigo-500/30 p-4 rounded-2xl space-y-2">
                     <h4 class="font-semibold text-indigo-300">One-Click Installation Ready!</h4>
-                    <p class="text-xs text-slate-300">Your browser supports direct installation. Click below to add the app to your device home screen.</p>
+                    <p class="text-xs text-slate-300">Your browser supports direct installation. Click below to add 'Self Study' to your device home screen.</p>
                     <button onclick="triggerInstallPrompt()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition shadow">Install App Now</button>
                 </div>
 
@@ -154,18 +219,18 @@
                     </h4>
                     <ol class="list-decimal list-inside space-y-2 text-xs text-slate-300 leading-relaxed">
                         <li>Ensure you are viewing this page in <strong class="text-white">Google Chrome</strong> on Android/iOS.</li>
-                        <li>Tap the Chrome menu icon (<i class="fa-solid fa-ellipsis-vertical text-indigo-400"></i>) in the top-right corner of the browser.</li>
-                        <li>Look for <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong>.</li>
-                        <li>Tap it and confirm. The app will install instantly with offline caching!</li>
+                        <li>Tap the Chrome menu icon (<i class="fa-solid fa-ellipsis-vertical text-indigo-400"></i>) in the top-right corner.</li>
+                        <li>Tap <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong>.</li>
+                        <li>Confirm installation to launch 'Self Study' in standalone mode.</li>
                     </ol>
                 </div>
 
                 <div class="space-y-3">
-                    <h4 class="font-semibold text-white">Enable Daily POTD Push Notifications</h4>
-                    <p class="text-xs text-slate-400">Click below to allow notifications. When installed as a PWA, you will receive daily Striver problem alerts.</p>
+                    <h4 class="font-semibold text-white">Enable Daily Topic Push Notifications</h4>
+                    <p class="text-xs text-slate-400">Click below to allow notifications so you receive a daily random question from your selected topic.</p>
                     <button onclick="requestNotificationPermission()" id="push-permission-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-2xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-bell"></i>
-                        <span>Turn on Daily Notifications</span>
+                        <span>Turn on Daily Topic Notifications</span>
                     </button>
                 </div>
             </div>
@@ -176,18 +241,20 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="border-t border-slate-800 py-8 mt-12 bg-darkCard/30 text-center text-xs text-slate-500 space-y-2">
-        <p>Striver DSA Hub &copy; 2026. Built for passionate coders preparing for product-based tech companies.</p>
-        <p>Structured from Striver's A2Z DSA Sheet and SDE Sheet.</p>
+        <p>Self Study &copy; 2026. Powered by Striver's A2Z & SDE DSA Sheets.</p>
+        <p>Your self-study companion for algorithmic excellence.</p>
     </footer>
 
+    <!-- JavaScript Application Logic -->
     <script>
         let deferredPrompt = null;
 
-        // Generate valid manifest data URI dynamically to ensure 100% PWA installability compliance
+        // Generate valid manifest data URI dynamically for PWA compliance
         const manifestData = {
-            "name": "Striver DSA Hub & POTD",
-            "short_name": "DSA Hub",
+            "name": "Self Study - Striver DSA",
+            "short_name": "Self Study",
             "start_url": window.location.href.split('#')[0],
             "display": "standalone",
             "background_color": "#0f172a",
@@ -195,13 +262,13 @@
             "orientation": "portrait-primary",
             "icons": [
                 {
-                    "src": "https://placehold.co/192x192/6366f1/ffffff?text=DSA",
+                    "src": "https://placehold.co/192x192/6366f1/ffffff?text=Study",
                     "sizes": "192x192",
                     "type": "image/png",
                     "purpose": "any maskable"
                 },
                 {
-                    "src": "https://placehold.co/512x512/6366f1/ffffff?text=DSA",
+                    "src": "https://placehold.co/512x512/6366f1/ffffff?text=Study",
                     "sizes": "512x512",
                     "type": "image/png",
                     "purpose": "any maskable"
@@ -212,10 +279,10 @@
         const blob = new Blob([stringManifest], {type: 'application/manifest+json'});
         document.getElementById('dynamic-manifest').setAttribute('href', URL.createObjectURL(blob));
 
-        // Register Service Worker with proper fetch/install handlers for PWA install eligibility
+        // Register Service Worker for PWA install capability
         if ('serviceWorker' in navigator) {
             const swCode = `
-                const CACHE_NAME = 'striver-dsa-v1';
+                const CACHE_NAME = 'self-study-v1';
                 self.addEventListener('install', (event) => {
                     self.skipWaiting();
                 });
@@ -259,6 +326,7 @@
             }
         }
 
+        // Comprehensive Striver DSA Question Database
         const sheetsData = {
             a2z: {
                 title: "Striver's A2Z DSA Sheet",
@@ -291,33 +359,20 @@
                             { title: "Remove duplicates from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" },
                             { title: "Rotate Array by K places", diff: "Medium", link: "https://leetcode.com/problems/rotate-array/" },
                             { title: "Move Zeros to End", diff: "Easy", link: "https://leetcode.com/problems/move-zeroes/" },
-                            { title: "Linear Search / Find Missing Number", diff: "Easy", link: "https://leetcode.com/problems/missing-number/" },
-                            { title: "Max Consecutive Ones", diff: "Easy", link: "https://leetcode.com/problems/max-consecutive-ones/" },
-                            { title: "Find the number that appears once", diff: "Easy", link: "https://leetcode.com/problems/single-number/" },
-                            { title: "Longest Subarray with sum K", diff: "Medium", link: "https://www.naukri.com/code360/problems/longest-subarray-with-sum-k_6682350" },
                             { title: "Two Sum", diff: "Easy", link: "https://leetcode.com/problems/two-sum/" },
                             { title: "Sort an array of 0s, 1s and 2s (Dutch National Flag)", diff: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
                             { title: "Majority Element (>N/2 times)", diff: "Medium", link: "https://leetcode.com/problems/majority-element/" },
                             { title: "Maximum Subarray Sum (Kadane's Algorithm)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
                             { title: "Stock Buy and Sell", diff: "Easy", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
-                            { title: "Rearrange Array Elements by Sign", diff: "Medium", link: "https://leetcode.com/problems/rearrange-array-elements-by-sign/" },
                             { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
-                            { title: "Leaders in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/superior-elements_873133" },
                             { title: "Longest Consecutive Sequence in an Array", diff: "Medium", link: "https://leetcode.com/problems/longest-consecutive-sequence/" },
                             { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
                             { title: "Rotate Image by 90 degree", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
                             { title: "Spiral Matrix", diff: "Medium", link: "https://leetcode.com/problems/spiral-matrix/" },
-                            { title: "Subarray Sum Equals K", diff: "Medium", link: "https://leetcode.com/problems/subarray-sum-equals-k/" },
-                            { title: "Pascal's Triangle", diff: "Medium", link: "https://leetcode.com/problems/pascals-triangle/" },
                             { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
-                            { title: "4-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/4sum/" },
-                            { title: "Largest Subarray with 0 Sum", diff: "Medium", link: "https://www.naukri.com/code360/problems/longest-subset-with-zero-sum_3163218" },
                             { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
                             { title: "Merge two sorted arrays without extra space", diff: "Hard", link: "https://leetcode.com/problems/merge-sorted-array/" },
-                            { title: "Find the Repeating and Missing Number", diff: "Hard", link: "https://www.naukri.com/code360/problems/missing-and-repeating-numbers_873366" },
-                            { title: "Count Inversions in an Array", diff: "Hard", link: "https://www.naukri.com/code360/problems/number-of-inversions_615.html" },
-                            { title: "Reverse Pairs", diff: "Hard", link: "https://leetcode.com/problems/reverse-pairs/" },
-                            { title: "Maximum Product Subarray", diff: "Medium", link: "https://leetcode.com/problems/maximum-product-subarray/" }
+                            { title: "Count Inversions in an Array", diff: "Hard", link: "https://www.naukri.com/code360/problems/number-of-inversions_615.html" }
                         ]
                     },
                     {
@@ -326,155 +381,75 @@
                             { title: "Binary Search to find X in sorted array", diff: "Easy", link: "https://leetcode.com/problems/binary-search/" },
                             { title: "Lower Bound & Upper Bound", diff: "Easy", link: "https://www.naukri.com/code360/problems/lower-bound_8165382" },
                             { title: "Search Insert Position", diff: "Easy", link: "https://leetcode.com/problems/search-insert-position/" },
-                            { title: "Find First and Last Position of Element in Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" },
                             { title: "Search in Rotated Sorted Array I & II", diff: "Medium", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
                             { title: "Find Minimum in Rotated Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
                             { title: "Single Element in a Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/single-element-in-a-sorted-array/" },
-                            { title: "Find Peak Element", diff: "Medium", link: "https://leetcode.com/problems/find-peak-element/" },
-                            { title: "Sqrt of a number using Binary Search", diff: "Easy", link: "https://www.naukri.com/code360/problems/square-root-integral_893351" },
                             { title: "Koko Eating Bananas", diff: "Medium", link: "https://leetcode.com/problems/koko-eating-bananas/" },
-                            { title: "Minimum Days to Make M Bouquets", diff: "Medium", link: "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/" },
-                            { title: "Find the Smallest Divisor Given a Threshold", diff: "Medium", link: "https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/" },
-                            { title: "Capacity To Ship Packages Within D Days", diff: "Medium", link: "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/" },
                             { title: "Aggressive Cows", diff: "Medium", link: "https://www.naukri.com/code360/problems/aggressive-cows_1082559" },
                             { title: "Book Allocation Problem", diff: "Hard", link: "https://www.naukri.com/code360/problems/allocate-books_1090540" },
-                            { title: "Split Array - Largest Sum", diff: "Hard", link: "https://leetcode.com/problems/split-array-largest-sum/" },
                             { title: "Median of Two Sorted Arrays", diff: "Hard", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/" },
-                            { title: "Kth Element of Two Sorted Arrays", diff: "Medium", link: "https://www.naukri.com/code360/problems/k-th-element-of-2-sorted-array_1164159" },
-                            { title: "Search in a 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/search-a-2d-matrix/" },
-                            { title: "Find the row with maximum number of 1s", diff: "Medium", link: "https://www.naukri.com/code360/problems/row-with-max-1s_1116565" },
-                            { title: "Peak Element in 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/find-a-peak-element-ii/" },
-                            { title: "Median in a row-wise sorted matrix", diff: "Hard", link: "https://www.naukri.com/code360/problems/median-in-a-matrix_1115738" }
+                            { title: "Search in a 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/search-a-2d-matrix/" }
                         ]
                     },
                     {
-                        name: "Step 5: Strings (Basic and Medium)",
+                        name: "Step 6: Linked List",
                         questions: [
-                            { title: "Remove outermost parentheses", diff: "Easy", link: "https://leetcode.com/problems/remove-outermost-parentheses/" },
-                            { title: "Reverse words in a given string / String", diff: "Medium", link: "https://leetcode.com/problems/reverse-words-in-a-string/" },
-                            { title: "Largest Odd Number in String", diff: "Easy", link: "https://leetcode.com/problems/largest-odd-number-in-string/" },
-                            { title: "Longest Common Prefix", diff: "Easy", link: "https://leetcode.com/problems/longest-common-prefix/" },
-                            { title: "Isomorphic String", diff: "Easy", link: "https://leetcode.com/problems/isomorphic-strings/" },
-                            { title: "Rotate String", diff: "Easy", link: "https://leetcode.com/problems/rotate-string/" },
-                            { title: "Valid Anagram", diff: "Easy", link: "https://leetcode.com/problems/valid-anagram/" },
-                            { title: "Sort Characters By Frequency", diff: "Medium", link: "https://leetcode.com/problems/sort-characters-by-frequency/" },
-                            { title: "Maximum Nesting Depth of the Parentheses", diff: "Easy", link: "https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/" },
-                            { title: "Roman to Integer", diff: "Easy", link: "https://leetcode.com/problems/roman-to-integer/" },
-                            { title: "String to Integer (atoi)", diff: "Medium", link: "https://leetcode.com/problems/string-to-integer-atoi/" },
-                            { title: "Count Number of Substrings", diff: "Medium", link: "https://www.naukri.com/code360/problems/count-with-k-different-characters_1214691" },
-                            { title: "Longest Palindromic Substring", diff: "Medium", link: "https://leetcode.com/problems/longest-palindromic-substring/" },
-                            { title: "Sum of Beauty of All Substrings", diff: "Medium", link: "https://leetcode.com/problems/sum-of-beauty-of-all-substrings/" },
-                            { title: "KMP Algorithm / Longest Prefix Suffix (LPS)", diff: "Hard", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" }
-                        ]
-                    },
-                    {
-                        name: "Step 6: Linked List (Singly, Doubly, Medium, Hard)",
-                        questions: [
-                            { title: "Introduction to Linked List & Insertion/Deletion", diff: "Easy", link: "https://www.naukri.com/code360/problems/introduction-to-linked-list_8140473" },
                             { title: "Reverse a Singly Linked List", diff: "Easy", link: "https://leetcode.com/problems/reverse-linked-list/" },
                             { title: "Middle of the Linked List", diff: "Easy", link: "https://leetcode.com/problems/middle-of-the-linked-list/" },
                             { title: "Detect a loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle/" },
                             { title: "Find the starting point of the Loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
-                            { title: "Length of Loop in Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/find-length-of-loop_8160483" },
                             { title: "Check if Linked List is palindrome", diff: "Medium", link: "https://leetcode.com/problems/palindrome-linked-list/" },
-                            { title: "Odd Even Linked List", diff: "Medium", link: "https://leetcode.com/problems/odd-even-linked-list/" },
-                            { title: "Remove Nth node from the back of the Linked List", diff: "Medium", link: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/" },
-                            { title: "Delete the middle node of a Linked List", diff: "Medium", link: "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/" },
-                            { title: "Sort Linked List", diff: "Medium", link: "https://leetcode.com/problems/sort-list/" },
-                            { title: "Intersection of Two Linked Lists", diff: "Easy", link: "https://leetcode.com/problems/intersection-of-two-linked-lists/" },
-                            { title: "Add 1 to a number represented as Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/add-1-a-number-represented-as-linked-list_920457" },
                             { title: "Add Two Numbers in Linked List", diff: "Medium", link: "https://leetcode.com/problems/add-two-numbers/" },
                             { title: "Reverse Nodes in k-Group", diff: "Hard", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/" },
-                            { title: "Rotate a Linked List", diff: "Medium", link: "https://leetcode.com/problems/rotate-list/" },
-                            { title: "Flatten a Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/flatten-a-linked-list_1112655" },
-                            { title: "Clone a Linked List with Random and Next Pointer", diff: "Medium", link: "https://leetcode.com/problems/copy-list-with-random-pointer/" }
+                            { title: "Flatten a Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/flatten-a-linked-list_1112655" }
                         ]
                     },
                     {
                         name: "Step 9: Stack and Queues",
                         questions: [
-                            { title: "Implement Stack using Arrays / Queues", diff: "Easy", link: "https://leetcode.com/problems/implement-stack-using-queues/" },
-                            { title: "Implement Queue using Arrays / Stacks", diff: "Easy", link: "https://leetcode.com/problems/implement-queue-using-stacks/" },
                             { title: "Valid Parentheses", diff: "Easy", link: "https://leetcode.com/problems/valid-parentheses/" },
                             { title: "Min Stack", diff: "Medium", link: "https://leetcode.com/problems/min-stack/" },
-                            { title: "Infix, Prefix and Postfix Conversions", diff: "Medium", link: "https://www.naukri.com/code360/problems/infix-to-postfix-expression_1382146" },
                             { title: "Next Greater Element I & II", diff: "Medium", link: "https://leetcode.com/problems/next-greater-element-ii/" },
-                            { title: "Previous Smaller Element", diff: "Easy", link: "https://www.naukri.com/code360/problems/previous-smaller-element_1112810" },
                             { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
-                            { title: "Sum of Subarray Minimums", diff: "Medium", link: "https://leetcode.com/problems/sum-of-subarray-minimums/" },
-                            { title: "Asteroid Collision", diff: "Medium", link: "https://leetcode.com/problems/asteroid-collision/" },
                             { title: "Largest Rectangle in Histogram", diff: "Hard", link: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
                             { title: "Sliding Window Maximum", diff: "Hard", link: "https://leetcode.com/problems/sliding-window-maximum/" },
-                            { title: "Stock Span Problem", diff: "Medium", link: "https://leetcode.com/problems/online-stock-span/" },
-                            { title: "LRU Cache", diff: "Medium", link: "https://leetcode.com/problems/lru-cache/" },
-                            { title: "LFU Cache", diff: "Hard", link: "https://leetcode.com/problems/lfu-cache/" }
+                            { title: "LRU Cache", diff: "Medium", link: "https://leetcode.com/problems/lru-cache/" }
                         ]
                     },
                     {
-                        name: "Step 13: Binary Trees (Traversals, Medium, Hard)",
+                        name: "Step 13: Binary Trees",
                         questions: [
                             { title: "Binary Tree Traversals (Preorder, Inorder, Postorder)", diff: "Easy", link: "https://www.naukri.com/code360/problems/tree-traversal_981285" },
                             { title: "Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
                             { title: "Maximum Depth of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
-                            { title: "Check if Binary Tree is Height-Balanced", diff: "Easy", link: "https://leetcode.com/problems/balanced-binary-tree/" },
                             { title: "Diameter of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/diameter-of-binary-tree/" },
                             { title: "Binary Tree Maximum Path Sum", diff: "Hard", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/" },
-                            { title: "Same Tree", diff: "Easy", link: "https://leetcode.com/problems/same-tree/" },
-                            { title: "Zigzag Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/" },
-                            { title: "Boundary Traversal of Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/boundary-traversal_790707" },
-                            { title: "Vertical Order Traversal of Binary Tree", diff: "Hard", link: "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/" },
-                            { title: "Top View & Bottom View of Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/top-view-of-binary-tree_799401" },
-                            { title: "Right/Left View of Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-right-side-view/" },
-                            { title: "Check for Symmetrical Trees", diff: "Easy", link: "https://leetcode.com/problems/symmetric-tree/" },
                             { title: "Lowest Common Ancestor in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" },
-                            { title: "Children Sum Property in Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/childrensum-property_790727" },
-                            { title: "All Nodes Distance K in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/" },
-                            { title: "Minimum Time Taken to Burn the Binary Tree from a Node", diff: "Hard", link: "https://www.naukri.com/code360/problems/time-to-burn-tree_1463528" },
-                            { title: "Construct Binary Tree from Inorder and Preorder/Postorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" },
-                            { title: "Serialize and Deserialize Binary Tree", diff: "Hard", link: "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" },
-                            { title: "Flatten Binary Tree to Linked List", diff: "Medium", link: "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/" }
+                            { title: "Construct Binary Tree from Inorder and Preorder/Postorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" }
                         ]
                     },
                     {
-                        name: "Step 15: Graphs (Traversal, Shortest Path, MST, Advanced)",
+                        name: "Step 15: Graphs",
                         questions: [
-                            { title: "Introduction to Graphs, BFS & DFS", diff: "Easy", link: "https://www.naukri.com/code360/problems/bfs-in-graph_973002" },
-                            { title: "Number of Provinces", diff: "Medium", link: "https://leetcode.com/problems/number-of-provinces/" },
+                            { title: "Breadth First Search (BFS)", diff: "Easy", link: "https://www.naukri.com/code360/problems/bfs-in-graph_973002" },
                             { title: "Number of Islands", diff: "Medium", link: "https://leetcode.com/problems/number-of-islands/" },
-                            { title: "Flood Fill Algorithm", diff: "Easy", link: "https://leetcode.com/problems/flood-fill/" },
                             { title: "Rotting Oranges", diff: "Medium", link: "https://leetcode.com/problems/rotting-oranges/" },
-                            { title: "Cycle Detection in Undirected Graph (BFS/DFS)", diff: "Medium", link: "https://www.naukri.com/code360/problems/cycle-detection-in-undirected-graph_1062670" },
-                            { title: "01 Matrix (Nearest Cell)", diff: "Medium", link: "https://leetcode.com/problems/01-matrix/" },
-                            { title: "Surrounded Regions", diff: "Medium", link: "https://leetcode.com/problems/surrounded-regions/" },
-                            { title: "Word Ladder I & II", diff: "Hard", link: "https://leetcode.com/problems/word-ladder/" },
-                            { title: "Topological Sort (DFS & Kahn's Algorithm)", diff: "Medium", link: "https://www.naukri.com/code360/problems/topological-sort_982938" },
-                            { title: "Course Schedule I & II", diff: "Medium", link: "https://leetcode.com/problems/course-schedule/" },
-                            { title: "Dijkstra's Algorithm (Priority Queue & Set)", diff: "Medium", link: "https://www.naukri.com/code360/problems/dijkstras-shortest-path_920469" },
-                            { title: "Bellman Ford Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/bellman-ford_2041211" },
-                            { title: "Floyd Warshall Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/floyd-warshall_2041979" },
-                            { title: "Minimum Spanning Tree - Prim's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" },
-                            { title: "Disjoint Set (Union by Rank / Path Compression)", diff: "Medium", link: "https://www.naukri.com/code360/problems/disjoint-set-union-find_1209239" },
-                            { title: "Kruskal's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/kruskal-s-minimum-spanning-tree_1082553" },
-                            { title: "Kosaraju's Algorithm for Strongly Connected Components", diff: "Hard", link: "https://www.naukri.com/code360/problems/count-strongly-connected-components-kosaraju-s-algorithm_1171151" }
+                            { title: "Cycle Detection in Undirected Graph", diff: "Medium", link: "https://www.naukri.com/code360/problems/cycle-detection-in-undirected-graph_1062670" },
+                            { title: "Topological Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/topological-sort_982938" },
+                            { title: "Dijkstra's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/dijkstras-shortest-path_920469" },
+                            { title: "Minimum Spanning Tree - Prim's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" }
                         ]
                     },
                     {
-                        name: "Step 16: Dynamic Programming (1D, 2D, Grids, Strings, Stocks)",
+                        name: "Step 16: Dynamic Programming",
                         questions: [
                             { title: "Climbing Stairs", diff: "Easy", link: "https://leetcode.com/problems/climbing-stairs/" },
-                            { title: "Frog Jump (DP 3)", diff: "Medium", link: "https://www.naukri.com/code360/problems/frog-jump_3621012" },
                             { title: "Maximum Sum of Non-Adjacent Elements (House Robber)", diff: "Medium", link: "https://leetcode.com/problems/house-robber/" },
-                            { title: "Ninja's Training", diff: "Medium", link: "https://www.naukri.com/code360/problems/ninja-s-training_3621003" },
                             { title: "Grid Unique Paths", diff: "Medium", link: "https://leetcode.com/problems/unique-paths/" },
-                            { title: "Minimum Path Sum in Grid", diff: "Medium", link: "https://leetcode.com/problems/minimum-path-sum/" },
-                            { title: "Triangle Path Sum", diff: "Medium", link: "https://leetcode.com/problems/triangle/" },
-                            { title: "Subset Sum Equal to K", diff: "Medium", link: "https://www.naukri.com/code360/problems/subset-sum-equal-to-k_1550954" },
                             { title: "0/1 Knapsack Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/0-1-knapsack_920542" },
-                            { title: "Coin Change", diff: "Medium", link: "https://leetcode.com/problems/coin-change/" },
                             { title: "Longest Common Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-common-subsequence/" },
                             { title: "Longest Increasing Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
-                            { title: "Matrix Chain Multiplication", diff: "Hard", link: "https://www.naukri.com/code360/problems/matrix-chain-multiplication_975344" },
-                            { title: "Burst Balloons", diff: "Hard", link: "https://leetcode.com/problems/burst-balloons/" }
+                            { title: "Matrix Chain Multiplication", diff: "Hard", link: "https://www.naukri.com/code360/problems/matrix-chain-multiplication_975344" }
                         ]
                     }
                 ]
@@ -499,8 +474,7 @@
                             { title: "Longest Substring Without Repeating Characters", diff: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
                             { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
                             { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
-                            { title: "Remove Duplicate from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" },
-                            { title: "Max Consecutive Ones", diff: "Easy", link: "https://leetcode.com/problems/max-consecutive-ones/" }
+                            { title: "Remove Duplicate from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" }
                         ]
                     },
                     {
@@ -510,21 +484,49 @@
                             { title: "Minimum Platforms", diff: "Medium", link: "https://www.naukri.com/code360/problems/minimum-number-of-platforms_799400" },
                             { title: "Job Sequencing Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/job-sequencing-problem_1169462" },
                             { title: "Coin Change", diff: "Medium", link: "https://leetcode.com/problems/coin-change/" },
-                            { title: "Edit Distance", diff: "Medium", link: "https://leetcode.com/problems/edit-distance/" },
-                            { title: "Maximum Profit in Job Scheduling / Stock", diff: "Medium", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/" }
+                            { title: "Edit Distance", diff: "Medium", link: "https://leetcode.com/problems/edit-distance/" }
                         ]
                     }
                 ]
             }
         };
 
+        // State Management for Self Study Topic
         let currentActiveSheet = 'a2z';
+        let activeStudyTopic = localStorage.getItem('self_study_topic') || "Step 3: Arrays (Easy, Medium, Hard)";
+        let activeRandomQuestions = [];
+        let currentRandomIndex = 0;
+        let currentRandomTopicName = '';
 
         window.addEventListener('DOMContentLoaded', () => {
             renderSheet(currentActiveSheet);
-            setupPOTD();
+            setupActiveTopicBanner();
             checkNotificationStatus();
+            setupRandomTopicGrid();
         });
+
+        // Switch between Sheet view and Random Practice view
+        function switchMainTab(tab) {
+            const sheetsView = document.getElementById('sheets-view');
+            const randomView = document.getElementById('random-view');
+            const tabSheetsBtn = document.getElementById('tab-sheets-btn');
+            const tabRandomBtn = document.getElementById('tab-random-btn');
+            const searchBarWrapper = document.getElementById('search-bar-wrapper');
+
+            if (tab === 'sheets') {
+                sheetsView.classList.remove('hidden');
+                randomView.classList.add('hidden');
+                searchBarWrapper.classList.remove('hidden');
+                tabSheetsBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
+                tabRandomBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white flex items-center space-x-2";
+            } else {
+                sheetsView.classList.add('hidden');
+                randomView.classList.remove('hidden');
+                searchBarWrapper.classList.add('hidden');
+                tabRandomBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow flex items-center space-x-2";
+                tabSheetsBtn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+            }
+        }
 
         function switchSheet(sheetKey) {
             currentActiveSheet = sheetKey;
@@ -532,11 +534,11 @@
             const btnSde = document.getElementById('tab-sde');
 
             if (sheetKey === 'a2z') {
-                btnA2z.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
-                btnSde.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                btnA2z.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition";
+                btnSde.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition";
             } else {
-                btnSde.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
-                btnA2z.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+                btnSde.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-indigo-400 border border-indigo-500/30 transition";
+                btnA2z.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition";
             }
 
             renderSheet(sheetKey);
@@ -557,7 +559,7 @@
 
                 html += `
                     <div class="bg-darkCard border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition hover:border-slate-700">
-                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleTopicAccordion(${tIdx})">
+                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleTopicAccordion('${sheetKey}', ${tIdx})">
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/20">
                                     ${tIdx + 1}
@@ -568,11 +570,11 @@
                                 <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">
                                     ${topicCompletedCount}/${topic.questions.length} Solved
                                 </span>
-                                <i id="icon-topic-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                                <i id="icon-topic-${sheetKey}-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
                             </div>
                         </div>
                         
-                        <div id="topic-content-${tIdx}" class="divide-y divide-slate-800/50">
+                        <div id="topic-content-${sheetKey}-${tIdx}" class="divide-y divide-slate-800/50">
                 `;
 
                 topic.questions.forEach((q, qIdx) => {
@@ -605,9 +607,9 @@
             container.innerHTML = html;
         }
 
-        function toggleTopicAccordion(tIdx) {
-            const content = document.getElementById(`topic-content-${tIdx}`);
-            const icon = document.getElementById(`icon-topic-${tIdx}`);
+        function toggleTopicAccordion(sheetKey, tIdx) {
+            const content = document.getElementById(`topic-content-${sheetKey}-${tIdx}`);
+            const icon = document.getElementById(`icon-topic-${sheetKey}-${tIdx}`);
             if (content.style.display === 'none') {
                 content.style.display = 'block';
                 icon.style.transform = 'rotate(0deg)';
@@ -637,29 +639,157 @@
             });
         }
 
-        function setupPOTD() {
-            const allQuestions = [];
+        // Self Study Topic & Random Practice Setup
+        function setupRandomTopicGrid() {
+            const grid = document.getElementById('topic-selector-grid');
+            const data = sheetsData.a2z; // Use A2Z as comprehensive topic source
+            let html = '';
+
+            data.topics.forEach((topic) => {
+                const isSelected = topic.name === activeStudyTopic;
+                const borderClass = isSelected ? 'border-indigo-500 bg-indigo-600/10' : 'border-slate-800 bg-slate-900';
+                
+                html += `
+                    <div class="flex flex-col justify-between ${borderClass} hover:border-indigo-500/50 p-4 rounded-2xl transition group space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-semibold text-sm text-white">${topic.name}</h4>
+                                ${isSelected ? '<span class="text-[10px] bg-indigo-500 text-white px-2 py-0.5 rounded-full font-bold">Active Topic</span>' : ''}
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">${topic.questions.length} questions</p>
+                        </div>
+                        <div class="flex items-center space-x-2 pt-2 border-t border-slate-800/60">
+                            <button onclick="setAsActiveStudyTopic('${topic.name.replace(/'/g, "\\'")}')" class="flex-1 bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-xl transition">
+                                ${isSelected ? 'Active for Notifications' : 'Select for Notifications'}
+                            </button>
+                            <button onclick="startTopicPractice('${topic.name.replace(/'/g, "\\'")}')" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-xl transition flex items-center justify-center">
+                                <i class="fa-solid fa-shuffle"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function setAsActiveStudyTopic(topicName) {
+            activeStudyTopic = topicName;
+            localStorage.setItem('self_study_topic', topicName);
+            setupActiveTopicBanner();
+            setupRandomTopicGrid();
+            
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("Self Study Updated", {
+                    body: `Your active study topic is now: "${topicName}". Daily random question notifications will come from this topic!`,
+                    icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
+                });
+            } else {
+                alert(`Active study topic updated to "${topicName}".`);
+            }
+        }
+
+        function setupActiveTopicBanner() {
+            let foundTopic = null;
             Object.keys(sheetsData).forEach(sKey => {
                 sheetsData[sKey].topics.forEach(t => {
-                    t.questions.forEach(q => {
-                        allQuestions.push({ ...q, topic: t.name });
-                    });
+                    if (t.name === activeStudyTopic) {
+                        foundTopic = t;
+                    }
                 });
             });
 
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 0);
-            const diff = now - start;
-            const oneDay = 1000 * 60 * 60 * 24;
-            const dayOfYear = Math.floor(diff / oneDay);
-            
-            const potd = allQuestions[dayOfYear % allQuestions.length];
+            if (!foundTopic) {
+                foundTopic = sheetsData.a2z.topics[2]; // Default to Arrays
+                activeStudyTopic = foundTopic.name;
+            }
 
-            document.getElementById('potd-title').innerText = potd.title;
-            document.getElementById('potd-desc').innerText = `Daily curated challenge from Striver's collection. Build mastery step-by-step.`;
-            document.getElementById('potd-topic').innerText = `Topic: ${potd.topic}`;
-            document.getElementById('potd-diff').innerText = `Difficulty: ${potd.diff}`;
-            document.getElementById('potd-link').href = potd.link;
+            document.getElementById('active-topic-title').innerText = activeStudyTopic;
+            document.getElementById('active-topic-desc').innerText = `Daily push notifications and random practice questions are locked to "${activeStudyTopic}". You will receive a random question from this topic every day until you select a new one.`;
+            document.getElementById('active-topic-count').innerText = `Questions in Topic: ${foundTopic.questions.length}`;
+        }
+
+        function startTopicPractice(topicName) {
+            let targetTopic = null;
+            Object.keys(sheetsData).forEach(sKey => {
+                sheetsData[sKey].topics.forEach(t => {
+                    if (t.name === topicName) {
+                        targetTopic = t;
+                    }
+                });
+            });
+
+            if (!targetTopic) return;
+
+            currentRandomTopicName = targetTopic.name;
+            activeRandomQuestions = [...targetTopic.questions].sort(() => Math.random() - 0.5);
+            currentRandomIndex = 0;
+
+            document.getElementById('topic-selector-grid').parentElement.classList.add('hidden');
+            document.getElementById('random-practice-box').classList.remove('hidden');
+
+            displayCurrentRandomQuestion();
+        }
+
+        function displayCurrentRandomQuestion() {
+            if (activeRandomQuestions.length === 0) return;
+
+            const q = activeRandomQuestions[currentRandomIndex];
+            document.getElementById('rp-topic-name').innerText = currentRandomTopicName;
+            document.getElementById('rp-counter').innerText = `Question ${currentRandomIndex + 1} of ${activeRandomQuestions.length} (Random Practice)`;
+            document.getElementById('rp-question-title').innerText = q.title;
+            document.getElementById('rp-link').href = q.link;
+
+            const diffBadge = document.getElementById('rp-diff');
+            diffBadge.innerText = q.diff;
+            diffBadge.className = q.diff === 'Easy' ? 'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
+                                  q.diff === 'Medium' ? 'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                                  'self-start sm:self-center text-xs px-3 py-1 rounded-lg border font-medium text-rose-400 bg-rose-500/10 border-rose-500/20';
+        }
+
+        function throwNextRandomQuestion() {
+            currentRandomIndex = (currentRandomIndex + 1) % activeRandomQuestions.length;
+            displayCurrentRandomQuestion();
+        }
+
+        function exitRandomPractice() {
+            document.getElementById('random-practice-box').classList.add('hidden');
+            document.getElementById('topic-selector-grid').parentElement.classList.remove('hidden');
+        }
+
+        function triggerDailyRandomNotification() {
+            let targetTopic = null;
+            Object.keys(sheetsData).forEach(sKey => {
+                sheetsData[sKey].topics.forEach(t => {
+                    if (t.name === activeStudyTopic) {
+                        targetTopic = t;
+                    }
+                });
+            });
+
+            if (!targetTopic || targetTopic.questions.length === 0) {
+                alert("Please select a valid study topic first.");
+                return;
+            }
+
+            const randomQ = targetTopic.questions[Math.floor(Math.random() * targetTopic.questions.length)];
+
+            if (!("Notification" in window)) {
+                alert(`[Self Study Daily Alert]\nTopic: ${activeStudyTopic}\nQuestion: ${randomQ.title}`);
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(`Self Study Daily: ${activeStudyTopic}`, {
+                        body: `Today's random question: ${randomQ.title} (${randomQ.diff})`,
+                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
+                    });
+                    document.getElementById('notif-badge').classList.remove('hidden');
+                } else {
+                    alert(`[Self Study Daily Alert]\nTopic: ${activeStudyTopic}\nQuestion: ${randomQ.title}\n\n(Enable push notifications in PWA Guide to receive this automatically on your mobile device)`);
+                }
+            });
         }
 
         function openInstallModal() {
@@ -678,32 +808,22 @@
 
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    document.getElementById('sub-btn-text').innerText = "Alerts Active!";
                     document.getElementById('notif-badge').classList.remove('hidden');
                     document.getElementById('push-permission-btn').innerText = "Notifications Enabled Successfully!";
                     document.getElementById('push-permission-btn').className = "w-full bg-slate-800 text-emerald-400 font-semibold py-3 px-4 rounded-2xl border border-emerald-500/30 flex items-center justify-center space-x-2";
                     
-                    new Notification("Striver DSA Hub", {
-                        body: "You have successfully subscribed to Daily Problem of the Day push notifications!",
-                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=DSA"
+                    new Notification("Self Study App", {
+                        body: `Notifications are active! You will receive daily random questions from "${activeStudyTopic}".`,
+                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=Study"
                     });
                 } else {
-                    alert("Notification permission was denied. You can enable it in your mobile Chrome settings.");
+                    alert("Notification permission was denied. You can enable notifications in your mobile browser settings.");
                 }
             });
         }
 
-        function subscribeDailyPOTD() {
-            requestNotificationPermission();
-        }
-
-        function toggleNotificationSettings() {
-            openInstallModal();
-        }
-
         function checkNotificationStatus() {
             if ("Notification" in window && Notification.permission === "granted") {
-                document.getElementById('sub-btn-text').innerText = "Alerts Active!";
                 document.getElementById('notif-badge').classList.remove('hidden');
             }
         }
