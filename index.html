@@ -1,437 +1,643 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Self Study App</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4f46e5">
-    
-    <!-- Inline Manifest to make it a Single File PWA -->
-    <script type="application/json" id="my-manifest">
-    {
-      "name": "Self Study App",
-      "short_name": "SelfStudy",
-      "start_url": "./index.html",
-      "display": "standalone",
-      "background_color": "#f3f4f6",
-      "theme_color": "#4f46e5",
-      "icons": [
-        {
-          "src": "https://via.placeholder.com/192x192/4f46e5/ffffff?text=SSA",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-        {
-          "src": "https://via.placeholder.com/512x512/4f46e5/ffffff?text=SSA",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ]
-    }
-    </script>
+    <title>Striver DSA Hub & Daily POTD PWA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Dynamically create the manifest link from the blob script above
-        const manifestEl = document.getElementById('my-manifest');
-        const manifestBlob = new Blob([manifestEl.innerText], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(manifestBlob);
-        const linkTag = document.createElement('link');
-        linkTag.rel = 'manifest';
-        linkTag.href = manifestURL;
-        document.head.appendChild(linkTag);
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        accent: '#6366f1',
+                        accentHover: '#4f46e5'
+                    }
+                }
+            }
+        }
     </script>
-
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f3f4f6;
-            color: #1f2937;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-            color: #4f46e5;
-            margin-bottom: 8px;
-        }
-
-        header p {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .selection-card {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        label {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        select {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
-            background-color: #fff;
-            outline: none;
-        }
-
-        select:focus {
-            border-color: #4f46e5;
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .primary-btn {
-            background-color: #4f46e5;
-            color: white;
-        }
-
-        .primary-btn:hover {
-            background-color: #4338ca;
-        }
-
-        .question-card {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .question-card.hidden {
-            display: none;
-        }
-
-        .badge {
-            align-self: flex-start;
-            background-color: #e0e7ff;
-            color: #4f46e5;
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        #q-title {
-            font-size: 1.2rem;
-            color: #111827;
-        }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .secondary-btn {
-            display: block;
-            text-align: center;
-            background-color: #10b981;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .secondary-btn:hover {
-            background-color: #059669;
-        }
-
-        .gfg-btn {
-            background-color: #f59e0b;
-        }
-
-        .gfg-btn:hover {
-            background-color: #d97706;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
+    <!-- Web App Manifest for PWA simulation -->
+    <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'Striver DSA Hub',
+        'short_name': 'DSA Hub',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#0f172a',
+        'theme_color': '#6366f1',
+        'icons': [{
+            'src': 'https://placehold.co/192x192/6366f1/ffffff?text=DSA',
+            'sizes': '192x192',
+            'type': 'image/png'
+        }]
+    }">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Self Study App</h1>
-            <p>Select a topic and master your DSA interview prep!</p>
-        </header>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
 
-        <main>
-            <div class="selection-card">
-                <label for="topic-select">Choose Topic:</label>
-                <select id="topic-select">
-                    <option value="all">All Topics</option>
-                    <option value="Array">Array</option>
-                    <option value="String">String</option>
-                    <option value="Tree">Tree</option>
-                    <option value="Graph">Graph</option>
-                    <option value="Trie">Trie</option>
-                    <option value="DP">Dynamic Programming (DP)</option>
-                </select>
-                <button id="random-btn" class="primary-btn">Get Random Question</button>
-            </div>
-
-            <div id="question-card" class="question-card hidden">
-                <span id="q-topic" class="badge">Topic</span>
-                <h2 id="q-title">Question Title</h2>
-                <div class="actions">
-                    <a id="q-explanation-link" href="#" target="_blank" class="secondary-btn">📖 View Explanation / Striver Guide</a>
-                    <a id="q-gfg-link" href="#" target="_blank" class="secondary-btn gfg-btn">💻 Practice on GFG (Companies & Figures)</a>
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-darkBg/80 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-accent text-white p-2 rounded-xl shadow-lg shadow-accent/30 flex items-center justify-center font-bold text-lg w-10 h-10">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Striver DSA Hub</h1>
+                    <p class="text-xs text-slate-400">A2Z & SDE Sheet + Mobile PWA</p>
                 </div>
             </div>
-        </main>
+            
+            <div class="flex items-center space-x-3">
+                <button id="pwa-nav-btn" onclick="openInstallModal()" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl text-sm font-medium shadow-md shadow-indigo-500/20 transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <span class="hidden sm:inline">Install PWA & Alerts</span>
+                    <span class="sm:hidden">Install</span>
+                </button>
+                <div class="relative">
+                    <button onclick="toggleNotificationSettings()" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition relative">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-emerald-500 rounded-full hidden"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <section class="bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-indigo-500/30">
+                        <i class="fa-solid fa-fire text-amber-400"></i>
+                        <span>PROBLEM OF THE DAY (POTD)</span>
+                    </div>
+                    <h2 id="potd-title" class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Loading today's challenge...</h2>
+                    <p id="potd-desc" class="text-slate-400 text-sm sm:text-base max-w-2xl">Handpicked daily question from Striver's Sheets to keep your streak alive and sharpen core algorithmic logic.</p>
+                    <div class="flex flex-wrap items-center gap-3 pt-1">
+                        <span id="potd-topic" class="bg-slate-800 text-slate-300 text-xs px-3 py-1 rounded-lg border border-slate-700 font-medium">Topic: Loading</span>
+                        <span id="potd-diff" class="bg-amber-500/10 text-amber-400 text-xs px-3 py-1 rounded-lg border border-amber-500/20 font-medium">Difficulty: Medium</span>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a id="potd-link" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-2xl text-center shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center space-x-2">
+                        <span>Solve Problem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                    <button onclick="subscribeDailyPOTD()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium px-5 py-3 rounded-2xl border border-slate-700 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-bell text-indigo-400"></i>
+                        <span id="sub-btn-text">Enable Daily Mobile Alert</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
+            <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 self-start">
+                <button onclick="switchSheet('a2z')" id="tab-a2z" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow">Striver's A2Z Sheet</button>
+                <button onclick="switchSheet('sde')" id="tab-sde" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white">Striver's SDE Sheet</button>
+            </div>
+            
+            <div class="relative w-full md:w-80">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="search-input" oninput="filterQuestions()" placeholder="Search questions by title..." class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+        </div>
+
+        <div id="topics-container" class="space-y-6">
+            <!-- Dynamically populated by JS -->
+        </div>
+
+    </main>
+
+    <div id="install-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-darkCard border border-slate-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-6">
+            <button onclick="closeInstallModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-indigo-400 text-2xl">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Install App & Mobile Alerts</h3>
+                    <p class="text-xs text-slate-400">Get Striver's POTD notifications directly on your mobile device</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-sm text-slate-300">
+                <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <h4 class="font-semibold text-indigo-400 flex items-center space-x-2">
+                        <i class="fa-brands fa-chrome text-lg"></i>
+                        <span>How to Install on Mobile Chrome</span>
+                    </h4>
+                    <ol class="list-decimal list-inside space-y-2 text-xs text-slate-300 leading-relaxed">
+                        <li>Open this website in <strong class="text-white">Google Chrome</strong> on your Android/iOS device.</li>
+                        <li>Tap the browser menu icon (<i class="fa-solid fa-ellipsis-vertical"></i>) in the top-right corner.</li>
+                        <li>Select <strong class="text-white">"Install app"</strong> or <strong class="text-white">"Add to Home screen"</strong> from the menu.</li>
+                        <li>Confirm the prompt. The app icon will appear on your home screen for offline & fast access!</li>
+                    </ol>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-white">Enable Daily POTD Push Notifications</h4>
+                    <p class="text-xs text-slate-400">Click below to allow browser notifications. When installed as a PWA, you will receive daily Striver problem reminders.</p>
+                    <button onclick="requestNotificationPermission()" id="push-permission-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-2xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Turn on Daily Notifications</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="closeInstallModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-3 rounded-2xl transition">Close</button>
+            </div>
+        </div>
     </div>
 
+    <footer class="border-t border-slate-800 py-8 mt-12 bg-darkCard/30 text-center text-xs text-slate-500 space-y-2">
+        <p>Striver DSA Hub &copy; 2026. Built for passionate coders preparing for product-based tech companies.</p>
+        <p>Structured from Striver's A2Z DSA Sheet and SDE Sheet.</p>
+    </footer>
+
     <script>
-        // Expanded dataset with both Explanation (Striver/Conceptual) and GFG links
-        const dsaQuestions = [
-            // Array
-            { 
-                topic: "Array", 
-                title: "Reverse the array", 
-                explanationUrl: "https://takeuforward.org/data-structures/reverse-a-array/", 
-                gfgUrl: "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/" 
+        // Database of Striver's DSA Questions categorized by Sheets and Topics
+        const sheetsData = {
+            a2z: {
+                title: "Striver's A2Z DSA Sheet",
+                topics: [
+                    {
+                        name: "Step 1: Learn the basics",
+                        questions: [
+                            { title: "C++ / Java / Python Introduction & Syntax", diff: "Easy", link: "https://takeuforward.org/c-plus-plus/c-plus-plus-basics" },
+                            { title: "Find character case (Upper/Lower)", diff: "Easy", link: "https://www.naukri.com/code360/problems/upper-or-lower_625150" },
+                            { title: "Check for Prime Number", diff: "Easy", link: "https://www.naukri.com/code360/problems/check-prime_624934" },
+                            { title: "GCD or HCF of two numbers", diff: "Easy", link: "https://www.naukri.com/code360/problems/gcd-or-hcf_840448" }
+                        ]
+                    },
+                    {
+                        name: "Step 2: Sorting Techniques",
+                        questions: [
+                            { title: "Selection Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/selection-sort_981162" },
+                            { title: "Bubble Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/bubble-sort_980538" },
+                            { title: "Insertion Sort", diff: "Easy", link: "https://www.naukri.com/code360/problems/insertion-sort_624381" },
+                            { title: "Merge Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/merge-sort_58461" },
+                            { title: "Quick Sort", diff: "Medium", link: "https://www.naukri.com/code360/problems/quick-sort_5844.html" }
+                        ]
+                    },
+                    {
+                        name: "Step 3: Arrays (Easy, Medium, Hard)",
+                        questions: [
+                            { title: "Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/largest-element-in-the-array_5026279" },
+                            { title: "Second Largest Element in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/second-largest-element-in-the-array_873346" },
+                            { title: "Check if Array Is Sorted and Rotated", diff: "Easy", link: "https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/" },
+                            { title: "Remove duplicates from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" },
+                            { title: "Rotate Array by K places", diff: "Medium", link: "https://leetcode.com/problems/rotate-array/" },
+                            { title: "Move Zeros to End", diff: "Easy", link: "https://leetcode.com/problems/move-zeroes/" },
+                            { title: "Linear Search / Find Missing Number", diff: "Easy", link: "https://leetcode.com/problems/missing-number/" },
+                            { title: "Max Consecutive Ones", diff: "Easy", link: "https://leetcode.com/problems/max-consecutive-ones/" },
+                            { title: "Find the number that appears once", diff: "Easy", link: "https://leetcode.com/problems/single-number/" },
+                            { title: "Longest Subarray with sum K", diff: "Medium", link: "https://www.naukri.com/code360/problems/longest-subarray-with-sum-k_6682350" },
+                            { title: "Two Sum", diff: "Easy", link: "https://leetcode.com/problems/two-sum/" },
+                            { title: "Sort an array of 0s, 1s and 2s (Dutch National Flag)", diff: "Medium", link: "https://leetcode.com/problems/sort-colors/" },
+                            { title: "Majority Element (>N/2 times)", diff: "Medium", link: "https://leetcode.com/problems/majority-element/" },
+                            { title: "Maximum Subarray Sum (Kadane's Algorithm)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+                            { title: "Stock Buy and Sell", diff: "Easy", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
+                            { title: "Rearrange Array Elements by Sign", diff: "Medium", link: "https://leetcode.com/problems/rearrange-array-elements-by-sign/" },
+                            { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
+                            { title: "Leaders in an Array", diff: "Easy", link: "https://www.naukri.com/code360/problems/superior-elements_873133" },
+                            { title: "Longest Consecutive Sequence in an Array", diff: "Medium", link: "https://leetcode.com/problems/longest-consecutive-sequence/" },
+                            { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
+                            { title: "Rotate Image by 90 degree", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" },
+                            { title: "Spiral Matrix", diff: "Medium", link: "https://leetcode.com/problems/spiral-matrix/" },
+                            { title: "Subarray Sum Equals K", diff: "Medium", link: "https://leetcode.com/problems/subarray-sum-equals-k/" },
+                            { title: "Pascal's Triangle", diff: "Medium", link: "https://leetcode.com/problems/pascals-triangle/" },
+                            { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
+                            { title: "4-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/4sum/" },
+                            { title: "Largest Subarray with 0 Sum", diff: "Medium", link: "https://www.naukri.com/code360/problems/longest-subset-with-zero-sum_3163218" },
+                            { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
+                            { title: "Merge two sorted arrays without extra space", diff: "Hard", link: "https://leetcode.com/problems/merge-sorted-array/" },
+                            { title: "Find the Repeating and Missing Number", diff: "Hard", link: "https://www.naukri.com/code360/problems/missing-and-repeating-numbers_873366" },
+                            { title: "Count Inversions in an Array", diff: "Hard", link: "https://www.naukri.com/code360/problems/number-of-inversions_615.html" },
+                            { title: "Reverse Pairs", diff: "Hard", link: "https://leetcode.com/problems/reverse-pairs/" },
+                            { title: "Maximum Product Subarray", diff: "Medium", link: "https://leetcode.com/problems/maximum-product-subarray/" }
+                        ]
+                    },
+                    {
+                        name: "Step 4: Binary Search (1D, 2D, Search Space)",
+                        questions: [
+                            { title: "Binary Search to find X in sorted array", diff: "Easy", link: "https://leetcode.com/problems/binary-search/" },
+                            { title: "Lower Bound & Upper Bound", diff: "Easy", link: "https://www.naukri.com/code360/problems/lower-bound_8165382" },
+                            { title: "Search Insert Position", diff: "Easy", link: "https://leetcode.com/problems/search-insert-position/" },
+                            { title: "Find First and Last Position of Element in Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" },
+                            { title: "Search in Rotated Sorted Array I & II", diff: "Medium", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
+                            { title: "Find Minimum in Rotated Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
+                            { title: "Single Element in a Sorted Array", diff: "Medium", link: "https://leetcode.com/problems/single-element-in-a-sorted-array/" },
+                            { title: "Find Peak Element", diff: "Medium", link: "https://leetcode.com/problems/find-peak-element/" },
+                            { title: "Sqrt of a number using Binary Search", diff: "Easy", link: "https://www.naukri.com/code360/problems/square-root-integral_893351" },
+                            { title: "Koko Eating Bananas", diff: "Medium", link: "https://leetcode.com/problems/koko-eating-bananas/" },
+                            { title: "Minimum Days to Make M Bouquets", diff: "Medium", link: "https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/" },
+                            { title: "Find the Smallest Divisor Given a Threshold", diff: "Medium", link: "https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/" },
+                            { title: "Capacity To Ship Packages Within D Days", diff: "Medium", link: "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/" },
+                            { title: "Aggressive Cows", diff: "Medium", link: "https://www.naukri.com/code360/problems/aggressive-cows_1082559" },
+                            { title: "Book Allocation Problem", diff: "Hard", link: "https://www.naukri.com/code360/problems/allocate-books_1090540" },
+                            { title: "Split Array - Largest Sum", diff: "Hard", link: "https://leetcode.com/problems/split-array-largest-sum/" },
+                            { title: "Median of Two Sorted Arrays", diff: "Hard", link: "https://leetcode.com/problems/median-of-two-sorted-arrays/" },
+                            { title: "Kth Element of Two Sorted Arrays", diff: "Medium", link: "https://www.naukri.com/code360/problems/k-th-element-of-2-sorted-array_1164159" },
+                            { title: "Search in a 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/search-a-2d-matrix/" },
+                            { title: "Find the row with maximum number of 1s", diff: "Medium", link: "https://www.naukri.com/code360/problems/row-with-max-1s_1116565" },
+                            { title: "Peak Element in 2D Matrix", diff: "Medium", link: "https://leetcode.com/problems/find-a-peak-element-ii/" },
+                            { title: "Median in a row-wise sorted matrix", diff: "Hard", link: "https://www.naukri.com/code360/problems/median-in-a-matrix_1115738" }
+                        ]
+                    },
+                    {
+                        name: "Step 5: Strings (Basic and Medium)",
+                        questions: [
+                            { title: "Remove outermost parentheses", diff: "Easy", link: "https://leetcode.com/problems/remove-outermost-parentheses/" },
+                            { title: "Reverse words in a given string / String", diff: "Medium", link: "https://leetcode.com/problems/reverse-words-in-a-string/" },
+                            { title: "Largest Odd Number in String", diff: "Easy", link: "https://leetcode.com/problems/largest-odd-number-in-string/" },
+                            { title: "Longest Common Prefix", diff: "Easy", link: "https://leetcode.com/problems/longest-common-prefix/" },
+                            { title: "Isomorphic String", diff: "Easy", link: "https://leetcode.com/problems/isomorphic-strings/" },
+                            { title: "Rotate String", diff: "Easy", link: "https://leetcode.com/problems/rotate-string/" },
+                            { title: "Valid Anagram", diff: "Easy", link: "https://leetcode.com/problems/valid-anagram/" },
+                            { title: "Sort Characters By Frequency", diff: "Medium", link: "https://leetcode.com/problems/sort-characters-by-frequency/" },
+                            { title: "Maximum Nesting Depth of the Parentheses", diff: "Easy", link: "https://leetcode.com/problems/maximum-nesting-depth-of-the-parentheses/" },
+                            { title: "Roman to Integer", diff: "Easy", link: "https://leetcode.com/problems/roman-to-integer/" },
+                            { title: "String to Integer (atoi)", diff: "Medium", link: "https://leetcode.com/problems/string-to-integer-atoi/" },
+                            { title: "Count Number of Substrings", diff: "Medium", link: "https://www.naukri.com/code360/problems/count-with-k-different-characters_1214691" },
+                            { title: "Longest Palindromic Substring", diff: "Medium", link: "https://leetcode.com/problems/longest-palindromic-substring/" },
+                            { title: "Sum of Beauty of All Substrings", diff: "Medium", link: "https://leetcode.com/problems/sum-of-beauty-of-all-substrings/" },
+                            { title: "KMP Algorithm / Longest Prefix Suffix (LPS)", diff: "Hard", link: "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/" }
+                        ]
+                    },
+                    {
+                        name: "Step 6: Linked List (Singly, Doubly, Medium, Hard)",
+                        questions: [
+                            { title: "Introduction to Linked List & Insertion/Deletion", diff: "Easy", link: "https://www.naukri.com/code360/problems/introduction-to-linked-list_8140473" },
+                            { title: "Reverse a Singly Linked List", diff: "Easy", link: "https://leetcode.com/problems/reverse-linked-list/" },
+                            { title: "Middle of the Linked List", diff: "Easy", link: "https://leetcode.com/problems/middle-of-the-linked-list/" },
+                            { title: "Detect a loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle/" },
+                            { title: "Find the starting point of the Loop in Linked List", diff: "Medium", link: "https://leetcode.com/problems/linked-list-cycle-ii/" },
+                            { title: "Length of Loop in Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/find-length-of-loop_8160483" },
+                            { title: "Check if Linked List is palindrome", diff: "Medium", link: "https://leetcode.com/problems/palindrome-linked-list/" },
+                            { title: "Odd Even Linked List", diff: "Medium", link: "https://leetcode.com/problems/odd-even-linked-list/" },
+                            { title: "Remove Nth node from the back of the Linked List", diff: "Medium", link: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/" },
+                            { title: "Delete the middle node of a Linked List", diff: "Medium", link: "https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/" },
+                            { title: "Sort Linked List", diff: "Medium", link: "https://leetcode.com/problems/sort-list/" },
+                            { title: "Intersection of Two Linked Lists", diff: "Easy", link: "https://leetcode.com/problems/intersection-of-two-linked-lists/" },
+                            { title: "Add 1 to a number represented as Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/add-1-a-number-represented-as-linked-list_920457" },
+                            { title: "Add Two Numbers in Linked List", diff: "Medium", link: "https://leetcode.com/problems/add-two-numbers/" },
+                            { title: "Reverse Nodes in k-Group", diff: "Hard", link: "https://leetcode.com/problems/reverse-nodes-in-k-group/" },
+                            { title: "Rotate a Linked List", diff: "Medium", link: "https://leetcode.com/problems/rotate-list/" },
+                            { title: "Flatten a Linked List", diff: "Medium", link: "https://www.naukri.com/code360/problems/flatten-a-linked-list_1112655" },
+                            { title: "Clone a Linked List with Random and Next Pointer", diff: "Medium", link: "https://leetcode.com/problems/copy-list-with-random-pointer/" }
+                        ]
+                    },
+                    {
+                        name: "Step 9: Stack and Queues",
+                        questions: [
+                            { title: "Implement Stack using Arrays / Queues", diff: "Easy", link: "https://leetcode.com/problems/implement-stack-using-queues/" },
+                            { title: "Implement Queue using Arrays / Stacks", diff: "Easy", link: "https://leetcode.com/problems/implement-queue-using-stacks/" },
+                            { title: "Valid Parentheses", diff: "Easy", link: "https://leetcode.com/problems/valid-parentheses/" },
+                            { title: "Min Stack", diff: "Medium", link: "https://leetcode.com/problems/min-stack/" },
+                            { title: "Infix, Prefix and Postfix Conversions", diff: "Medium", link: "https://www.naukri.com/code360/problems/infix-to-postfix-expression_1382146" },
+                            { title: "Next Greater Element I & II", diff: "Medium", link: "https://leetcode.com/problems/next-greater-element-ii/" },
+                            { title: "Previous Smaller Element", diff: "Easy", link: "https://www.naukri.com/code360/problems/previous-smaller-element_1112810" },
+                            { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
+                            { title: "Sum of Subarray Minimums", diff: "Medium", link: "https://leetcode.com/problems/sum-of-subarray-minimums/" },
+                            { title: "Asteroid Collision", diff: "Medium", link: "https://leetcode.com/problems/asteroid-collision/" },
+                            { title: "Largest Rectangle in Histogram", diff: "Hard", link: "https://leetcode.com/problems/largest-rectangle-in-histogram/" },
+                            { title: "Sliding Window Maximum", diff: "Hard", link: "https://leetcode.com/problems/sliding-window-maximum/" },
+                            { title: "Stock Span Problem", diff: "Medium", link: "https://leetcode.com/problems/online-stock-span/" },
+                            { title: "LRU Cache", diff: "Medium", link: "https://leetcode.com/problems/lru-cache/" },
+                            { title: "LFU Cache", diff: "Hard", link: "https://leetcode.com/problems/lfu-cache/" }
+                        ]
+                    },
+                    {
+                        name: "Step 13: Binary Trees (Traversals, Medium, Hard)",
+                        questions: [
+                            { title: "Binary Tree Traversals (Preorder, Inorder, Postorder)", diff: "Easy", link: "https://www.naukri.com/code360/problems/tree-traversal_981285" },
+                            { title: "Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
+                            { title: "Maximum Depth of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
+                            { title: "Check if Binary Tree is Height-Balanced", diff: "Easy", link: "https://leetcode.com/problems/balanced-binary-tree/" },
+                            { title: "Diameter of Binary Tree", diff: "Easy", link: "https://leetcode.com/problems/diameter-of-binary-tree/" },
+                            { title: "Binary Tree Maximum Path Sum", diff: "Hard", link: "https://leetcode.com/problems/binary-tree-maximum-path-sum/" },
+                            { title: "Same Tree", diff: "Easy", link: "https://leetcode.com/problems/same-tree/" },
+                            { title: "Zigzag Level Order Traversal", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/" },
+                            { title: "Boundary Traversal of Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/boundary-traversal_790707" },
+                            { title: "Vertical Order Traversal of Binary Tree", diff: "Hard", link: "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/" },
+                            { title: "Top View & Bottom View of Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/top-view-of-binary-tree_799401" },
+                            { title: "Right/Left View of Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/binary-tree-right-side-view/" },
+                            { title: "Check for Symmetrical Trees", diff: "Easy", link: "https://leetcode.com/problems/symmetric-tree/" },
+                            { title: "Lowest Common Ancestor in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/" },
+                            { title: "Children Sum Property in Binary Tree", diff: "Medium", link: "https://www.naukri.com/code360/problems/childrensum-property_790727" },
+                            { title: "All Nodes Distance K in Binary Tree", diff: "Medium", link: "https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/" },
+                            { title: "Minimum Time Taken to Burn the Binary Tree from a Node", diff: "Hard", link: "https://www.naukri.com/code360/problems/time-to-burn-tree_1463528" },
+                            { title: "Construct Binary Tree from Inorder and Preorder/Postorder", diff: "Medium", link: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/" },
+                            { title: "Serialize and Deserialize Binary Tree", diff: "Hard", link: "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" },
+                            { title: "Flatten Binary Tree to Linked List", diff: "Medium", link: "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/" }
+                        ]
+                    },
+                    {
+                        name: "Step 15: Graphs (Traversal, Shortest Path, MST, Advanced)",
+                        questions: [
+                            { title: "Introduction to Graphs, BFS & DFS", diff: "Easy", link: "https://www.naukri.com/code360/problems/bfs-in-graph_973002" },
+                            { title: "Number of Provinces", diff: "Medium", link: "https://leetcode.com/problems/number-of-provinces/" },
+                            { title: "Number of Islands", diff: "Medium", link: "https://leetcode.com/problems/number-of-islands/" },
+                            { title: "Flood Fill Algorithm", diff: "Easy", link: "https://leetcode.com/problems/flood-fill/" },
+                            { title: "Rotting Oranges", diff: "Medium", link: "https://leetcode.com/problems/rotting-oranges/" },
+                            { title: "Cycle Detection in Undirected Graph (BFS/DFS)", diff: "Medium", link: "https://www.naukri.com/code360/problems/cycle-detection-in-undirected-graph_1062670" },
+                            { title: "01 Matrix (Nearest Cell)", diff: "Medium", link: "https://leetcode.com/problems/01-matrix/" },
+                            { title: "Surrounded Regions", diff: "Medium", link: "https://leetcode.com/problems/surrounded-regions/" },
+                            { title: "Word Ladder I & II", diff: "Hard", link: "https://leetcode.com/problems/word-ladder/" },
+                            { title: "Topological Sort (DFS & Kahn's Algorithm)", diff: "Medium", link: "https://www.naukri.com/code360/problems/topological-sort_982938" },
+                            { title: "Course Schedule I & II", diff: "Medium", link: "https://leetcode.com/problems/course-schedule/" },
+                            { title: "Dijkstra's Algorithm (Priority Queue & Set)", diff: "Medium", link: "https://www.naukri.com/code360/problems/dijkstras-shortest-path_920469" },
+                            { title: "Bellman Ford Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/bellman-ford_2041211" },
+                            { title: "Floyd Warshall Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/floyd-warshall_2041979" },
+                            { title: "Minimum Spanning Tree - Prim's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/prim-s-mst_1095633" },
+                            { title: "Disjoint Set (Union by Rank / Path Compression)", diff: "Medium", link: "https://www.naukri.com/code360/problems/disjoint-set-union-find_1209239" },
+                            { title: "Kruskal's Algorithm", diff: "Medium", link: "https://www.naukri.com/code360/problems/kruskal-s-minimum-spanning-tree_1082553" },
+                            { title: "Kosaraju's Algorithm for Strongly Connected Components", diff: "Hard", link: "https://www.naukri.com/code360/problems/count-strongly-connected-components-kosaraju-s-algorithm_1171151" }
+                        ]
+                    },
+                    {
+                        name: "Step 16: Dynamic Programming (1D, 2D, Grids, Strings, Stocks)",
+                        questions: [
+                            { title: "Climbing Stairs", diff: "Easy", link: "https://leetcode.com/problems/climbing-stairs/" },
+                            { title: "Frog Jump (DP 3)", diff: "Medium", link: "https://www.naukri.com/code360/problems/frog-jump_3621012" },
+                            { title: "Maximum Sum of Non-Adjacent Elements (House Robber)", diff: "Medium", link: "https://leetcode.com/problems/house-robber/" },
+                            { title: "Ninja's Training", diff: "Medium", link: "https://www.naukri.com/code360/problems/ninja-s-training_3621003" },
+                            { title: "Grid Unique Paths", diff: "Medium", link: "https://leetcode.com/problems/unique-paths/" },
+                            { title: "Minimum Path Sum in Grid", diff: "Medium", link: "https://leetcode.com/problems/minimum-path-sum/" },
+                            { title: "Triangle Path Sum", diff: "Medium", link: "https://leetcode.com/problems/triangle/" },
+                            { title: "Subset Sum Equal to K", diff: "Medium", link: "https://www.naukri.com/code360/problems/subset-sum-equal-to-k_1550954" },
+                            { title: "0/1 Knapsack Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/0-1-knapsack_920542" },
+                            { title: "Coin Change", diff: "Medium", link: "https://leetcode.com/problems/coin-change/" },
+                            { title: "Longest Common Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-common-subsequence/" },
+                            { title: "Longest Increasing Subsequence", diff: "Medium", link: "https://leetcode.com/problems/longest-increasing-subsequence/" },
+                            { title: "Matrix Chain Multiplication", diff: "Hard", link: "https://www.naukri.com/code360/problems/matrix-chain-multiplication_975344" },
+                            { title: "Burst Balloons", diff: "Hard", link: "https://leetcode.com/problems/burst-balloons/" }
+                        ]
+                    }
+                ]
             },
-            { 
-                topic: "Array", 
-                title: "Find the maximum and minimum element in an array", 
-                explanationUrl: "https://takeuforward.org/data-structures/maximum-and-minimum-element-in-an-array/", 
-                gfgUrl: "https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/" 
-            },
-            { 
-                topic: "Array", 
-                title: "Find the Kth max and min element of an array", 
-                explanationUrl: "https://takeuforward.org/data-structures/kth-largest-smallest-element-in-an-array/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/kth-smallest-element/0" 
-            },
-            { 
-                topic: "Array", 
-                title: "Sort an array of 0s, 1s and 2s (Dutch National Flag Algorithm)", 
-                explanationUrl: "https://takeuforward.org/data-structures/sort-an-array-of-0s-1s-and-2s/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/sort-an-array-of-0s-1s-and-2s4231/1" 
-            },
-            { 
-                topic: "Array", 
-                title: "Move all negative elements to end of array", 
-                explanationUrl: "https://takeuforward.org/arrays/move-all-negative-elements-to-end-of-array/", 
-                gfgUrl: "https://www.geeksforgeeks.org/move-negative-numbers-beginning-positive-end-constant-extra-space/" 
-            },
-
-            // String
-            { 
-                topic: "String", 
-                title: "Reverse a String", 
-                explanationUrl: "https://takeuforward.org/data-structures/reverse-a-string/", 
-                gfgUrl: "https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/" 
-            },
-            { 
-                topic: "String", 
-                title: "Check whether a string is Palindrome or not", 
-                explanationUrl: "https://takeuforward.org/data-structures/check-if-a-string-is-palindrome-or-not/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/palindrome-string0817/1" 
-            },
-            { 
-                topic: "String", 
-                title: "Find Duplicate characters in a string", 
-                explanationUrl: "https://takeuforward.org/data-structures/find-duplicate-characters-in-a-string/", 
-                gfgUrl: "https://www.geeksforgeeks.org/print-all-the-duplicates-in-the-input-string/" 
-            },
-            { 
-                topic: "String", 
-                title: "Check whether one string is a rotation of another", 
-                explanationUrl: "https://takeuforward.org/data-structures/check-if-string-is-rotation-of-another/", 
-                gfgUrl: "https://www.geeksforgeeks.org/a-program-to-check-if-strings-are-rotations-of-each-other/" 
-            },
-
-            // Tree
-            { 
-                topic: "Tree", 
-                title: "Level order traversal", 
-                explanationUrl: "https://takeuforward.org/data-structures/level-order-traversal-of-binary-tree/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/level-order-traversal/1" 
-            },
-            { 
-                topic: "Tree", 
-                title: "Reverse Level Order traversal", 
-                explanationUrl: "https://takeuforward.org/data-structures/reverse-level-order-traversal/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/reverse-level-order-traversal/1" 
-            },
-            { 
-                topic: "Tree", 
-                title: "Height of a tree", 
-                explanationUrl: "https://takeuforward.org/data-structures/maximum-depth-of-a-binary-tree/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1" 
-            },
-            { 
-                topic: "Tree", 
-                title: "Diameter of a binary tree", 
-                explanationUrl: "https://takeuforward.org/data-structures/calculate-the-diameter-of-a-binary-tree/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1" 
-            },
-
-            // Graph
-            { 
-                topic: "Graph", 
-                title: "Create a Graph and print representation", 
-                explanationUrl: "https://takeuforward.org/graph/introduction-to-graphs/", 
-                gfgUrl: "https://www.geeksforgeeks.org/graphs-and-its-representations/" 
-            },
-            { 
-                topic: "Graph", 
-                title: "Implement Breadth First Search (BFS)", 
-                explanationUrl: "https://takeuforward.org/graph/breadth-first-search-bfs-level-order-traversal/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1" 
-            },
-            { 
-                topic: "Graph", 
-                title: "Implement Depth First Search (DFS)", 
-                explanationUrl: "https://takeuforward.org/graph/depth-first-search-dfs/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/print-adjacency-list-1587115620/1" 
-            },
-            { 
-                topic: "Graph", 
-                title: "Detect Cycle in a Directed Graph", 
-                explanationUrl: "https://takeuforward.org/graph/detect-cycle-in-a-directed-graph-dfs/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1" 
-            },
-
-            // Trie
-            { 
-                topic: "Trie", 
-                title: "Construct a Trie (Insert, Search, Delete)", 
-                explanationUrl: "https://takeuforward.org/data-structures/implement-trie-1/", 
-                gfgUrl: "https://www.geeksforgeeks.org/trie-insert-and-search/" 
-            },
-            { 
-                topic: "Trie", 
-                title: "Print all valid words present in a dictionary", 
-                explanationUrl: "https://takeuforward.org/data-structures/trie-complete-implementation/", 
-                gfgUrl: "https://www.geeksforgeeks.org/boggle-find-all-possible-words-in-a-board-of-characters/" 
-            },
-            { 
-                topic: "Trie", 
-                title: "Phone directory / Auto-complete feature", 
-                explanationUrl: "https://takeuforward.org/data-structures/implement-trie-ii/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/phone-directory4628/1" 
-            },
-
-            // DP
-            { 
-                topic: "DP", 
-                title: "Coin Change Problem", 
-                explanationUrl: "https://takeuforward.org/data-structures/coin-change-dp-20/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/coin-change2448/1" 
-            },
-            { 
-                topic: "DP", 
-                title: "0/1 Knapsack Problem", 
-                explanationUrl: "https://takeuforward.org/data-structures/0-1-knapsack-dp-19/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1" 
-            },
-            { 
-                topic: "DP", 
-                title: "Longest Common Subsequence", 
-                explanationUrl: "https://takeuforward.org/data-structures/longest-common-subsequence-dp-25/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/longest-common-subsequence-1587115620/1" 
-            },
-            { 
-                topic: "DP", 
-                title: "Word Break Problem", 
-                explanationUrl: "https://takeuforward.org/data-structures/word-break-problem-dp-132/", 
-                gfgUrl: "https://practice.geeksforgeeks.org/problems/word-break1352/1" 
+            sde: {
+                title: "Striver's SDE Sheet",
+                topics: [
+                    {
+                        name: "Arrays & Matrices (SDE Core)",
+                        questions: [
+                            { title: "Set Matrix Zeroes", diff: "Medium", link: "https://leetcode.com/problems/set-matrix-zeroes/" },
+                            { title: "Pascal's Triangle", diff: "Medium", link: "https://leetcode.com/problems/pascals-triangle/" },
+                            { title: "Next Permutation", diff: "Medium", link: "https://leetcode.com/problems/next-permutation/" },
+                            { title: "Kadane's Algorithm (Max Subarray Sum)", diff: "Medium", link: "https://leetcode.com/problems/maximum-subarray/" },
+                            { title: "Merge Overlapping Subintervals", diff: "Medium", link: "https://leetcode.com/problems/merge-intervals/" },
+                            { title: "Rotate Matrix by 90 Degrees", diff: "Medium", link: "https://leetcode.com/problems/rotate-image/" }
+                        ]
+                    },
+                    {
+                        name: "Hashing & Two Pointers (SDE)",
+                        questions: [
+                            { title: "Longest Substring Without Repeating Characters", diff: "Medium", link: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
+                            { title: "3-Sum Problem", diff: "Medium", link: "https://leetcode.com/problems/3sum/" },
+                            { title: "Trapping Rain Water", diff: "Hard", link: "https://leetcode.com/problems/trapping-rain-water/" },
+                            { title: "Remove Duplicate from Sorted Array", diff: "Easy", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/" },
+                            { title: "Max Consecutive Ones", diff: "Easy", link: "https://leetcode.com/problems/max-consecutive-ones/" }
+                        ]
+                    },
+                    {
+                        name: "Greedy & Dynamic Programming (SDE)",
+                        questions: [
+                            { title: "N Meetings in One Room", diff: "Medium", link: "https://www.naukri.com/code360/problems/maximum-meetings_1062658" },
+                            { title: "Minimum Platforms", diff: "Medium", link: "https://www.naukri.com/code360/problems/minimum-number-of-platforms_799400" },
+                            { title: "Job Sequencing Problem", diff: "Medium", link: "https://www.naukri.com/code360/problems/job-sequencing-problem_1169462" },
+                            { title: "Coin Change", diff: "Medium", link: "https://leetcode.com/problems/coin-change/" },
+                            { title: "Edit Distance", diff: "Medium", link: "https://leetcode.com/problems/edit-distance/" },
+                            { title: "Maximum Profit in Job Scheduling / Stock", diff: "Medium", link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/" }
+                        ]
+                    }
+                ]
             }
-        ];
+        };
 
-        const topicSelect = document.getElementById('topic-select');
-        const randomBtn = document.getElementById('random-btn');
-        const questionCard = document.getElementById('question-card');
-        const qTopic = document.getElementById('q-topic');
-        const qTitle = document.getElementById('q-title');
-        const qExplanationLink = document.getElementById('q-explanation-link');
-        const qGfgLink = document.getElementById('q-gfg-link');
+        let currentActiveSheet = 'a2z';
 
-        randomBtn.addEventListener('click', () => {
-            const selectedTopic = topicSelect.value;
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSheet(currentActiveSheet);
+            setupPOTD();
+            checkNotificationStatus();
+        });
+
+        // Switch between A2Z and SDE sheets
+        function switchSheet(sheetKey) {
+            currentActiveSheet = sheetKey;
+            const btnA2z = document.getElementById('tab-a2z');
+            const btnSde = document.getElementById('tab-sde');
+
+            if (sheetKey === 'a2z') {
+                btnA2z.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
+                btnSde.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+            } else {
+                btnSde.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-indigo-600 text-white shadow";
+                btnA2z.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white";
+            }
+
+            renderSheet(sheetKey);
+        }
+
+        // Render topics and questions with completion checkboxes
+        function renderSheet(sheetKey) {
+            const container = document.getElementById('topics-container');
+            const data = sheetsData[sheetKey];
+            const savedProgress = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
+
+            let html = '';
+            data.topics.forEach((topic, tIdx) => {
+                let topicCompletedCount = 0;
+                topic.questions.forEach((q, qIdx) => {
+                    const qId = `${sheetKey}_${tIdx}_${qIdx}`;
+                    if (savedProgress[qId]) topicCompletedCount++;
+                });
+
+                html += `
+                    <div class="bg-darkCard border border-slate-800 rounded-3xl overflow-hidden shadow-xl transition hover:border-slate-700">
+                        <div class="bg-slate-900/60 px-6 py-4 flex items-center justify-between border-b border-slate-800/60 cursor-pointer select-none" onclick="toggleTopicAccordion(${tIdx})">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-500/20">
+                                    ${tIdx + 1}
+                                </div>
+                                <h3 class="font-bold text-base text-white">${topic.name}</h3>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">
+                                    ${topicCompletedCount}/${topic.questions.length} Solved
+                                </span>
+                                <i id="icon-topic-${tIdx}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                            </div>
+                        </div>
+                        
+                        <div id="topic-content-${tIdx}" class="divide-y divide-slate-800/50">
+                `;
+
+                topic.questions.forEach((q, qIdx) => {
+                    const qId = `${sheetKey}_${tIdx}_${qIdx}`;
+                    const isChecked = savedProgress[qId] ? 'checked' : '';
+                    const diffColor = q.diff === 'Easy' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 
+                                      q.diff === 'Medium' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 
+                                      'text-rose-400 bg-rose-500/10 border-rose-500/20';
+
+                    html += `
+                        <div class="question-item px-6 py-3.5 flex items-center justify-between hover:bg-slate-800/30 transition gap-4" data-title="${q.title.toLowerCase()}">
+                            <div class="flex items-center space-x-3.5 min-w-0">
+                                <input type="checkbox" ${isChecked} onchange="toggleQuestion('${qId}')" class="w-4 h-4 rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900 cursor-pointer">
+                                <a href="${q.link}" target="_blank" class="text-sm font-medium text-slate-200 hover:text-indigo-400 transition truncate flex items-center space-x-2">
+                                    <span class="truncate">${q.title}</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 flex-shrink-0"></i>
+                                </a>
+                            </div>
+                            <span class="text-xs px-2.5 py-0.5 rounded-md border font-medium flex-shrink-0 ${diffColor}">${q.diff}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Toggle collapsible topic section
+        function toggleTopicAccordion(tIdx) {
+            const content = document.getElementById(`topic-content-${tIdx}`);
+            const icon = document.getElementById(`icon-topic-${tIdx}`);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // Save progress to local storage
+        function toggleQuestion(qId) {
+            const savedProgress = JSON.parse(localStorage.getItem('dsa_progress') || '{}');
+            savedProgress[qId] = !savedProgress[qId];
+            localStorage.setItem('dsa_progress', JSON.stringify(savedProgress));
+            renderSheet(currentActiveSheet);
+        }
+
+        // Filter questions by search input
+        function filterQuestions() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const items = document.querySelectorAll('.question-item');
+            items.forEach(item => {
+                const title = item.getAttribute('data-title');
+                if (title.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Setup Problem of the Day based on current date
+        function setupPOTD() {
+            const allQuestions = [];
+            Object.keys(sheetsData).forEach(sKey => {
+                sheetsData[sKey].topics.forEach(t => {
+                    t.questions.forEach(q => {
+                        allQuestions.push({ ...q, topic: t.name });
+                    });
+                });
+            });
+
+            // Pick a pseudo-random problem based on day of the year
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay);
             
-            let filtered = dsaQuestions;
-            if (selectedTopic !== 'all') {
-                filtered = dsaQuestions.filter(q => q.topic === selectedTopic);
-            }
+            const potd = allQuestions[dayOfYear % allQuestions.length];
 
-            if (filtered.length === 0) {
-                alert('No questions available for this topic.');
+            document.getElementById('potd-title').innerText = potd.title;
+            document.getElementById('potd-desc').innerText = `Daily curated challenge from Striver's collection. Build mastery step-by-step.`;
+            document.getElementById('potd-topic').innerText = `Topic: ${potd.topic}`;
+            document.getElementById('potd-diff').innerText = `Difficulty: ${potd.diff}`;
+            document.getElementById('potd-link').href = potd.link;
+        }
+
+        // Modal Controls for PWA Install & Notifications
+        function openInstallModal() {
+            document.getElementById('install-modal').classList.remove('hidden');
+        }
+
+        function closeInstallModal() {
+            document.getElementById('install-modal').classList.add('hidden');
+        }
+
+        // Request browser notification permission for daily mobile push alerts
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop/mobile push notifications.");
                 return;
             }
 
-            const randomIndex = Math.floor(Math.random() * filtered.length);
-            const question = filtered[randomIndex];
-
-            qTopic.textContent = question.topic;
-            qTitle.textContent = question.title;
-            qExplanationLink.href = question.explanationUrl;
-            qGfgLink.href = question.gfgUrl;
-
-            questionCard.classList.remove('hidden');
-        });
-
-        // Register a lightweight dynamic Service Worker for PWA support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('activate', e => self.clients.claim());
-                    self.addEventListener('fetch', e => {
-                        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('sub-btn-text').innerText = "Alerts Active!";
+                    document.getElementById('notif-badge').classList.remove('hidden');
+                    document.getElementById('push-permission-btn').innerText = "Notifications Enabled Successfully!";
+                    document.getElementById('push-permission-btn').className = "w-full bg-slate-800 text-emerald-400 font-semibold py-3 px-4 rounded-2xl border border-emerald-500/30 flex items-center justify-center space-x-2";
+                    
+                    // Show confirmation notification
+                    new Notification("Striver DSA Hub", {
+                        body: "You have successfully subscribed to Daily Problem of the Day push notifications!",
+                        icon: "https://placehold.co/192x192/6366f1/ffffff?text=DSA"
                     });
-                `;
-                const swBlob = new Blob([swCode], {type: 'text/javascript'});
-                const swUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swUrl)
-                    .then(() => console.log('PWA Service Worker Ready'))
-                    .catch(err => console.log('SW registration failed', err));
+                } else {
+                    alert("Notification permission was denied. You can enable it in your mobile Chrome settings.");
+                }
             });
+        }
+
+        function subscribeDailyPOTD() {
+            requestNotificationPermission();
+        }
+
+        function toggleNotificationSettings() {
+            openInstallModal();
+        }
+
+        function checkNotificationStatus() {
+            if ("Notification" in window && Notification.permission === "granted") {
+                document.getElementById('sub-btn-text').innerText = "Alerts Active!";
+                document.getElementById('notif-badge').classList.remove('hidden');
+            }
         }
     </script>
 </body>
